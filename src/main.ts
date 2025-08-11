@@ -1,8 +1,25 @@
-import Vue from 'vue'
-import App from './App.vue'
-import './uni.promisify.adaptor'
+import { createPinia } from 'pinia';
+import uviewPlus from 'uview-plus';
+import { createSSRApp } from "vue";
+import App from "./App.vue";
 
-Vue.config.productionTip = false
+export function createApp() {
+  const app = createSSRApp(App);
+  const pinia = createPinia();
 
-const app = new (typeof App === 'function' ? App : Vue.extend(Object.assign({ mpType: 'app' }, App)))
-app.$mount();
+  app.use(pinia)
+    .use(uviewPlus, () => {
+      return {
+        options: {
+          // 修改$u.config对象的属性
+          config: {
+            // 修改默认单位为rpx，相当于执行 uni.$u.config.unit = 'rpx'
+            unit: 'rpx'
+          }
+        }
+      }
+    });
+  return {
+    app,
+  };
+}

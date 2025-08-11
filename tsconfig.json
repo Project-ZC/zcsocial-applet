@@ -1,37 +1,13 @@
 {
+  "extends": "@vue/tsconfig/tsconfig.json",
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
-    "strict": true,
-    "jsx": "preserve",
-    "importHelpers": true,
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "experimentalDecorators":true,
     "sourceMap": true,
-    "skipLibCheck": true,
     "baseUrl": ".",
-    "types": [
-      "webpack-env",
-      "@dcloudio/types"
-    ],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
-    "lib": [
-      "esnext",
-      "dom",
-      "dom.iterable",
-      "scripthost"
-    ]
+    "lib": ["esnext", "dom"],
+    "types": ["@dcloudio/types","miniprogram-api-typings","uview-plus/types"]
   },
-  "exclude": [
-    "node_modules",
-    "unpackage",
-    "dist",
-    "src/**/*.nvue"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
 }
