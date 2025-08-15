@@ -49,65 +49,73 @@
 				<view class="menu-arrow">></view>
 			</view>
 		</view>
+		<u-button
+			class="logout-btn"
+			type="danger"
+			@click="handleLogout"
+			text="退出登录"
+		></u-button>
 	</view>
 </template>
 
 <script lang="ts" setup>
 import { useThemeStore } from "@/stores/theme";
-import { ActionType } from "@/types/order";
+import { useUserStore } from "@/stores/user";
+import { ActionType } from "@/enums/order";
 import { computed } from "vue";
 
 const themeStore = useThemeStore();
+const userStore = useUserStore();
 const isDarkMode = computed(() => themeStore.isDarkMode);
 
 // 导航到订单页面
 const navigateToOrders = () => {
 	uni.navigateTo({
-		url: '/pages/orders/orders'
+		url: "/pages/orders/orders",
 	});
 };
 
 // 导航到收藏页面
 const navigateToFavorites = () => {
 	uni.showToast({
-		title: '跳转到收藏页面',
-		icon: 'none'
+		title: "跳转到收藏页面",
+		icon: "none",
 	});
 };
 
 // 导航到设置页面
 const navigateToSettings = () => {
 	uni.showToast({
-		title: '跳转到设置页面',
-		icon: 'none'
+		title: "跳转到设置页面",
+		icon: "none",
 	});
 };
 
 // 导航到商家订单管理页面
 const navigateToMerchantOrders = () => {
 	uni.navigateTo({
-		url: '/pages/merchant/orders'
+		url: "/pages/merchant/orders",
 	});
 };
 
 // 导航到订单演示页面
 const navigateToOrderDemo = () => {
 	uni.navigateTo({
-		url: '/pages/order-demo/order-demo'
+		url: "/pages/order-demo/order-demo",
 	});
 };
 
 // 导航到奶茶点单页面
 const navigateToMilkTeaOrder = () => {
 	uni.navigateTo({
-		url: '/pages/milk-tea-order/milk-tea-order'
+		url: "/pages/milk-tea-order/milk-tea-order",
 	});
 };
 
 // 导航到奶茶点单演示页面
 const navigateToMilkTeaDemo = () => {
 	uni.navigateTo({
-		url: '/pages/milk-tea-demo/milk-tea-demo'
+		url: "/pages/milk-tea-demo/milk-tea-demo",
 	});
 };
 
@@ -115,7 +123,7 @@ const navigateToMilkTeaDemo = () => {
 const handleOrderClick = (orderInfo: any) => {
 	uni.showToast({
 		title: `点击了订单：${orderInfo.orderNumber}`,
-		icon: 'none'
+		icon: "none",
 	});
 };
 
@@ -123,9 +131,9 @@ const handleOrderClick = (orderInfo: any) => {
 const handleActionClick = (action: any, orderInfo: any) => {
 	uni.showToast({
 		title: `执行操作：${action.text} - ${orderInfo.orderNumber}`,
-		icon: 'none'
+		icon: "none",
 	});
-	
+
 	// 根据操作类型执行相应逻辑
 	switch (action.type) {
 		case ActionType.PAY:
@@ -147,6 +155,21 @@ const handleActionClick = (action: any, orderInfo: any) => {
 			// 处理再次购买逻辑
 			break;
 	}
+};
+
+const handleLogout = () => {
+	uni.showModal({
+		title: "提示",
+		content: "确定要退出登录吗？",
+		success: (res) => {
+			if (res.confirm) {
+				uni.clearStorageSync();
+				uni.reLaunch({
+					url: "/pages/login/login",
+				});
+			}
+		},
+	});
 };
 
 defineOptions({
@@ -275,4 +298,4 @@ defineOptions({
 		}
 	}
 }
-</style> 
+</style>
