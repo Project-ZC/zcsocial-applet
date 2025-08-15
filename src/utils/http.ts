@@ -1,5 +1,9 @@
-import { useUserStore } from "@/stores/user";
-const userStore = useUserStore();
+// 移除对 useUserStore 的引用以避免循环依赖
+// 如果需要用户 token，可以将其作为参数传递给 http 函数
+// import { useUserStore } from '@/stores/index';
+import { loginTo } from "@/utils/login";
+import { uniCache } from "@/utils/storage";
+
 const baseURL = "http://115.190.120.193:8080";
 //添加拦截器
 const httpInterceptor = {
@@ -15,8 +19,9 @@ const httpInterceptor = {
 			"X-App-Platform": "wechat",
 		};
 		// 添加token
-		if (userStore.userInfo?.token) {
-			args.header["X-App-Token"] = userStore.userInfo.token;
+		const user = uniCache.getItem('user')
+		if (user?.userInfo?.token) {
+			args.header["X-App-Token"] = user?.userInfo?.token;
 		}
 	},
 };
@@ -48,15 +53,18 @@ export const http = <T>(options: UniApp.RequestOptions) => {
 				} else if (val.code == 1002) {
 					uni.showToast({
 						icon: "none",
-						title: "登录过期,请重新登录",
+						title: val.message || "登录过期,请重新登录",
 					});
 					uni.clearStorageSync();
-					reject(val);
 					setTimeout(() => {
-						uni.navigateTo({
-							url: "/pages/login/login",
-						});
-					}, 1500);
+						loginTo()
+					}, 300);
+					// reject(val);
+					// setTimeout(() => {
+					// 	uni.navigateTo({
+					// 		url: "/pages/login/login",
+					// 	});
+					// }, 1500);
 				} else {
 					if (val.message) {
 						uni.showToast({

@@ -51,7 +51,7 @@
 
 <script lang="ts" setup>
 import OrderCard from "@/components/order-card/order-card.vue";
-import { useThemeStore } from "@/stores/theme";
+import { useThemeStore } from "@/stores/modules/theme";
 import { ActionType, OrderStatus } from "@/enums/order";
 import { computed, ref } from "vue";
 
@@ -66,7 +66,7 @@ const orders = ref([
 	{
 		orderNumber: "ORD20241201001",
 		status: OrderStatus.PENDING_ACCEPT,
-		productImage: "/static/logo.png",
+		productImage: "/static/images/logo.png",
 		productName: "经典拿铁咖啡",
 		productSpec: "大杯 / 热饮 / 加糖",
 		price: 28.0,
@@ -82,7 +82,7 @@ const orders = ref([
 	{
 		orderNumber: "ORD20241201002",
 		status: OrderStatus.PREPARING,
-		productImage: "/static/logo.png",
+		productImage: "/static/images/logo.png",
 		productName: "美式咖啡 + 提拉米苏",
 		productSpec: "中杯 / 冰饮 / 无糖 + 标准份",
 		price: 45.0,

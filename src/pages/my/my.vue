@@ -1,18 +1,23 @@
 <template>
-	<view class="my-page" :class="{ 'dark-theme': isDarkMode }">
+	<view class="my-page container" :class="{ 'dark-theme': isDarkMode }">
 		<!-- 用户信息区域 -->
 		<view class="user-info-section">
 			<view class="user-avatar">
-				<image src="/static/logo.png" mode="aspectFill" />
+				  <u--image
+					:showLoading="true"
+					:src="userStore.userInfo?.avatar"
+					width="120rpx"
+					height="120rpx"
+				></u--image>
 			</view>
 			<view class="user-details">
-				<view class="username">张三</view>
-				<view class="user-level">黄金会员</view>
+				<view class="username">{{userStore.userInfo?.nickname || '微信用户'}}</view>
+				<view class="user-level">零卡ID：{{userStore.userInfo?.id || ''}}</view>
 			</view>
 		</view>
 
 		<!-- 功能菜单 -->
-		<view class="menu-section">
+		<!-- <view class="menu-section">
 			<view class="menu-item" @tap="navigateToOrders">
 				<view class="menu-icon">📋</view>
 				<view class="menu-text">我的订单</view>
@@ -48,82 +53,86 @@
 				<view class="menu-text">奶茶点单演示</view>
 				<view class="menu-arrow">></view>
 			</view>
-		</view>
-		<u-button
+		</view> -->
+		<u-cell-group>
+			<u-cell v-for="item in state.cellList" :key="item.title" :icon="item.icon" :title="item.title" :isLink="item.showArrow" @click="navigateTo(item.url)"></u-cell>
+		</u-cell-group>	
+		<!-- <u-button
+			v-if="userStore.userInfo?.token"
 			class="logout-btn"
-			type="danger"
+			type="error"
 			@click="handleLogout"
-			text="退出登录"
-		></u-button>
+		>退出登录</u-button> -->
 	</view>
 </template>
 
 <script lang="ts" setup>
-import { useThemeStore } from "@/stores/theme";
-import { useUserStore } from "@/stores/user";
+import { useThemeStore } from "@/stores/modules/theme";
+import { useUserStore } from "@/stores/modules/user";
 import { ActionType } from "@/enums/order";
-import { computed } from "vue";
+import { computed, reactive } from "vue";
 
 const themeStore = useThemeStore();
 const userStore = useUserStore();
 const isDarkMode = computed(() => themeStore.isDarkMode);
 
-// 导航到订单页面
-const navigateToOrders = () => {
-	uni.navigateTo({
-		url: "/pages/orders/orders",
-	});
-};
+const state = reactive({
+	cellList: [
+	{
+		title: '我的订单',
+		icon: 'star-fill',
+		url: '/pages/orders/orders',
+		showArrow: true,
+	},
+	{
+		title: '我的收藏',
+		icon: 'star-fill',
+		url: '/pages/favorites/favorites',
+		showArrow: true,
+	},
+	
+	{
+		title: '设置',
+		icon: 'setting-fill',
+		url: '/pages/settings/settings',
+		showArrow: true,
+	},
+	{
+		title: '商家订单管理',
+		icon: 'star-fill',
+		url: '/pages/merchant/orders',
+		showArrow: true,
+	},
+	{
+		title: '订单卡片演示',
+		icon: 'star-fill',
+		url: '/pages/order-demo/order-demo',
+		showArrow: true,
+	},
+	{
+		title: '奶茶点单',
+		icon: 'star-fill',
+		url: '/pages/milk-tea-order/milk-tea-order',
+		showArrow: true,
+	},
+	{
+		title: '奶茶点单演示',
+		icon: 'star-fill',
+		url: '/pages/milk-tea-demo/milk-tea-demo',
+		showArrow: true,
+	},
+	{
+		title: '店铺管理',
+		icon: 'star-fill',
+		url: '/pages/shopManage/shopManage',
+		showArrow: true,
+	},
+]
+})
 
-// 导航到收藏页面
-const navigateToFavorites = () => {
-	uni.showToast({
-		title: "跳转到收藏页面",
-		icon: "none",
-	});
-};
-
-// 导航到设置页面
-const navigateToSettings = () => {
-	uni.showToast({
-		title: "跳转到设置页面",
-		icon: "none",
-	});
-};
-
-// 导航到商家订单管理页面
-const navigateToMerchantOrders = () => {
-	uni.navigateTo({
-		url: "/pages/merchant/orders",
-	});
-};
-
-// 导航到订单演示页面
-const navigateToOrderDemo = () => {
-	uni.navigateTo({
-		url: "/pages/order-demo/order-demo",
-	});
-};
-
-// 导航到奶茶点单页面
-const navigateToMilkTeaOrder = () => {
-	uni.navigateTo({
-		url: "/pages/milk-tea-order/milk-tea-order",
-	});
-};
-
-// 导航到奶茶点单演示页面
-const navigateToMilkTeaDemo = () => {
-	uni.navigateTo({
-		url: "/pages/milk-tea-demo/milk-tea-demo",
-	});
-};
-
-// 处理订单点击
-const handleOrderClick = (orderInfo: any) => {
-	uni.showToast({
-		title: `点击了订单：${orderInfo.orderNumber}`,
-		icon: "none",
+const navigateTo = (url: string) => {
+	url && uni.navigateTo({
+		url,
 	});
 };
 
@@ -179,9 +188,15 @@ defineOptions({
 
 <style lang="scss" scoped>
 .my-page {
+	.logout-btn{
+		width: 90%;
+		margin-top: 40rpx;
+	}
 	min-height: 100vh;
-	background-color: #f5f5f5;
 	padding-bottom: 40rpx;
+	::v-deep .u-cell__body{
+		background-color: #fff;
+	}
 
 	&.dark-theme {
 		background-color: #1a1a1a;

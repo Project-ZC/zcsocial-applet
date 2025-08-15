@@ -41,8 +41,8 @@ interface TouchEvent {
 // 响应式数据
 const windowHeight = ref(0);
 const statusBarHeight = ref(0);
-const errorImage = ref("/static/error.png"); // 假设错误图片路径
-const iconRight = ref("/static/icon-right.png"); // 假设图标路径
+const errorImage = ref("/static/images/error.png"); // 假设错误图片路径
+const iconRight = ref("/static/images/icon-right.png"); // 假设图标路径
 const moneySymbol = ref("¥");
 const appName = ref("应用名称");
 const isPress = ref(1);
@@ -87,7 +87,7 @@ const classifyList = ref<ClassifyItem[]>([
 				goods_price: "19",
 				goods_original_price: "29",
 				goods_number: 0,
-				goods_image: ["/static/mall/goods1.png", "/static/mall/goods2.png"],
+				goods_image: ["/static/images/mall/goods1.png", "/static/images/mall/goods2.png"],
 			},
 			{
 				goods_name: "新鲜盐焗鸡",
@@ -98,7 +98,7 @@ const classifyList = ref<ClassifyItem[]>([
 				goods_price: "19",
 				goods_original_price: "29",
 				goods_number: 0,
-				goods_image: ["/static/mall/goods1.png", "/static/mall/goods2.png"],
+				goods_image: ["/static/images/mall/goods1.png", "/static/images/mall/goods2.png"],
 			},
 			{
 				goods_name: "新鲜盐焗鸡",
@@ -109,7 +109,7 @@ const classifyList = ref<ClassifyItem[]>([
 				goods_price: "19",
 				goods_original_price: "29",
 				goods_number: 0,
-				goods_image: ["/static/mall/goods1.png", "/static/mall/goods2.png"],
+				goods_image: ["/static/images/mall/goods1.png", "/static/images/mall/goods2.png"],
 			},
 			{
 				goods_name: "新鲜盐焗鸡",
@@ -120,7 +120,7 @@ const classifyList = ref<ClassifyItem[]>([
 				goods_price: "19",
 				goods_original_price: "29",
 				goods_number: 0,
-				goods_image: ["/static/mall/goods1.png", "/static/mall/goods2.png"],
+				goods_image: ["/static/images/mall/goods1.png", "/static/images/mall/goods2.png"],
 			},
 		],
 	},

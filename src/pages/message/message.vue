@@ -64,7 +64,7 @@ const orders = ref([
 	{
 		orderNumber: "ORD20241201001",
 		status: OrderStatus.PENDING_ACCEPT,
-		productImage: "/static/logo.png",
+		productImage: "/static/images/logo.png",
 		productName: "diy酒品",
 		productSpec: "大杯 / 加冰球 / 加柠檬 / 加薄荷 / 50°酒精",
 		price: 28.0,
@@ -82,7 +82,7 @@ const orders = ref([
 	{
 		orderNumber: "ORD20241201002",
 		status: OrderStatus.PENDING_ACCEPT,
-		productImage: "/static/logo.png",
+		productImage: "/static/images/logo.png",
 		productName: "鸡尾酒",
 		productSpec: "中杯",
 		price: 22.0,
@@ -100,7 +100,7 @@ const orders = ref([
 	{
 		orderNumber: "ORD20241201003",
 		status: OrderStatus.PREPARING,
-		productImage: "/static/logo.png",
+		productImage: "/static/images/logo.png",
 		productName: "鸡尾酒",
 		productSpec: "大杯",
 		price: 45.0,

@@ -1,0 +1,110 @@
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="page-header glass-card">
+    <view class="back-arrow" bindtap="safeNavigateBack">
+      <image src="/static/images/icons/back.png" mode="aspectFit"></image>
+    </view>
+    <text class="page-title">店铺详情</text>
+    <view class="empty-place"></view>
+  </view>
+  
+  <!-- 店铺信息表单 -->
+  <view class="shop-form glass-card">
+    <!-- 店铺LOGO -->
+    <view class="form-item">
+      <text class="form-label">店铺LOGO</text>
+      <view class="logo-uploader" bindtap="uploadLogo">
+        <image class="shop-logo" src="{{shopInfo.logo}}" mode="aspectFill" wx:if="{{shopInfo.logo}}"></image>
+        <view class="upload-placeholder" wx:else>
+          <view class="upload-icon"></view>
+          <text class="upload-text">点击上传</text>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 店铺名称 -->
+    <view class="form-item">
+      <text class="form-label">店铺名称</text>
+      <input class="form-input" value="{{shopInfo.name}}" placeholder="请输入店铺名称" bindinput="inputName" />
+    </view>
+    
+    <!-- 店铺简介 -->
+    <view class="form-item">
+      <text class="form-label">店铺简介</text>
+      <textarea class="form-textarea" value="{{shopInfo.description}}" placeholder="请输入店铺简介" bindinput="inputDescription" maxlength="200"></textarea>
+      <text class="textarea-counter">{{shopInfo.description.length || 0}}/200</text>
+    </view>
+    
+    <!-- 营业时间 -->
+    <view class="form-item">
+      <text class="form-label">营业时间</text>
+      <view class="time-picker-row">
+        <picker mode="time" value="{{shopInfo.openTime}}" bindchange="changeOpenTime">
+          <view class="time-picker">
+            <text>{{shopInfo.openTime || '请选择'}}</text>
+          </view>
+        </picker>
+        <text class="time-separator">至</text>
+        <picker mode="time" value="{{shopInfo.closeTime}}" bindchange="changeCloseTime">
+          <view class="time-picker">
+            <text>{{shopInfo.closeTime || '请选择'}}</text>
+          </view>
+        </picker>
+      </view>
+    </view>
+    
+    <!-- 店铺地址 -->
+    <view class="form-item">
+      <text class="form-label">店铺地址</text>
+      <view class="location-picker" bindtap="chooseLocation">
+        <text wx:if="{{shopInfo.address}}">{{shopInfo.address}}</text>
+        <text wx:else class="placeholder-text">点击选择地址</text>
+        <view class="location-icon"></view>
+      </view>
+    </view>
+    
+
+    
+    <!-- 店铺标签 -->
+    <view class="form-item">
+      <text class="form-label">店铺标签</text>
+      <view class="tags-container">
+        <view class="tags-list">
+          <view class="tag-item" wx:for="{{shopInfo.tags}}" wx:key="index">
+            {{item}}
+            <text class="remove-tag" bindtap="removeTag" data-index="{{index}}">×</text>
+          </view>
+          <view class="add-tag" bindtap="showTagInput" wx:if="{{!showTagInput && shopInfo.tags.length < 5}}">+</view>
+        </view>
+        <view class="tag-input-container" wx:if="{{showTagInput}}">
+          <input class="tag-input" focus="{{showTagInput}}" placeholder="输入标签名称" bindinput="inputTag" value="{{newTag}}" bindblur="hideTagInput" maxlength="6" />
+          <button class="add-tag-btn" bindtap="addTag" disabled="{{!newTag}}">添加</button>
+        </view>
+      </view>
+    </view>
+    
+
+    
+
+    
+    <!-- Homebar相册 -->
+    <view class="form-item">
+      <text class="form-label">Homebar相册</text>
+      <view class="album-container">
+        <view class="album-list">
+          <view class="album-item" wx:for="{{shopInfo.album}}" wx:key="index">
+            <image src="{{item}}" mode="aspectFill"></image>
+            <view class="delete-image" catchtap="deleteAlbumImage" data-index="{{index}}">×</view>
+          </view>
+          <view class="add-image" bindtap="uploadAlbumImage" wx:if="{{shopInfo.album.length < 9}}">
+            <view class="add-icon">+</view>
+          </view>
+        </view>
+        <text class="album-tip">最多上传9张照片，建议上传店铺环境、特色酒水等照片</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 保存按钮 -->
+  <button class="save-button" bindtap="saveShopInfo">保存</button>
+</view> 

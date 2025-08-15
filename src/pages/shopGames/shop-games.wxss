@@ -1,0 +1,358 @@
+.container {
+  padding: 0 30rpx;
+  min-height: 100vh;
+  background-color: #f7f8fa;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100rpx;
+  padding: 0 10rpx;
+  position: sticky;
+  top: 0;
+  background-color: #f7f8fa;
+  z-index: 10;
+}
+
+.back-btn {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: 600;
+}
+
+.add-btn {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+}
+
+/* 游戏列表样式 */
+.game-list {
+  margin-top: 20rpx;
+}
+
+.game-item {
+  margin-bottom: 30rpx;
+  background-color: #fff;
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+  padding: 30rpx;
+}
+
+.game-info {
+  display: flex;
+  margin-bottom: 20rpx;
+}
+
+.game-icon {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 12rpx;
+  flex-shrink: 0;
+  background-color: #f0f0f0;
+}
+
+.game-details {
+  margin-left: 20rpx;
+  flex: 1;
+}
+
+.game-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  margin-bottom: 6rpx;
+}
+
+.game-type {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+  background-color: #f5f5f5;
+  display: inline-block;
+  padding: 4rpx 12rpx;
+  border-radius: 6rpx;
+}
+
+.game-desc {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.game-meta {
+  display: flex;
+  font-size: 24rpx;
+  color: #999;
+}
+
+.player-count {
+  margin-right: 20rpx;
+}
+
+.game-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1rpx solid #f0f0f0;
+  padding-top: 20rpx;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  font-size: 26rpx;
+}
+
+.status.active text {
+  color: #07c160;
+}
+
+.status.inactive text {
+  color: #999;
+}
+
+.action-btns {
+  display: flex;
+}
+
+.edit-btn, .delete-btn {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 20rpx;
+}
+
+.edit-btn {
+  color: #576b95;
+}
+
+.delete-btn {
+  color: #e64340;
+}
+
+/* 空状态样式 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 200rpx;
+}
+
+.empty-state image {
+  width: 200rpx;
+  height: 200rpx;
+  margin-bottom: 30rpx;
+}
+
+.empty-state text {
+  font-size: 28rpx;
+  color: #999;
+}
+
+/* 弹窗样式 */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 680rpx;
+  background-color: #fff;
+  border-radius: 16rpx;
+  z-index: 101;
+  overflow: hidden;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.modal-header text {
+  font-size: 34rpx;
+  font-weight: 600;
+}
+
+.close-btn {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  padding: 30rpx;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.form-item {
+  margin-bottom: 30rpx;
+}
+
+.label {
+  display: block;
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+input, textarea {
+  width: 100%;
+  border: 1rpx solid #ddd;
+  border-radius: 8rpx;
+  padding: 16rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+
+textarea {
+  height: 160rpx;
+}
+
+.upload-box {
+  width: 200rpx;
+  height: 200rpx;
+  border: 1rpx dashed #ddd;
+  border-radius: 8rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-box image {
+  width: 100%;
+  height: 100%;
+  border-radius: 8rpx;
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 24rpx;
+}
+
+.upload-placeholder text:first-child {
+  font-size: 40rpx;
+  margin-bottom: 10rpx;
+}
+
+.switch-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-footer {
+  display: flex;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+.modal-footer button {
+  flex: 1;
+  height: 90rpx;
+  line-height: 90rpx;
+  text-align: center;
+  font-size: 32rpx;
+  border-radius: 0;
+  margin: 0;
+}
+
+.cancel-btn {
+  background-color: #f7f7f7;
+  color: #333;
+}
+
+.save-btn {
+  background-color: #07c160;
+  color: #fff;
+}
+
+/* 确认弹窗 */
+.confirm-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600rpx;
+  background-color: #fff;
+  border-radius: 16rpx;
+  z-index: 101;
+  overflow: hidden;
+}
+
+.confirm-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  padding: 30rpx;
+  text-align: center;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.confirm-content {
+  padding: 40rpx 30rpx;
+  font-size: 30rpx;
+  color: #333;
+  text-align: center;
+}
+
+.confirm-btns {
+  display: flex;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+.confirm-btns button {
+  flex: 1;
+  height: 90rpx;
+  line-height: 90rpx;
+  text-align: center;
+  font-size: 32rpx;
+  border-radius: 0;
+  margin: 0;
+}
+
+.confirm-btn {
+  background-color: #e64340;
+  color: #fff;
+} 

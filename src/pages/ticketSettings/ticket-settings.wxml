@@ -1,0 +1,166 @@
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="page-header glass-card">
+    <text class="page-title">门票设置</text>
+    <view class="header-actions">
+      <button class="add-btn" bindtap="showAddModal">新增门票</button>
+    </view>
+  </view>
+  
+  <!-- 门票列表 -->
+  <view class="ticket-list">
+    <view class="ticket-item glass-card" wx:for="{{ticketList}}" wx:key="id">
+      <view class="ticket-header">
+        <view class="ticket-info">
+          <text class="ticket-name">{{item.name}}</text>
+          <view class="ticket-status {{item.status === 'active' ? 'active' : 'inactive'}}">
+            <text>{{item.status === 'active' ? '启用' : '停用'}}</text>
+          </view>
+        </view>
+        <view class="ticket-price">
+          <view class="price-display">
+            <text class="price-label">男性:</text>
+            <text class="price-symbol">¥</text>
+            <text class="price-value">{{item.malePrice}}</text>
+          </view>
+          <view class="price-display">
+            <text class="price-label">女性:</text>
+            <text class="price-symbol">¥</text>
+            <text class="price-value">{{item.femalePrice}}</text>
+          </view>
+        </view>
+      </view>
+      
+      <view class="ticket-details">
+        <view class="detail-item">
+          <text class="detail-label">包含酒水：</text>
+          <text class="detail-value">{{item.drinkCount}}杯</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">使用时间：</text>
+          <text class="detail-value">{{item.validHours}}小时</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">有效期：</text>
+          <text class="detail-value">{{item.validDays}}天</text>
+        </view>
+      </view>
+      
+      <view class="ticket-actions">
+        <button class="action-btn edit-btn" bindtap="editTicket" data-id="{{item.id}}">编辑</button>
+        <button class="action-btn toggle-btn {{item.status === 'active' ? 'deactivate' : 'activate'}}" 
+                bindtap="toggleTicketStatus" data-id="{{item.id}}">
+          {{item.status === 'active' ? '停用' : '启用'}}
+        </button>
+        <button class="action-btn delete-btn" bindtap="deleteTicket" data-id="{{item.id}}">删除</button>
+      </view>
+    </view>
+    
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{ticketList.length === 0}}">
+      <image class="empty-icon" src="https://via.placeholder.com/120x120/CCCCCC/FFFFFF?text=🎫" mode="aspectFit"></image>
+      <text class="empty-text">暂无门票设置</text>
+      <text class="empty-desc">点击上方"新增门票"开始设置</text>
+    </view>
+  </view>
+  
+  <!-- 添加/编辑门票模态框 -->
+  <view class="modal-overlay" wx:if="{{showModal}}" bindtap="hideModal">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">{{isEditing ? '编辑门票' : '新增门票'}}</text>
+        <view class="modal-close" bindtap="hideModal">×</view>
+      </view>
+      
+      <view class="modal-body">
+        <view class="form-group">
+          <label class="form-label">门票名称</label>
+          <input class="form-input" 
+                 placeholder="请输入门票名称" 
+                 value="{{currentTicket.name}}"
+                 bindinput="onNameInput" />
+        </view>
+        
+        <!-- 性别价格设置 -->
+        <view class="form-group">
+          <label class="form-label">门票价格</label>
+          <view class="gender-pricing">
+            <view class="price-item">
+              <text class="gender-label">男性价格</text>
+              <view class="price-input-container">
+                <text class="price-symbol">¥</text>
+                <input class="form-input price-input" 
+                       type="digit" 
+                       placeholder="请输入男性价格" 
+                       value="{{currentTicket.malePrice}}"
+                       bindinput="onMalePriceInput" />
+              </view>
+            </view>
+            <view class="price-item">
+              <text class="gender-label">女性价格</text>
+              <view class="price-input-container">
+                <text class="price-symbol">¥</text>
+                <input class="form-input price-input" 
+                       type="digit" 
+                       placeholder="请输入女性价格" 
+                       value="{{currentTicket.femalePrice}}"
+                       bindinput="onFemalePriceInput" />
+              </view>
+            </view>
+          </view>
+        </view>
+        
+        <view class="form-group">
+          <label class="form-label">包含酒水数量</label>
+          <input class="form-input" 
+                 type="number" 
+                 placeholder="请输入酒水数量" 
+                 value="{{currentTicket.drinkCount}}"
+                 bindinput="onDrinkCountInput" />
+        </view>
+        
+        <view class="form-group">
+          <label class="form-label">使用时间（小时）</label>
+          <input class="form-input" 
+                 type="number" 
+                 placeholder="请输入使用时间" 
+                 value="{{currentTicket.validHours}}"
+                 bindinput="onValidHoursInput" />
+        </view>
+        
+        <view class="form-group">
+          <label class="form-label">有效期（天）</label>
+          <input class="form-input" 
+                 type="number" 
+                 placeholder="请输入有效期" 
+                 value="{{currentTicket.validDays}}"
+                 bindinput="onValidDaysInput" />
+        </view>
+        
+        <view class="form-group">
+          <label class="form-label">门票描述</label>
+          <textarea class="form-textarea" 
+                    placeholder="请输入门票描述" 
+                    value="{{currentTicket.description}}"
+                    bindinput="onDescriptionInput"></textarea>
+        </view>
+        
+        <view class="form-group switch-group">
+          <label>启用状态</label>
+          <switch 
+            checked="{{currentTicket.status === 'active'}}" 
+            color="#1989fa" 
+            bindchange="onStatusChange"
+          ></switch>
+        </view>
+      </view>
+      
+      <view class="modal-footer">
+        <button class="modal-btn cancel-btn" bindtap="hideModal">取消</button>
+        <button class="modal-btn confirm-btn" bindtap="saveTicket">保存</button>
+      </view>
+    </view>
+  </view>
+</view>
+
+

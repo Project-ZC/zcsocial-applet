@@ -1,13 +1,6 @@
 {
 	"pages": [
 		{
-			"path": "pages/login/login",
-			"style": {
-				"navigationBarTitleText": "登录",
-				"navigationStyle": "custom"
-			}
-		},
-		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "首页",
@@ -56,6 +49,48 @@
 				"navigationBarTitleText": "纵向Tab演示",
 				"navigationStyle": "custom"
 			}
+		},
+		{
+			"path": "pages/shopManage/shopManage",
+			"style": {
+				"navigationBarTitleText": "店铺管理"
+			}
+		},
+		{
+			"path": "pages/shopDetail/shopDetail",
+			"style": {
+				"navigationBarTitleText": "店铺详情"
+			}
+		},
+		{
+			"path": "pages/shopMenu/shopMenu",
+			"style": {
+				"navigationBarTitleText": "酒单管理"
+			}
+		},
+		{
+			"path": "pages/shopStaff/shopStaff",
+			"style": {
+				"navigationBarTitleText": "员工管理"
+			}
+		},
+		{
+			"path": "pages/tableManage/tableManage",
+			"style": {
+				"navigationBarTitleText": "桌位管理"
+			}
+		},
+		{
+			"path": "pages/ticketSettings/ticketSettings",
+			"style": {
+				"navigationBarTitleText": "门票设置"
+			}
+		},
+		{
+			"path": "pages/shopGames/shopGames",
+			"style": {
+				"navigationBarTitleText": "店内游戏"
+			}
 		}
 	],
 	"globalStyle": {
@@ -74,20 +109,20 @@
 			{
 				"pagePath": "pages/index/index",
 				"text": "首页",
-				"iconPath": "static/tabbar/home.png",
-				"selectedIconPath": "static/tabbar/home-active.png"
+				"iconPath": "static/images/tabbar/home.png",
+				"selectedIconPath": "static/images/tabbar/home-active.png"
 			},
 			{
 				"pagePath": "pages/message/message",
 				"text": "通知",
-				"iconPath": "static/tabbar/message.png",
-				"selectedIconPath": "static/tabbar/message-active.png"
+				"iconPath": "static/images/tabbar/message.png",
+				"selectedIconPath": "static/images/tabbar/message-active.png"
 			},
 			{
 				"pagePath": "pages/my/my",
 				"text": "我的",
-				"iconPath": "static/tabbar/my.png",
-				"selectedIconPath": "static/tabbar/my-active.png"
+				"iconPath": "static/images/tabbar/my.png",
+				"selectedIconPath": "static/images/tabbar/my-active.png"
 			}
 		]
 	},

@@ -1,0 +1,109 @@
+<view class="container">
+  <view class="header">
+    <view class="back-btn" bindtap="navigateBack">
+      <text class="iconfont icon-back"></text>
+    </view>
+    <view class="title">店内游戏管理</view>
+    <view class="add-btn" bindtap="openAddModal">
+      <text class="iconfont icon-add"></text>
+    </view>
+  </view>
+  
+  <view class="game-list" wx:if="{{games.length > 0}}">
+    <view class="game-item" wx:for="{{games}}" wx:key="id">
+      <view class="game-info">
+        <image class="game-icon" src="{{item.icon || '/static/images/default-game.png'}}" mode="aspectFill"></image>
+        <view class="game-details">
+          <view class="game-name">{{item.name}}</view>
+          <view class="game-type">{{item.type}}</view>
+          <view class="game-desc">{{item.description}}</view>
+          <view class="game-meta">
+            <text class="player-count">{{item.playerCount}}</text>
+            <text class="like-rate">喜爱度: {{item.likeRate}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="game-actions">
+        <view class="status {{item.isActive ? 'active' : 'inactive'}}">
+          <switch checked="{{item.isActive}}" bindchange="toggleGameStatus" data-index="{{index}}" color="#07c160"></switch>
+          <text>{{item.isActive ? '已启用' : '已禁用'}}</text>
+        </view>
+        <view class="action-btns">
+          <view class="edit-btn" bindtap="openEditModal" data-index="{{index}}">
+            <text class="iconfont icon-edit"></text>
+          </view>
+          <view class="delete-btn" bindtap="openDeleteModal" data-index="{{index}}">
+            <text class="iconfont icon-delete"></text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <view class="empty-state" wx:else>
+    <image src="/static/images/empty-games.png" mode="aspectFit"></image>
+    <text>暂无游戏，点击右上角添加</text>
+  </view>
+
+  <!-- 添加/编辑游戏弹窗 -->
+  <view class="modal-mask" wx:if="{{showAddModal}}"></view>
+  <view class="modal" wx:if="{{showAddModal}}">
+    <view class="modal-header">
+      <text>{{isEdit ? '编辑游戏' : '添加游戏'}}</text>
+      <view class="close-btn" bindtap="closeAddModal">
+        <text class="iconfont icon-close"></text>
+      </view>
+    </view>
+    <view class="modal-content">
+      <view class="form-item">
+        <text class="label">游戏名称</text>
+        <input type="text" placeholder="请输入游戏名称" value="{{tempGame.name}}" bindinput="bindInputChange" data-field="name" />
+      </view>
+      <view class="form-item">
+        <text class="label">游戏类型</text>
+        <input type="text" placeholder="桌游、互动、技巧等" value="{{tempGame.type}}" bindinput="bindInputChange" data-field="type" />
+      </view>
+      <view class="form-item">
+        <text class="label">游戏描述</text>
+        <textarea placeholder="请输入游戏描述" value="{{tempGame.description}}" bindinput="bindInputChange" data-field="description" maxlength="100"></textarea>
+      </view>
+      <view class="form-item">
+        <text class="label">参与人数</text>
+        <input type="text" placeholder="如: 2-6人" value="{{tempGame.playerCount}}" bindinput="bindInputChange" data-field="playerCount" />
+      </view>
+      <view class="form-item">
+        <text class="label">喜爱程度</text>
+        <input type="text" placeholder="如: 87%" value="{{tempGame.likeRate}}" bindinput="bindInputChange" data-field="likeRate" />
+      </view>
+      <view class="form-item">
+        <text class="label">游戏图标</text>
+        <view class="upload-box" bindtap="uploadIcon">
+          <image wx:if="{{tempGame.icon}}" src="{{tempGame.icon}}" mode="aspectFill"></image>
+          <view class="upload-placeholder" wx:else>
+            <text class="iconfont icon-upload"></text>
+            <text>点击上传</text>
+          </view>
+        </view>
+      </view>
+      <view class="form-item switch-item">
+        <text class="label">启用状态</text>
+        <switch checked="{{tempGame.isActive}}" bindchange="switchChange" color="#07c160"></switch>
+      </view>
+    </view>
+    <view class="modal-footer">
+      <button class="cancel-btn" bindtap="closeAddModal">取消</button>
+      <button class="save-btn" bindtap="saveGame">保存</button>
+    </view>
+  </view>
+
+  <!-- 删除确认弹窗 -->
+  <view class="modal-mask" wx:if="{{showDeleteModal}}"></view>
+  <view class="confirm-modal" wx:if="{{showDeleteModal}}">
+    <view class="confirm-title">删除确认</view>
+    <view class="confirm-content">确定要删除"{{currentGame.name}}"吗？删除后无法恢复。</view>
+    <view class="confirm-btns">
+      <button class="cancel-btn" bindtap="closeDeleteModal">取消</button>
+      <button class="confirm-btn" bindtap="deleteGame">确定删除</button>
+    </view>
+  </view>
+</view> 

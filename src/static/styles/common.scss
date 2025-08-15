@@ -1,0 +1,56 @@
+.container {
+    padding: 12px 12px 30px;
+}
+
+/* 全局页面背景色 */
+page {
+    background-color: #f5f5f5;
+    /* 任意颜色 */
+}
+
+
+.z-modal {
+
+    display: flex;
+    flex-direction: column;
+    background: white;
+
+    .modal-header {
+        padding: 16rpx 20rpx;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-title {
+        font-size: 32rpx;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .close-btn {
+        font-size: 50rpx;
+        color: #999;
+        cursor: pointer;
+    }
+
+    .modal-body {
+        padding: 20rpx;
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .modal-footer {
+        padding: 15rpx 20rpx;
+        border-top: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        gap: 30rpx;
+    }
+}
+
+.z-modal-lg {
+    width: 650rpx;
+    max-height: 80vh;
+}

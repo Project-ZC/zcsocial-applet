@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useThemeStore } from "@/stores/theme";
+import { useThemeStore } from "@/stores/modules/theme";
 import { computed, withDefaults } from "vue";
 
 interface ShopInfo {

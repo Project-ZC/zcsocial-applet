@@ -94,7 +94,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useThemeStore } from "@/stores/theme";
+import { useThemeStore } from "@/stores/modules/theme";
 import type { ActionButton, OrderInfo } from "@/types/order";
 import { ActionType, OrderStatus } from "@/enums/order";
 import { computed, withDefaults } from "vue";

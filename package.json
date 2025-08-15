@@ -60,7 +60,7 @@
     "pinia-plugin-persistedstate": "^4.5.0",
     "pinia-plugin-unistorage": "^0.0.17",
     "unplugin-auto-import": "^0.16.4",
-    "uview-plus": "^3.4.40",
+    "uview-plus": "3.4.94",
     "vue": "^3.4.21",
     "vue-i18n": "^9.9.1"
   },

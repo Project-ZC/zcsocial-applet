@@ -1,5 +1,5 @@
 <template>
-	<view class="content">
+	<view class="content container">
 		<Navbar />
 		<view class="scan-box" @tap="handleScan">
 			<up-image width="100" height="100" src="/static/scan-logo.png" />
@@ -184,15 +184,13 @@ const handleScan = () => {
 
 <style lang="scss" scoped>
 .content {
-	width: 100%;
 	.scan-box {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		padding: 20rpx;
 		box-sizing: border-box;
-		margin: 30rpx;
+		margin: 12px 0;
 		background-color: #fff;
 		border-radius: 16rpx;
 		box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
@@ -216,7 +214,7 @@ const handleScan = () => {
 		font-weight: bold;
 	}
 	.shop-list {
-		padding: 20rpx;
+		// padding: 20rpx;
 		box-sizing: border-box;
 	}
 }

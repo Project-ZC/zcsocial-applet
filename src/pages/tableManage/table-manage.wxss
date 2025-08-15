@@ -1,0 +1,356 @@
+.container {
+  padding: 15px;
+  background-color: #f8f8f8;
+  min-height: 100vh;
+}
+
+/* 玻璃卡片效果 */
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 头部样式 */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.add-btn {
+  background: #3aa9e8;
+  color: white;
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: none;
+}
+
+/* 桌位列表样式 */
+.table-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.table-item {
+  padding: 15px;
+}
+
+.table-info {
+  margin-bottom: 15px;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.table-name {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.table-status {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 10px;
+}
+
+.table-status.available {
+  background-color: #e6f7ff;
+  color: #1890ff;
+}
+
+.table-status.occupied {
+  background-color: #fff1f0;
+  color: #ff4d4f;
+}
+
+.table-count {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.table-mode {
+  margin-top: 5px;
+}
+
+.mode-tag {
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+  color: #666;
+}
+
+.mode-tag.ticket {
+  background-color: #e6f7ff;
+  color: #1890ff;
+}
+
+.mode-tag.order {
+  background-color: #fff2e8;
+  color: #fa8c16;
+}
+
+.table-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.edit-btn, .delete-btn {
+  flex: 1;
+  font-size: 14px;
+  padding: 8px 0;
+  border-radius: 20px;
+  border: none;
+}
+
+.edit-btn {
+  background: #3aa9e8;
+  color: white;
+}
+
+.delete-btn {
+  background: #ff4d4f;
+  color: white;
+}
+
+/* 弹窗样式 */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+}
+
+.modal-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: 300px;
+  padding: 20px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.close-btn {
+  font-size: 20px;
+  color: #999;
+  padding: 5px;
+}
+
+.modal-body {
+  margin-bottom: 20px;
+}
+
+.form-item {
+  margin-bottom: 15px;
+}
+
+.form-label {
+  display: block;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.form-input {
+  width: 100%;
+  height: 40px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 14px;
+  color: #333;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 10px;
+}
+
+.cancel-btn, .confirm-btn {
+  flex: 1;
+  height: 40px;
+  font-size: 14px;
+  border-radius: 20px;
+  border: none;
+}
+
+.cancel-btn {
+  background: #f5f5f5;
+  color: #666;
+}
+
+.confirm-btn {
+  background: #3aa9e8;
+  color: white;
+}
+
+/* 服务模式选择器样式 */
+.service-mode-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.mode-option {
+  padding: 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background-color: #fff;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.mode-option.active {
+  border-color: #3aa9e8;
+  background-color: #f0f8ff;
+}
+
+.mode-label {
+  display: block;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.mode-option.active .mode-label {
+  color: #3aa9e8;
+}
+
+.mode-desc {
+  display: block;
+  font-size: 12px;
+  color: #999;
+  line-height: 1.4;
+}
+
+.mode-option.active .mode-desc {
+  color: #666;
+}
+
+/* 二维码相关样式 */
+.qrcode-section {
+  margin-top: 10px;
+}
+
+.qrcode-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.qrcode-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+}
+
+.qrcode-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.qrcode-btn {
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 15px;
+  border: none;
+}
+
+.view-btn {
+  background: #3aa9e8;
+  color: white;
+}
+
+.qrcode-actions .delete-btn {
+  background: #ff4d4f;
+  color: white;
+}
+
+.qrcode-upload {
+  margin-top: 10px;
+}
+
+.upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 20px;
+  border: 2px dashed #d0d0d0;
+  border-radius: 8px;
+  background-color: #fafafa;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.upload-area:active {
+  background-color: #f0f0f0;
+  border-color: #3aa9e8;
+}
+
+.upload-icon {
+  font-size: 32px;
+  color: #999;
+  margin-bottom: 8px;
+}
+
+.upload-text {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.upload-desc {
+  font-size: 12px;
+  color: #999;
+  text-align: center;
+} 

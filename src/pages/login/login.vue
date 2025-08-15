@@ -8,7 +8,7 @@
 				<view class="logo">
 					<image
 						class="wheat-icon"
-						src="/static/logo.png"
+						src="/static/images/logo.png"
 						mode="aspectFit"
 					></image>
 				</view>
@@ -55,7 +55,7 @@
 
 <script setup lang="ts">
 import { reactive } from "vue";
-import { useUserStore } from "@/stores/user";
+import { useUserStore } from "@/stores/modules/user";
 import { register, toLogin } from "@/api/login";
 
 // 定义组件选项
@@ -157,26 +157,26 @@ const openPrivacyAgreement = () => {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .container {
 	min-height: 100%;
-	padding-bottom: env(safe-area-inset-bottom);
+	// padding-bottom: env(safe-area-inset-bottom);
 	box-sizing: border-box;
 
-	&_bg {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background: linear-gradient(
-			to bottom,
-			rgba(6, 148, 230, 0.24) 0%,
-			rgba(255, 255, 255, 0.16) 20%,
-			white 100%
-		);
-		z-index: -1;
-	}
+	// &_bg {
+	// 	position: absolute;
+	// 	top: 0;
+	// 	left: 0;
+	// 	width: 100%;
+	// 	height: 100%;
+	// 	background: linear-gradient(
+	// 		to bottom,
+	// 		rgba(6, 148, 230, 0.24) 0%,
+	// 		rgba(255, 255, 255, 0.16) 20%,
+	// 		white 100%
+	// 	);
+	// 	z-index: -1;
+	// }
 }
 
 .logo-section {
