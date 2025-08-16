@@ -1,9 +1,11 @@
 <template>
-  <view class="container">
+  <pageWrapper class="shop-manage">
+    <view class="content">
+
     <!-- 店铺基本信息 -->
-    <view class="shop-info-card glass-card">
+    <view class="shop-info-card z-glass-card">
       <view class="shop-header">
-        <u-image class="shop-logo" src="/static/images/logo.png" mode="aspectFill" width="60px" height="60px" border-radius="8px"></u-image>
+        <up-image class="shop-logo" src="/static/images/logo.png" mode="aspectFill" width="60px" height="60px" border-radius="8px"></up-image>
         <view class="shop-basic-info">
           <text class="shop-name">{{shopInfo.name}}</text>
           <view class="shop-status {{shopInfo.status === 'open' ? 'open' : 'closed'}}">
@@ -30,7 +32,7 @@
     
     <!-- 功能按钮 -->
     <view class="function-grid">
-      <view class="function-item glass-card" v-for="(item, index) in functionItems" :key="index" @click="navigateTo(item.url)">
+      <view class="function-item z-glass-card" v-for="(item, index) in functionItems" :key="index" @click="navigateTo(item.url)">
         <view class="function-icon" :class="item.iconClass"></view>
         <text class="function-name">{{item.name}}</text>
         <text class="function-desc">{{item.desc}}</text>
@@ -38,10 +40,10 @@
     </view>
     
     <!-- 其他管理功能 -->
-    <view class="more-functions glass-card">
+    <view class="more-functions z-glass-card">
       <view class="more-function-title">其他功能</view>
-      <u-cell-group>
-        <u-cell
+      <up-cell-group>
+        <up-cell
           title="店铺状态"
           :value="shopInfo.status === 'open' ? '营业中' : '休息中'"
           @click="toggleShopStatus"
@@ -53,8 +55,8 @@
           <template #value>
             <text class="cell-value" :class="shopInfo.status === 'open' ? 'open-status' : 'closed-status'">{{shopInfo.status === 'open' ? '营业中 (点击设为休息)' : '休息中 (点击设为营业)'}}</text>
           </template>
-        </u-cell>
-        <u-cell
+        </up-cell>
+        <up-cell
           title="店铺数据"
           value="查看统计数据"
           @click="viewShopAnalytics"
@@ -63,8 +65,8 @@
           <template #icon>
             <view class="more-function-icon analytics-icon"></view>
           </template>
-        </u-cell>
-        <u-cell
+        </up-cell>
+        <up-cell
           title="店铺二维码"
           value="生成并分享"
           @click="viewQRCode"
@@ -73,12 +75,13 @@
           <template #icon>
             <view class="more-function-icon qrcode-icon"></view>
           </template>
-        </u-cell>
-      </u-cell-group>
+        </up-cell>
+      </up-cell-group>
+    </view>
     </view>
     
     <!-- 二维码选项弹窗 -->
-    <!-- <u-popup :show="showQRCodePopup" mode="bottom" @close="closeQRCodePopup">
+    <!-- <up-popup :show="showQRCodePopup" mode="bottom" @close="closeQRCodePopup">
       <view class="qrcode-options">
         <view class="qrcode-option" @click="generateShopQRCode">
           <text class="option-title">店铺详情二维码</text>
@@ -90,29 +93,30 @@
         </view>
         <view class="qrcode-cancel" @click="closeQRCodePopup">取消</view>
       </view>
-    </u-popup> -->
+    </up-popup> -->
     
     <!-- 二维码预览弹窗 -->
-    <u-popup :show="showPreviewPopup" mode="center" @close="closePreviewPopup">
+    <up-popup :show="showPreviewPopup" mode="center" @close="closePreviewPopup">
       <view class="qrcode-preview">
         <view class="preview-header">
           <text class="preview-title">{{currentQRCodeType === 'shop' ? '店铺二维码' : '酒单二维码'}}</text>
           <view class="close-btn" @click="closePreviewPopup">×</view>
         </view>
         <view class="preview-content">
-          <u-image class="qrcode-image" :src="currentQRCode" mode="aspectFit" width="400rpx" height="400rpx" margin-bottom="30rpx"></u-image>
+          <up-image class="qrcode-image" :src="currentQRCode" mode="aspectFit" width="400rpx" height="400rpx" margin-bottom="30rpx"></up-image>
           <text class="qrcode-tip">长按保存或分享该二维码</text>
         </view>
         <view class="preview-actions">
-          <u-button class="action-btn save-btn" text="保存到相册" @click="saveQRCode"></u-button>
-          <u-button class="action-btn share-btn" text="分享给好友" open-type="share"></u-button>
+          <up-button class="action-btn save-btn" text="保存到相册" @click="saveQRCode"></up-button>
+          <up-button class="action-btn share-btn" text="分享给好友" open-type="share"></up-button>
         </view>
       </view>
-    </u-popup>
-  </view>
+    </up-popup>
+  </pageWrapper>
 </template>
 
 <script lang="ts" setup>
+import pageWrapper from "@/components/page/index.vue";
 import { onMounted, reactive, ref } from "vue";
 import { getShopList, deleteShop, addShop, editShop } from "@/api/shopManage";
 
@@ -178,7 +182,7 @@ const getShopInfo = async () => {
   console.log('获取店铺信息');
   try {
 	const res = await getShopList({
-		page: 1,
+		pageNum: 1,
 		pageSize: 10,
 	});
 	console.log(res);
@@ -403,18 +407,18 @@ const viewQRCode = () => {
 </script>
 
 <style lang="scss" scoped>
+@import '@/uni.scss';
 /* 主容器 */
-.container {
+.shop-manage {
+  .content{
+
+    padding: $up-box-pd;
+  }
 }
 
 /* 毛玻璃卡片效果 */
 .glass-card {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin-bottom: 15px;
-  padding: 15px;
+  margin-bottom: 15rpx;
 }
 
 /* 页面标题 */
@@ -422,32 +426,33 @@ const viewQRCode = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px;
-  margin-bottom: 20px;
+  padding: 10rpx;
+  margin-bottom: 20rpx;
 }
 
 .page-title {
-  font-size: 20px;
+  font-size: 20rpx;
   font-weight: bold;
   color: #333;
 }
 
 /* 店铺基本信息卡片 */
 .shop-info-card {
-  padding: 15px;
+  padding: 15rpx;
+  margin-bottom: $up-box-mg;
 }
 
 .shop-header {
   display: flex;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 15rpx;
 }
 
 .shop-logo {
-  width: 60px;
-  height: 60px;
-  border-radius: 8px;
-  margin-right: 12px;
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 8rpx;
+  margin-right: 12rpx;
 }
 
 .shop-basic-info {
@@ -455,18 +460,19 @@ const viewQRCode = () => {
 }
 
 .shop-name {
-  font-size: 18px;
+  font-size: $up-font-lg;
   font-weight: bold;
   color: #333;
-  margin-bottom: 5px;
+  margin-bottom: 5rpx;
 }
 
 .shop-status {
   display: inline-block;
-  padding: 4px 8px;
-  border-radius: 10px;
-  font-size: 12px;
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
+  font-size: $up-font-sm;
   color: white;
+  margin-left: 6rpx;
 }
 
 .shop-status.open {
@@ -481,8 +487,8 @@ const viewQRCode = () => {
 .shop-stats {
   display: flex;
   justify-content: space-around;
-  padding: 10px 0;
-  border-top: 1px solid #f0f0f0;
+  padding: 10rpx 0;
+  border-top: 1rpx solid #f0f0f0;
 }
 
 .stat-item {
@@ -492,14 +498,14 @@ const viewQRCode = () => {
 }
 
 .stat-number {
-  font-size: 18px;
+  font-size: $up-font-md;
   font-weight: bold;
   color: #333;
-  margin-bottom: 5px;
+  margin-bottom: 5rpx;
 }
 
 .stat-label {
-  font-size: 12px;
+  font-size: $up-font-sm;
   color: #999;
 }
 
@@ -507,8 +513,8 @@ const viewQRCode = () => {
 .function-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  margin-bottom: 10rpx;
+  gap: 15rpx;
+  margin-bottom: 20rpx;
 }
 
 .function-item {
@@ -516,7 +522,7 @@ const viewQRCode = () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 20rpx;
   transition: all 0.3s;
 }
 
@@ -525,11 +531,11 @@ const viewQRCode = () => {
 }
 
 .function-icon {
-  width: 50px;
-  height: 50px;
+  width: 80rpx;
+  height: 80rpx;
   background-size: cover;
   background-position: center;
-  margin-bottom: 10px;
+  margin-bottom: 10rpx;
 }
 
 /* 各个功能的图标 */
@@ -581,14 +587,14 @@ const viewQRCode = () => {
 }
 
 .function-name {
-  font-size: 16px;
+  font-size: $up-font-md;
   font-weight: bold;
   color: #333;
-  margin-bottom: 5px;
+  margin-bottom: 5rpx;
 }
 
 .function-desc {
-  font-size: 12px;
+  font-size: $up-font-sm;
   color: #999;
   text-align: center;
 }
@@ -600,18 +606,18 @@ const viewQRCode = () => {
 }
 
 .more-function-title {
-  font-size: 16px;
+  font-size: $up-font-lg;
   font-weight: bold;
   color: #333;
-  padding: 15px;
-  border-bottom: 1px solid #f0f0f0;
+  padding: $up-box-pd;
+  border-bottom: 1rpx solid #f0f0f0;
 }
 
 .more-function-item {
   display: flex;
   align-items: center;
-  padding: 15px;
-  border-bottom: 1px solid #f0f0f0;
+  padding: $up-box-pd;
+  border-bottom: 1rpx solid #f0f0f0;
 }
 
 .more-function-item:last-child {
@@ -619,11 +625,11 @@ const viewQRCode = () => {
 }
 
 .more-function-icon {
-  width: 24px;
-  height: 24px;
+  width: 24rpx;
+  height: 24rpx;
   background-size: cover;
   background-position: center;
-  margin-right: 10px;
+  margin-right: 10rpx;
 }
 
 .open-icon,
@@ -636,19 +642,18 @@ const viewQRCode = () => {
 
 .more-function-name {
   flex: 1;
-  font-size: 14px;
+  font-size: 14rpx;
   color: #333;
 }
 
 .more-function-arrow {
-  width: 8px;
-  height: 8px;
-  border-top: 2px solid #999;
-  border-right: 2px solid #999;
+  width: 8rpx;
+  height: 8rpx;
+  border-top: 2rpx solid #999;
+  border-right: 2rpx solid #999;
   transform: rotate(45deg);
-  margin-right: 8px;
-}
-
+  margin-right: 8rpx;
+} 
 /* 二维码选项样式 */
 .qrcode-options {
   background-color: #fff;

@@ -33,9 +33,9 @@
 					一键授权登录
 				</button>
 				<view class="agreement-section">
-					<u-checkbox-group v-model="state.isAgreed">
-						<u-checkbox label=""></u-checkbox>
-					</u-checkbox-group>
+					<up-checkbox-group v-model="state.isAgreed">
+						<up-checkbox label=""></up-checkbox>
+					</up-checkbox-group>
 					<text class="agreement-text">
 						登录零卡社交服务账号且代表您已经同意
 						<text class="link" @click.stop="openUserAgreement"

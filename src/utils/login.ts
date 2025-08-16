@@ -7,6 +7,14 @@ import { toLogin } from "@/api/login";
 // 处理登录逻辑
 export const loginTo = (data = {}) => {
     return new Promise((resolve, reject) => {
+        // uni.getUserProfile({
+        //     success: (res) => {
+        //         console.log(res);
+        //     },
+        //     fail: (err) => {
+        //         reject(err);
+        //     }
+        // })
         uni.login({
             provider: "weixin",
             success: async (loginRes) => {
@@ -18,13 +26,8 @@ export const loginTo = (data = {}) => {
                         loginCode: loginRes.code,
                     };
                     const res = await toLogin(params);
-                    // 使用Pinia store保存用户信息
-                    // 移除对 userStore 的直接引用
-                    // userStore.setUserInfo(res.data);
-                    // uni.reLaunch({
-                    //     url: "/pages/index/index",
-                    // });
-                    resolve(res.data); // 登录成功，返回用户信息
+                    // 登录成功，返回用户信息，由调用方负责存储到 userStore
+                    resolve(res.data);
                 } catch (error: any) {
                     console.log(error);
                     reject(error); // 登录失败，返回错误信息

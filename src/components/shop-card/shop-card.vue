@@ -1,6 +1,6 @@
 <template>
   <view class="shop-card-box">
-    <view class="shop-card" :class="{ 'dark-theme': isDarkMode }">
+    <view class="shop-card z-glass-card" :class="{ 'dark-theme': isDarkMode }">
       <view class="img-box">
         <up-image width="100%" height="100%" :src="shopInfo.thumb"></up-image>
       </view>
@@ -79,9 +79,6 @@ defineOptions({
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.3);
-    background-color: #fff;
-    border-radius: 16rpx;
     margin-bottom: 20rpx;
     transition: all 0.3s ease;
 

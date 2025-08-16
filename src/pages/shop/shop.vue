@@ -119,29 +119,5 @@ const onClickLeft = () => {
   }
 }
 
-// 暗色主题样式
-page[data-dark-theme="true"] {
-  .shop-page {
-    background-color: #1c1c1e;
 
-    .shop-info {
-      .info-content {
-        background-color: #2c2c2e;
-
-        .title {
-          color: #fff;
-        }
-
-        .business-hours,
-        .address {
-          color: #999;
-
-          .label {
-            color: #fff;
-          }
-        }
-      }
-    }
-  }
-}
 </style>

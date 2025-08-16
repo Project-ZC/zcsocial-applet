@@ -1,101 +1,133 @@
 <template>
-  <div class="container">
+  <pageWrapper>
     <!-- 顶部导航栏 -->
-    <u-navbar
+    <up-navbar
+      class="z-navbar"
       :title="'团队管理'"
-      :placeholder="true"
       :border="true"
       leftIcon=""
-      @leftClick="safeNavigateBack"
     >
       <template #right>
         <view class="header-right">
-          <!-- <u-icon name="scan" size="22" @click="generateQRCode"></u-icon> -->
-          <u-icon name="plus" size="22" @click="openAddModal"></u-icon>
+          <!-- <up-icon name="scan" size="22" @click="generateQRCode"></up-icon> -->
+          <up-icon name="plus" size="22" @click="openAddModal"></up-icon>
         </view>
       </template>
-    </u-navbar>
+    </up-navbar>
 
     <!-- 员工管理页 -->
     <view class="staff-container">
       <!-- 角色筛选 -->
-      <view class="role-filter">
-        <view
-          v-for="(role, index) in state.roleFilterOptions"
-          :key="index"
-          class="role-item"
-          :class="{ active: state.currentRole === role.value }"
-          @click="filterByRole(role.value)"
-        >
-          {{ role.label }}
+     <scroll-view scroll-x class="role-filter-scroll">
+        <view class="role-filter">
+          <view class="role-item" @click="filterByRole('all')" :class="{ active: state.currentRole === 'all' }">
+            全部
+          </view>
+          <view
+            v-for="(role, index) in state.roleList"
+            :key="index"
+            class="role-item"
+            :class="{ active: state.currentRole === role.id }"
+            @click="filterByRole(role.id)"
+          >
+            {{ role.name }}
+          </view>
         </view>
-      </view>
+      </scroll-view>
 
       <!-- 员工列表 -->
-      <u-list v-if="!state.isLoading && state.filteredStaffList.length > 0">
-        <u-list-item v-for="item in state.filteredStaffList" :key="item.id">
+     <scroll-view  
+       scroll-y 
+       class="scroll-content" 
+       @scrolltolower="debouncedLoadStaffList"
+       :scroll-top="scrollTop"
+       :scroll-with-animation="false"
+       :enhanced="true"
+       :bounces="false"
+       :show-scrollbar="false"
+       :fast-deceleration="true"
+     >
+      <up-list v-if="!state.isLoading && state.filteredStaffList.length > 0" >
+        <up-list-item 
+          v-for="(item, index) in state.filteredStaffList" 
+          :key="item.id"
+          :data-index="index"
+        >
           <view class="staff-item">
             <view class="staff-avatar">
-              <u-avatar :src="item.avatar" size="50"></u-avatar>
+              <up-avatar :src="item.userAvatar" size="50"></up-avatar>
             </view>
             <view class="staff-info">
               <view class="staff-header">
-                <view class="staff-name">{{ item.name }}</view>
-                <view class="staff-role">{{ item.role }}</view>
+                <view class="staff-name">{{ item.userNickname }}</view>
+                <view class="staff-role" v-if="item.userRoleNames">{{ item.userRoleNames }}</view>
               </view>
-              <view class="staff-intro">{{ item.intro }}</view>
-              <view class="staff-contact" v-if="item.phone || item.wechat">
-                <text v-if="item.phone">电话: {{ item.phone }}</text>
-                <text v-if="item.phone && item.wechat"> | </text>
-                <text v-if="item.wechat">零卡id: {{ item.wechat }}</text>
+              <view class="staff-intro">{{ item.userIntroduce }}</view>
+              <view class="staff-contact" v-if="item.userMobile || item.id">
+                <text v-if="item.userMobile">电话: {{ item.userMobile }}</text>
+                <text v-if="item.userMobile && item.id"> | </text>
+                <text v-if="item.id">零卡id: {{ item.id }}</text>
               </view>
-              <view class="staff-permissions" v-if="item.permissionNames && item.permissionNames.length > 0">
-                <text class="permission-tag" v-for="(permission, pIndex) in item.permissionNames" :key="pIndex">
+              <view class="staff-roleIds" v-if="item.userRoleNames && item.userRoleNames.length > 0">
+                <text class="permission-tag" v-for="(permission, pIndex) in item.userRoleNames" :key="pIndex">
                   {{ permission }}
                 </text>
               </view>
             </view>
             <view class="staff-actions">
-              <view class="action-edit" @click="openEditModal(item.id)">
-                <u-icon name="edit-pen" color="#1890ff" size="18"></u-icon>
+              <view class="action-edit" @click="openEditModal(item)">
+                <up-icon name="edit-pen" color="#1890ff" size="26"></up-icon>
               </view>
-              <view class="action-delete" @click="openDeleteModal(item.id)">
-                <u-icon name="trash" color="#ff4d4f" size="18"></u-icon>
+              <view class="action-delete" @click="openDeleteModal(item)">
+                <up-icon name="trash" color="#ff4d4f" size="26"></up-icon>
               </view>
             </view>
           </view>
-        </u-list-item>
-      </u-list>
+        </up-list-item>
+      </up-list>
+      
+      <!-- 加载更多状态 -->
+      <view class="loading-more" v-if="state.isLoading && state.filteredStaffList.length > 0">
+        <view class="loading-text">加载中...</view>
+      </view>
+      </scroll-view>
 
       <!-- 员工列表为空状态 -->
       <view class="empty-state" v-if="!state.isLoading && state.filteredStaffList.length === 0">
-        <u-empty mode="data" icon="/static/images/empty-staff.png">
+        <up-empty mode="data" icon="/static/images/empty-staff.png">
           <template #text>
             <view class="empty-text">暂无员工</view>
             <view class="empty-subtext">点击右上角"+"添加员工</view>
           </template>
-        </u-empty>
+        </up-empty>
       </view>
     </view>
-
-    <!-- 加载状态 -->
-    <u-loading-page v-if="state.isLoading" loading loading-text="加载中..."></u-loading-page>
+  </pageWrapper>
 
     <!-- 添加/编辑员工模态框 -->
-    <u-popup
+    <up-popup  
       :show="state.showModal"
-      width="90%"
-      closeOnClickOverlay
+      @close="closeModal"
+      round="20rpx"
     >
     <view class="z-modal">
+      <view class="modal-header">
+        <view class="modal-title">{{ state.modalTitle }}</view>
+        <view class="close-btn" @click="closeModal">
+          <up-icon name="close" size="20"></up-icon>
+        </view>
+      </view>
+      <scroll-view 
+        scroll-y 
+        class="scroll-content"
+      >
       <view class="modal-body">
-        <!-- 统一搜索栏（仅在添加模式显示） -->
         <view class="unified-search-container" v-if="!state.isEdit">
           <view class="search-tabs">
             <view
               class="search-tab"
-              :class="{ active: state.searchType === 'phone' }"
-              @click="switchSearchType('phone')"
+              :class="{ active: state.searchType === 'mobile' }"
+              @click="switchSearchType('mobile')"
             >
               手机号
             </view>
@@ -108,127 +140,111 @@
             </view>
           </view>
           <view class="search-box">
-            <u-input
+            <up-input
               v-model="state.searchKeyword"
-              :placeholder="state.searchType === 'phone' ? '请输入手机号码' : '请输入零卡ID'"
-              :type="state.searchType === 'phone' ? 'number' : 'text'"
+              :placeholder="state.searchType === 'mobile' ? '请输入手机号码' : '请输入零卡ID'"
+              :type="state.searchType === 'mobile' ? 'number' : 'text'"
               clearable
-              border="surround"
             />
-            <u-button class="search-btn-modal" @click="onSearch">搜索</u-button>
+            <up-button type="primary" class="search-btn-modal" @click="onSearch">搜索</up-button>
           </view>
         </view>
-
-        <view class="form-item">
-          <view class="form-label">头像</view>
-          <view class="avatar-picker" @click="state.isEdit ? null : chooseImage()">
-            <u-avatar :src="state.tempStaff.avatar || '/static/images/default-avatar.png'" size="80"></u-avatar>
-            <view class="avatar-upload-icon" v-if="!state.isEdit">
-              <u-icon name="camera" color="#fff" size="16"></u-icon>
+        <view v-if="state.resultList.length > 0">
+          <view class="form-item">
+            <view class="form-label">头像</view>
+            <view class="avatar-picker" @click="state.isEdit ? null : chooseImage()">
+              <up-avatar :src="state.tempStaff.avatar || '/static/images/default-avatar.png'" size="80"></up-avatar>
+              <!-- <view class="avatar-upload-icon" v-if="!state.isEdit">
+                <up-icon name="camera" color="#fff" size="16"></up-icon>
+              </view> -->
             </view>
           </view>
-        </view>
-
-        <view class="form-item">
-          <view class="form-label">姓名</view>
-          <u-input
-            v-model="state.tempStaff.name"
-            placeholder="请输入员工姓名"
-            border="surround"
-            :disabled="state.isEdit"
-          />
-        </view>
-
-        <view class="form-item">
-          <view class="form-label">职位</view>
-          <view class="role-display">
-            <view class="current-role">{{ state.tempStaff.role || '实习生' }}</view>
-            <view class="role-tip">职位将根据所选权限自动生成</view>
+          <view class="form-item">
+            <view class="form-label">呢称</view>
+            <up-input
+              v-model="state.tempStaff.nickname"
+              placeholder="请输入员工呢称"
+              border="surround"
+              disabled
+            />
           </view>
-        </view>
-
-        <view class="form-item">
-          <view class="form-label">手机号</view>
-          <u-input
-            v-model="state.tempStaff.phone"
-            type="number"
-            placeholder="请输入手机号码"
-            border="surround"
-            :disabled="state.isEdit"
-          />
-        </view>
-
-        <view class="form-item">
-          <view class="form-label">零卡id</view>
-          <u-input
-            v-model="state.tempStaff.wechat"
-            placeholder="请输入零卡id"
-            border="surround"
-            :disabled="state.isEdit"
-          />
-        </view>
-
-        <view class="form-item">
-          <view class="form-label">员工权限</view>
-          <view class="permissions-list">
-            <view
-              v-for="(item, index) in state.permissionOptions"
-              :key="index"
-              class="permission-item"
-              @click="togglePermission(item.value)"
-            >
-              <view
-                class="permission-checkbox"
-                :class="{ checked: state.tempStaff.permissions.includes(item.value) }"
-              >
-                <u-icon
-                  v-if="state.tempStaff.permissions.includes(item.value)"
-                  name="checkbox-mark"
-                  color="#fff"
-                  size="16"
-                ></u-icon>
-              </view>
-              <view class="permission-content">
-                <view class="permission-name">{{ item.name }}</view>
-                <view class="permission-desc">{{ item.description }}</view>
-              </view>
+          <view class="form-item">
+            <view class="form-label">职位</view>
+            <view class="role-display">
+              <view class="current-role">{{ state.tempStaff.role || '暂无职位' }}</view>
+              <view class="role-tip">职位将根据所选权限自动生成</view>
             </view>
           </view>
-        </view>
 
-        <view class="form-item">
-          <view class="form-label">简介</view>
-          <u-textarea
-            v-model="state.tempStaff.intro"
-            placeholder="请输入员工简介"
-            auto-height
-            border="surround"
-            :disabled="state.isEdit"
-          ></u-textarea>
-        </view>
-      </view>
-      <view class="modal-footer">
-        <u-button @click="closeModal">取消</u-button>
-        <u-button type="primary" @click="saveStaff">确定</u-button>
-      </view>
-      </view>
-    </u-popup>
+          <view class="form-item">
+            <view class="form-label">手机号</view>
+            <up-input
+              v-model="state.tempStaff.mobile"
+              type="number"
+              placeholder="请输入手机号码"
+              border="surround"
+              disabled
+            />
+          </view>
 
-    <!-- 删除确认模态框 -->
-    <u-modal
-      :show="state.showDeleteModal"
-      title="提示"
-      :show-cancel-button="true"
-      cancel-text="取消"
-      confirm-text="删除"
-      @cancel="closeDeleteModal"
-      @confirm="deleteStaff"
-    >
-      <view class="confirm-message">确定要删除该员工吗？此操作不可撤销。</view>
-    </u-modal>
+          <view class="form-item">
+            <view class="form-label">零卡id</view>
+            <up-input
+              v-model="state.tempStaff.id"
+              placeholder="请输入零卡id"
+              border="surround"
+              disabled
+            />
+          </view>
+
+             <view class="form-item">
+              <view class="form-label">员工权限</view>
+                <view class="roleIds-list">
+                 <view
+                   v-for="(item, index) in state.roleList"
+                   :key="index"
+                   class="permission-item"
+                   @click="selectPermission(item.id)"
+                 >
+                   <view class="permission-checkbox" :class="{ checked: state.tempStaff.roleIds.includes(item.id) }">
+                     <up-icon
+                       v-if="state.tempStaff.roleIds.includes(item.id)"
+                       name="checkbox-mark"
+                       color="#fff"
+                       size="16"
+                     ></up-icon>
+                   </view>
+                   <view class="permission-content">
+                     <view class="permission-name">{{ item.name }}</view>
+                     <view class="permission-desc">{{ item.description || '暂无描述' }}</view>
+                   </view>
+                 </view>
+               </view>
+            </view>
+
+          <view class="form-item">
+            <view class="form-label">简介</view>
+            <up-textarea
+              v-model="state.tempStaff.introduce"
+              placeholder="请输入员工简介"
+              auto-height
+              border="surround"
+              disabled
+            ></up-textarea>
+          </view>
+        </view>
+        <emptyData v-else/>
+      </view>
+      </scroll-view>
+      <view class="modal-footer" v-if="state.resultList.length > 0">
+        <up-button @click="closeModal" shape="circle">取消</up-button>
+        <up-button type="primary" shape="circle" @click="saveStaff">确定</up-button>
+      </view>
+      </view>
+    </up-popup>
 
     <!-- 店铺二维码模态框 -->
-    <u-modal
+    <up-modal
       :show="state.showQRCodeModal"
       title="店铺招募二维码"
       width="80%"
@@ -236,38 +252,45 @@
       :show-confirm-button="false"
     >
       <view class="qrcode-container">
-        <u-image
+        <up-image
           :src="state.shopQRCode"
           width="300rpx"
           height="300rpx"
           mode="aspectFit"
           show-menu-by-longpress
-        ></u-image>
+        ></up-image>
         <view class="qrcode-tip">长按保存或分享该二维码</view>
         <view class="qrcode-actions">
-          <u-button class="save-btn" @click="saveQRCodeToAlbum">保存到相册</u-button>
-          <u-button class="share-btn" @click="shareQRCode">分享给好友</u-button>
+          <up-button class="save-btn" @click="saveQRCodeToAlbum">保存到相册</up-button>
+          <up-button class="share-btn" @click="shareQRCode">分享给好友</up-button>
         </view>
       </view>
-    </u-modal>
-  </div>
+    </up-modal>
 </template>
 
 <script lang="ts" setup>
+import {cloneDeep} from 'lodash-es'
+import pageWrapper from "@/components/page/index.vue";
+import emptyData from "@/components/empty-data/index.vue";
 import { ref, reactive, onMounted } from 'vue'
 
-// 定义接口
-interface Staff {
-  id: string
-  avatar: string
-  name: string
-  role: string
-  phone: string
-  wechat: string
-  intro: string
-  permissions: string[]
-  permissionNames: string[]
+import { addShopStaff, getShopStaffList, getAllShopStaffList, editShopStaff, deleteShopStaff } from '@/api/shopStaff'
+import { getAllUserList } from '@/api/userManage'
+import { getAllRoleList } from '@/api/roleManage'
+
+// 防抖函数
+const debounce = (func: Function, wait: number) => {
+  let timeout: number | undefined
+  return function executedFunction(...args: any[]) {
+    const later = () => {
+      clearTimeout(timeout)
+      func(...args)
+    }
+    clearTimeout(timeout)
+    timeout = setTimeout(later, wait)
+  }
 }
+
 
 interface PermissionOption {
   value: string
@@ -275,22 +298,22 @@ interface PermissionOption {
   description: string
 }
 
-interface RoleFilterOption {
-  label: string
-  value: string
-}
+// 滚动位置状态
+const scrollTop = ref(0)
 
 // 状态管理
 const state = reactive({
   shopId: '123456',
   currentRole: 'all',
-  roleFilterOptions: [
-    { label: '全部', value: 'all' },
-    { label: '店长', value: '店长' },
-    { label: '调酒师', value: '调酒师' },
-    { label: '主理人', value: '主理人' },
-    { label: '其他', value: '其他' }
-  ] as RoleFilterOption[],
+  roleList: [
+    // { label: '全部', value: 'all' },
+    // { label: '店长', value: '店长' },
+    // { label: '调酒师', value: '调酒师' },
+    // { label: '主理人', value: '主理人' },
+    // { label: '其他', value: '其他' }
+  ] ,
+
+  resultList: [] as any,
   
   permissionOptions: [
     {
@@ -310,279 +333,287 @@ const state = reactive({
     }
   ] as PermissionOption[],
   
-  staffList: [] as Staff[],
-  filteredStaffList: [] as Staff[],
+  staffList: [],
+  filteredStaffList: [],
   
-  searchType: 'phone',
-  searchKeyword: '',
+  searchType: 'mobile',
+  searchKeyword: '1384906259',
   
   showModal: false,
-  showDeleteModal: false,
   showQRCodeModal: false,
   modalTitle: '添加员工',
   
   tempStaff: {
     id: '',
     avatar: '',
-    name: '',
-    role: '调酒师',
-    phone: '',
-    wechat: '',
-    intro: '',
-    permissions: [] as string[]
+    nickname: '',
+    role: '',
+    mobile: '',
+    introduce: '',
+    roleIds: [] as string[],
+
   },
   
-  isEdit: false,
+  isEdit: true,
   isLoading: true,
-  shopQRCode: '/static/images/qrcode-placeholder.png',
-  deleteStaffId: '',
+  shopQRCode: '',
+
+  pageParams: {
+    pageNum: 1,
+    pageSize: 10,
+    total: 0,
+  },
 })
 
 // 加载员工列表
-const loadStaffList = () => {
-  state.isLoading = true
-  setTimeout(() => {
-    state.staffList = [
-      {
-        id: '1001',
-        avatar: '/static/images/avatar1.png',
-        name: '张三',
-        role: '店铺主理人',
-        phone: '13800138001',
-        wechat: 'zero001',
-        intro: '5年调酒经验，擅长经典鸡尾酒调制，特调创新能力强',
-        permissions: ['manager_permission', 'owner_permission'],
-        permissionNames: ['店长权限', '主理人权限']
-      },
-      {
-        id: '1002',
-        avatar: '/static/images/avatar2.png',
-        name: '李四',
-        role: '调酒师',
-        phone: '13800138002',
-        wechat: 'zero002',
-        intro: '3年酒吧工作经验，擅长客户沟通和花式调酒',
-        permissions: ['bartender_permission'],
-        permissionNames: ['调酒师权限']
-      },
-      {
-        id: '1003',
-        avatar: '/static/images/avatar3.png',
-        name: '王五',
-        role: '普通员工',
-        phone: '13800138003',
-        wechat: 'zero003',
-        intro: '热情大方，善于活跃气氛，熟悉各类酒水知识',
-        permissions: [],
-        permissionNames: []
-      }
-    ]
-    
-    state.filteredStaffList = [...state.staffList]
-    state.isLoading = false
-    filterByRole()
-  }, 500)
+const loadStaffList = async() => {
+  state.isLoading = true;
+  try {
+    const res = await getShopStaffList({
+     pageNum: state.pageParams.pageNum,
+     pageSize: state.pageParams.pageSize,
+     roleId: state.currentRole == 'all'? '' : state.currentRole
+    })
+    const list = res.data.list;
+    state.pageParams.total = res.data.total;
+    if (state.pageParams.pageNum === 1) {
+      state.filteredStaffList = list;
+    } else {
+      state.filteredStaffList.push(...list);
+    }
+    state.staffList = cloneDeep(state.filteredStaffList)
+  } catch (error) {
+  } finally {
+    state.isLoading = false;
+  }
 }
+
+// 防抖处理的滚动到底部加载
+const debouncedLoadStaffList = debounce(() => {
+  if (state.filteredStaffList.length < state.pageParams.total) {
+    state.pageParams.pageNum++;
+    loadStaffList();
+  }
+}, 200);
 
 // 筛选员工角色
 const filterByRole = (role: string = state.currentRole) => {
-  state.currentRole = role
-  if (role === 'all') {
-    state.filteredStaffList = [...state.staffList]
-  } else {
-    state.filteredStaffList = state.staffList.filter(item => item.role === role)
+  state.pageParams.pageNum = 1;
+  state.currentRole = role;
+  loadStaffList();
+  // if (role === 'all') {
+  //   state.filteredStaffList = [...state.staffList]
+  // } else {
+  //   state.filteredStaffList = state.staffList.filter(item => item.role === role)
+  // }
+}
+
+const GetAllRoleList = async()=>{
+  try {
+    const res = await getAllRoleList({})
+    state.roleList = res.data || [];
+  } catch (error) {
+    console.log(error,1234)
   }
 }
 
 // 打开添加员工模态框
-const openAddModal = () => {
+const openAddModal = async() => {
   state.modalTitle = '添加员工'
   state.isEdit = false
-  state.tempStaff = {
-    id: '',
-    avatar: '',
-    name: '',
-    role: '实习生',
-    phone: '',
-    wechat: '',
-    intro: '',
-    permissions: []
+  state.showModal = true;
+}
+
+// 打开编辑员工模态框
+const openEditModal = (staff: any) => {
+  state.resultList = [staff]
+  state.modalTitle = '编辑员工'
+  state.isEdit = true
+  for(const key in staff){
+    state.tempStaff[key] = staff[key]
   }
   state.showModal = true
 }
 
-// 打开编辑员工模态框
-const openEditModal = (staffId: string) => {
-  const staff = state.staffList.find(item => item.id === staffId)
-  if (staff) {
-    state.modalTitle = '编辑员工'
-    state.isEdit = true
-    state.tempStaff = { ...staff }
-    state.showModal = true
-  }
-}
-
 // 关闭员工模态框
 const closeModal = () => {
-  state.showModal = false
+  state.showModal = false;
+  state.searchKeyword = '';
+  state.searchType = 'mobile';
+  state.tempStaff = {
+    id: '',
+    avatar: '',
+    nickname: '',
+    role: '',
+    mobile: '',
+    introduce: '',
+    roleIds: []
+  }
+  state.resultList = []
 }
 
-// 切换权限
+// 选择权限（单选）
+const selectPermission = (permissionId: string) => {
+  console.log('选择权限:', permissionId)
+  
+  // 如果已经选中，则取消选中
+  if (state.tempStaff.roleIds.includes(permissionId)) {
+    state.tempStaff.roleIds = []
+    state.tempStaff.role = ''
+  } else {
+    // 单选模式：只选中当前点击的权限
+    state.tempStaff.roleIds = [permissionId]
+    
+    // 根据选中的权限生成职位描述
+    const selectedRole = state.roleList.find(item => item.id === permissionId)
+    state.tempStaff.role = selectedRole?.name || ''
+  }
+}
+
+// 切换权限（保留原有函数以兼容）
 const togglePermission = (permission: string) => {
-  const permissions = [...state.tempStaff.permissions]
-  const index = permissions.indexOf(permission)
+  const roleIds = [...state.tempStaff.roleIds]
+  const index = roleIds.indexOf(permission)
   
   if (index > -1) {
-    permissions.splice(index, 1)
+    roleIds.splice(index, 1)
   } else {
-    permissions.push(permission)
+    roleIds.push(permission)
   }
   
-  state.tempStaff.permissions = permissions
-  state.tempStaff.role = generateRoleByPermissions(permissions)
+  state.tempStaff.roleIds = roleIds
+  state.tempStaff.role = generateRoleByPermissions(roleIds)
 }
 
 // 生成权限名称数组
-const generatePermissionNames = (permissions: string[]) => {
-  const permissionMap: Record<string, string> = {
-    'manager_permission': '店长权限',
-    'bartender_permission': '调酒师权限',
-    'owner_permission': '主理人权限'
+const generatePermissionNames = (roleIds: string[]) => {
+  // 单选模式，只处理第一个权限
+  if (!roleIds || roleIds.length === 0) {
+    return []
   }
   
-  return permissions.map(p => permissionMap[p]).filter(Boolean)
+  const permissionId = roleIds[0]
+  const role = state.roleList.find(role => role.id === permissionId)
+  return role ? [role.name] : []
 }
 
 // 根据权限生成职位描述
-const generateRoleByPermissions = (permissions: string[]) => {
-  if (!permissions || permissions.length === 0) {
-    return '实习生'
+const generateRoleByPermissions = (roleIds: string[]) => {
+  if (!roleIds || roleIds.length === 0) {
+    return ''
   }
   
-  const hasManager = permissions.includes('manager_permission')
-  const hasBartender = permissions.includes('bartender_permission')
-  const hasOwner = permissions.includes('owner_permission')
+  // 单选模式，只取第一个权限
+  const permissionId = roleIds[0]
+  const selectedRole = state.roleList.find(role => role.id === permissionId)
   
-  // 根据权限组合生成职位
-  if (hasOwner && hasManager && hasBartender) {
-    return '创始人/主理人'
-  } else if (hasOwner && hasManager) {
-    return '店铺主理人'
-  } else if (hasManager && hasBartender) {
-    return '店长兼调酒师'
-  } else if (hasOwner && hasBartender) {
-    return '主理人调酒师'
-  } else if (hasOwner) {
-    return '主理人'
-  } else if (hasManager) {
-    return '店长'
-  } else if (hasBartender) {
-    return '调酒师'
-  } else {
-    return '普通员工'
+  if (!selectedRole) {
+    return ''
   }
+  
+  return selectedRole.name
 }
 
 // 打开删除确认模态框
-const openDeleteModal = (staffId: string) => {
-  state.deleteStaffId = staffId
-  state.showDeleteModal = true
-}
-
-// 关闭删除确认模态框
-const closeDeleteModal = () => {
-  state.showDeleteModal = false
-  state.deleteStaffId = ''
+const openDeleteModal = (staff: any) => {
+  // 使用 uview-plus 的 up-modal 显示确认删除框
+  uni.showModal ({
+    title: '提示',
+    content: '确定要删除该员工吗？此操作不可撤销。',
+    confirmText: '删除',
+    cancelText: '取消',
+    confirmColor: '#f76560',
+    success: (res) => {
+      if (res.confirm) {
+        // 用户点击了删除按钮
+        deleteStaff(staff)
+      }
+    }
+  })
 }
 
 // 保存员工
-const saveStaff = () => {
-  const staff = { ...state.tempStaff }
-  const isEdit = state.isEdit
-  
+const saveStaff = async() => {
   // 表单验证
-  if (!isEdit) {
-    if (!staff.name.trim()) {
-      uni.showToast({
-        title: '请填写姓名',
-        icon: 'none'
-      })
-      return
-    }
-    
-    if (!staff.role) {
+    if (!state.tempStaff.role) {
       uni.showToast({
         title: '请选择职位',
         icon: 'none'
       })
       return
     }
-  }
-  
-  // 模拟提交数据
-  uni.showLoading({ title: '保存中...' })
-  
-  setTimeout(() => {
-    let staffList = [...state.staffList]
-    
-    if (staff.id && isEdit) {
-      // 编辑现有员工
-      const index = staffList.findIndex(item => item.id === staff.id)
-      if (index !== -1) {
-        staffList[index] = {
-          ...staffList[index],
-          permissions: staff.permissions || [],
-          permissionNames: generatePermissionNames(staff.permissions || []),
-          role: generateRoleByPermissions(staff.permissions || [])
-        }
-      }
-    } else {
-      // 添加新员工
-      const newStaff: Staff = {
-        ...staff,
-        id: Date.now().toString(),
-        avatar: staff.avatar || '/static/images/default-avatar.png',
-        permissionNames: generatePermissionNames(staff.permissions || [])
-      }
-      staffList.push(newStaff)
+  // uni.showLoading({ title: '保存中...' })
+  try {
+    let params = {
+      roleIds: state.tempStaff.roleIds,
+      userId: state.tempStaff.id,
     }
-    
-    state.staffList = staffList
-    state.showModal = false
-    filterByRole()
-    
-    uni.hideLoading()
+    await addShopStaff(params);
     uni.showToast({
-      title: isEdit ? '权限更新成功' : '添加成功',
+      title: '保存成功',
       icon: 'success'
     })
-  }, 800)
+    closeModal()
+    loadStaffList()
+  } catch (error) {}
+  
+  // setTimeout(() => {
+  //   let staffList = [...state.staffList]
+    
+  //   if (staff.id && isEdit) {
+  //     // 编辑现有员工
+  //     const index = staffList.findIndex(item => item.id === staff.id)
+  //     if (index !== -1) {
+  //       staffList[index] = {
+  //         ...staffList[index],
+  //         roleIds: staff.roleIds || [],
+  //         permissionNames: generatePermissionNames(staff.roleIds || []),
+  //         role: generateRoleByPermissions(staff.roleIds || [])
+  //       }
+  //     }
+  //   } else {
+  //     // 添加新员工
+  //     const newStaff: Staff = {
+  //       ...staff,
+  //       id: Date.now().toString(),
+  //       avatar: staff.avatar || '/static/images/default-avatar.png',
+  //       permissionNames: generatePermissionNames(staff.roleIds || [])
+  //     }
+  //     staffList.push(newStaff)
+  //   }
+    
+  //   state.staffList = staffList
+  //   state.showModal = false
+  //   filterByRole()
+    
+  //   uni.hideLoading()
+  //   uni.showToast({
+  //     title: isEdit ? '权限更新成功' : '添加成功',
+  //     icon: 'success'
+  //   })
+  // }, 800)
 }
 
 // 删除员工
-const deleteStaff = () => {
-  if (!state.deleteStaffId) return
-  
-  uni.showLoading({ title: '删除中...' })
-  
-  setTimeout(() => {
-    state.staffList = state.staffList.filter(item => item.id !== state.deleteStaffId)
-    state.showDeleteModal = false
-    state.deleteStaffId = ''
-    
-    filterByRole()
-    
-    uni.hideLoading()
+const deleteStaff = async (staff: any) => {
+  if (!staff || !staff.id) return
+  // uni.showLoading({ title: '删除中...' })
+  try {
+    // 调用删除员工API
+    await deleteShopStaff({ userId: staff.id })
+    // 删除成功后刷新列表
     uni.showToast({
       title: '删除成功',
       icon: 'success'
     })
-  }, 800)
+    await loadStaffList()
+  } catch (error) {
+  }
 }
 
 // 打开招募二维码模态框
 const generateQRCode = () => {
-  state.shopQRCode = '/static/images/qrcode-placeholder.png'
+  // state.shopQRCode = '/static/images/qrcode-placeholder.png'
   state.showQRCodeModal = true
 }
 
@@ -593,7 +624,7 @@ const switchSearchType = (type: string) => {
 }
 
 // 执行搜索
-const onSearch = () => {
+const onSearch = async() => {
   const { searchType, searchKeyword } = state
   const keyword = searchKeyword.trim()
   
@@ -605,30 +636,49 @@ const onSearch = () => {
     return
   }
   
-  const searchTypeText = searchType === 'phone' ? '手机号' : '零卡ID'
-  uni.showToast({
-    title: `搜索${searchTypeText}: ${keyword}`,
-    icon: 'none',
-    duration: 1500
-  })
+  const searchTypeText = searchType === 'mobile' ? '手机号' : '零卡ID'
+  const params = {} as any;
+  if(searchType === 'mobile'){
+    params.mobile = keyword;
+  }else{
+    params.id = keyword;
+  }
+  try {
+    const res = await getAllUserList(params);
+    console.log(res, 555);
+    state.resultList = res.data || [];
+    if(state.resultList.length>0){
+      const data = state.resultList[0];
+      for(const key in data){
+        if(key !== 'roleIds') { // 不覆盖权限字段
+          state.tempStaff[key] = data[key]
+        }
+      }
+      // 确保权限字段是数组格式
+      state.tempStaff.roleIds = Array.isArray(data.roleIds) ? data.roleIds : []
+    }
+    console.log( state.tempStaff,1234)
+  } catch (error) {
+    console.log(error,1234)
+  }
 }
 
 // 选择图片
 const chooseImage = () => {
-  uni.chooseImage({
-    count: 1,
-    sizeType: ['compressed'],
-    sourceType: ['album', 'camera'],
-    success: (res) => {
-      const tempFilePath = res.tempFilePaths[0]
-      uni.showLoading({ title: '上传中...' })
+  // uni.chooseImage({
+  //   count: 1,
+  //   sizeType: ['compressed'],
+  //   sourceType: ['album', 'camera'],
+  //   success: (res) => {
+  //     const tempFilePath = res.tempFilePaths[0]
+  //     uni.showLoading({ title: '上传中...' })
       
-      setTimeout(() => {
-        state.tempStaff.avatar = tempFilePath
-        uni.hideLoading()
-      }, 800)
-    }
-  })
+  //     setTimeout(() => {
+  //       state.tempStaff.avatar = tempFilePath
+  //       uni.hideLoading()
+  //     }, 800)
+  //   }
+  // })
 }
 
 // 保存招募二维码到相册
@@ -655,24 +705,16 @@ const shareQRCode = () => {
   })
 }
 
-// 返回上一页
-const safeNavigateBack = () => {
-  uni.navigateBack()
-}
 
 // 初始化
-onMounted(() => {
+onMounted(async () => {
+  await GetAllRoleList()  // 先获取角色列表
   loadStaffList()
 })
 </script>
 
 <style lang="scss" scoped>
-.container {
-  min-height: 100vh;
-  background-color: #f7f8fa;
-}
-
-/* 顶部导航栏 */
+@import '@/uni.scss';
 .header-right {
   display: flex;
   align-items: center;
@@ -680,30 +722,35 @@ onMounted(() => {
   padding-right: 20rpx;
 }
 
-/* 员工管理页 */
-.staff-container {
-  padding: 20rpx;
+.role-filter-scroll{
+  // margin-bottom: $up-box-mg;
 }
-
 /* 角色筛选 */
 .role-filter {
   display: flex;
-  padding: 20rpx 0;
+  padding: 16rpx 16rpx 6rpx;
   background-color: #fff;
-  margin-bottom: 20rpx;
-  overflow-x: auto;
+  margin-bottom: $up-box-mg;
   white-space: nowrap;
+  height: 60rpx;
+  /* 优化横向滚动性能 */
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  /* 启用硬件加速 */
+  transform: translate3d(0, 0, 0);
 }
 
 .role-item {
   padding: 12rpx 24rpx;
   margin-right: 20rpx;
-  font-size: 26rpx;
+  font-size: $up-font-sm;
   color: #666;
   border-radius: 24rpx;
   background-color: #f5f5f5;
   transition: all 0.3s;
   flex-shrink: 0;
+  height: 30rpx;
+  width: fit-content;
 }
 
 .role-item.active {
@@ -717,10 +764,15 @@ onMounted(() => {
   padding: 30rpx;
   background-color: #fff;
   border-radius: 12rpx;
-  margin-bottom: 20rpx;
+  margin: $up-box-mg;
   box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
   display: flex;
   position: relative;
+  /* 优化渲染性能 */
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  /* 防止子元素影响滚动 */
+  contain: layout style paint;
 }
 
 .staff-avatar {
@@ -768,7 +820,7 @@ onMounted(() => {
   margin-top: 10rpx;
 }
 
-.staff-permissions {
+.staff-roleIds {
   margin-top: 12rpx;
   display: flex;
   flex-wrap: wrap;
@@ -828,10 +880,15 @@ onMounted(() => {
   color: #bbb;
 }
 
-/* 模态框 */
-.modal-body {
-  padding: 20rpx;
-  max-height: 80vh;
+/* 加载更多状态 */
+.loading-more {
+  padding: 30rpx;
+  text-align: center;
+}
+
+.loading-text {
+  font-size: 26rpx;
+  color: #999;
 }
 
 .form-item {
@@ -887,7 +944,7 @@ onMounted(() => {
   line-height: 1.3;
 }
 
-.permissions-list {
+.roleIds-list {
   display: flex;
   flex-direction: column;
   gap: 16rpx;
@@ -901,6 +958,8 @@ onMounted(() => {
   border-radius: 8rpx;
   border: 1rpx solid #eee;
   transition: all 0.3s;
+  margin-bottom: 16rpx;
+  width: 100%;
 }
 
 .permission-item:active {
@@ -908,6 +967,7 @@ onMounted(() => {
   border-color: #91d5ff;
 }
 
+/* 自定义复选框样式 */
 .permission-checkbox {
   width: 40rpx;
   height: 40rpx;
@@ -973,7 +1033,7 @@ onMounted(() => {
 }
 
 .search-tab.active {
-  background-color: #1890ff;
+  background-color: $u-primary;
   color: #fff;
   font-weight: 500;
 }
@@ -982,8 +1042,8 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 20rpx;
-  .u-input{
-   flex: 1
+  .up-input{
+   flex: 1;
   }
   .search-btn-modal {
     width: 120rpx;

@@ -24,11 +24,11 @@
         <view class="category-actions" v-if="state.categories.length > 0">
           <view class="action-btn edit-category-btn" @click="openEditCategoryModal">
             <!-- <image src="/static/images/icons/edit.png" mode="aspectFit"></image> -->
-            <u-icon name="plus-circle-fill" size="56rpx"></u-icon>
+            <up-icon name="plus-circle-fill" size="56rpx"></up-icon>
           </view>
           <view class="action-btn delete-category-btn" @click="openDeleteCategoryModal">
             <!-- <image src="/static/images/icons/delete.png" mode="aspectFit"></image> -->
-            <u-icon name="minus-circle-fill" size="56rpx"></u-icon>
+            <up-icon name="minus-circle-fill" size="56rpx"></up-icon>
           </view>
         </view>
       </view>
@@ -51,8 +51,8 @@
             </view>
           </view>
           <view class="drink-actions">
-            <u-button  type="warning" class="edit-btn"  plain shape="circle" @click="openEditDrinkModal(item.id)">编辑</u-button>
-            <u-button type="error" class="delete-btn"   plain shape="circle" @click="openDeleteDrinkModal(item.id)">删除</u-button>
+            <up-button  type="warning" class="edit-btn"  plain shape="circle" @click="openEditDrinkModal(item.id)">编辑</up-button>
+            <up-button type="error" class="delete-btn"   plain shape="circle" @click="openDeleteDrinkModal(item.id)">删除</up-button>
           </view>
         </view>
       </view>
@@ -61,19 +61,19 @@
       <view class="empty-state" v-else-if="state.currentCategoryId && state.categories.length > 0">
         <image src="/static/images/empty-drinks.png" mode="aspectFit"></image>
         <text>当前分类还没有酒水</text>
-        <u-button class="add-drink-btn" @click="openAddDrinkModal">添加酒水</u-button>
+        <up-button class="add-drink-btn" @click="openAddDrinkModal">添加酒水</up-button>
       </view>
 
       <view class="empty-state" v-else-if="state.categories.length === 0">
         <image src="/static/images/empty-category.png" mode="aspectFit"></image>
         <text>还没有创建分类</text>
-        <u-button class="add-category-btn" @click="openAddCategoryModal">创建分类</u-button>
+        <up-button class="add-category-btn" @click="openAddCategoryModal">创建分类</up-button>
       </view>
 
       <!-- 添加按钮 -->
       <view class="floating-btn" @click="openAddDrinkModal" v-if="state.currentCategoryId && state.categories.length > 0">
         <!-- <image src="/static/images/icons/add-white.png" mode="aspectFit"></image> -->
-          <u-icon name="plus" size="32" color="#fff"></u-icon>
+          <up-icon name="plus" size="32" color="#fff"></up-icon>
       </view>
     </block>
  
@@ -95,11 +95,11 @@
         <view class="category-actions" v-if="state.diyTypes.length > 0">
           <view class="action-btn edit-category-btn" @click="openEditDiyTypeModal">
             <!-- <image src="/static/images/icons/edit.png" mode="aspectFit"></image> -->
-            <u-icon name="plus-circle-fill" size="56rpx"></u-icon>
+            <up-icon name="plus-circle-fill" size="56rpx"></up-icon>
           </view>
           <view class="action-btn delete-category-btn" @click="openDeleteDiyTypeModal">
             <!-- <image src="/static/images/icons/delete.png" mode="aspectFit"></image> -->
-            <u-icon name="minus-circle-fill" size="56rpx"></u-icon>
+            <up-icon name="minus-circle-fill" size="56rpx"></up-icon>
           </view>
         </view>
       </view>
@@ -121,8 +121,8 @@
             </view>
           </view>
           <view class="diy-actions">
-            <u-button type="warning" class="edit-btn"  plain shape="circle" @click="openEditDiyIngredientModal(item.id)">编辑</u-button>
-            <u-button type="error" class="delete-btn"   plain shape="circle" @click="openDeleteDiyIngredientModal(item.id)">删除</u-button>
+            <up-button type="warning" class="edit-btn"  plain shape="circle" @click="openEditDiyIngredientModal(item.id)">编辑</up-button>
+            <up-button type="error" class="delete-btn"   plain shape="circle" @click="openDeleteDiyIngredientModal(item.id)">删除</up-button>
           </view>
         </view>
       </view>
@@ -131,23 +131,23 @@
       <view class="empty-state" v-else-if="state.currentDiyTypeId && state.diyTypes.length > 0">
         <image src="/static/images/empty-ingredients.png" mode="aspectFit"></image>
         <text>当前分类还没有酒料</text>
-        <u-button class="add-diy-btn" @click="openAddDiyIngredientModal">添加酒料</u-button>
+        <up-button class="add-diy-btn" @click="openAddDiyIngredientModal">添加酒料</up-button>
       </view>
 
       <view class="empty-state" v-else-if="state.diyTypes.length === 0">
         <image src="/static/images/empty-category.png" mode="aspectFit"></image>
         <text>还没有创建DIY酒料分类</text>
-        <u-button class="add-category-btn" @click="openAddDiyTypeModal">创建酒料分类</u-button>
+        <up-button class="add-category-btn" @click="openAddDiyTypeModal">创建酒料分类</up-button>
       </view>
 
       <!-- 添加DIY酒料按钮 -->
       <view class="floating-btn" @click="openAddDiyIngredientModal" v-if="state.currentDiyTypeId && state.diyTypes.length > 0">
-        <u-icon name="plus" size="32" color="#fff"></u-icon>
+        <up-icon name="plus" size="32" color="#fff"></up-icon>
       </view>
     </block>
 
     <!-- 分类模态框 -->
-    <u-popup :show="state.showCategoryModal" mode="center" @close="closeCategoryModal">
+    <up-popup :show="state.showCategoryModal" mode="center" @close="closeCategoryModal">
       <view class="z-modal-lg z-modal ">
         <view class="modal-header">
           <text>{{ state.isEditingCategory ? '编辑分类' : '添加分类' }}</text>
@@ -156,22 +156,22 @@
         <view class="modal-body">
           <view class="form-group">
             <label>分类名称</label>
-            <u-input v-model="state.tempCategory.name" placeholder="请输入分类名称" />
+            <up-input v-model="state.tempCategory.name" placeholder="请输入分类名称" />
           </view>
           <view class="form-group">
             <label>排序 (数字越小排序越靠前)</label>
-            <u-input v-model.number="state.tempCategory.sort" placeholder="请输入排序数字" type="number" />
+            <up-input v-model.number="state.tempCategory.sort" placeholder="请输入排序数字" type="number" />
           </view>
         </view>
         <view class="modal-footer">
-          <u-button @click="closeCategoryModal">取消</u-button>
-          <u-button type="primary" @click="saveCategory">确定</u-button>
+          <up-button @click="closeCategoryModal">取消</up-button>
+          <up-button type="primary" @click="saveCategory">确定</up-button>
         </view>
       </view>
-    </u-popup>
+    </up-popup>
 
     <!-- DIY酒料分类模态框 -->
-    <u-popup :show="state.showDiyTypeModal" mode="center" @close="closeDiyTypeModal">
+    <up-popup :show="state.showDiyTypeModal" mode="center" @close="closeDiyTypeModal">
       <view class="z-modal-lg z-modal">
         <view class="modal-header">
           <text>{{ state.isEditingDiyType ? '编辑酒料分类' : '添加酒料分类' }}</text>
@@ -180,22 +180,22 @@
         <view class="modal-body">
           <view class="form-group">
             <label>分类名称</label>
-            <u-input v-model="state.tempDiyType.name" placeholder="请输入分类名称" />
+            <up-input v-model="state.tempDiyType.name" placeholder="请输入分类名称" />
           </view>
           <view class="form-group">
             <label>排序 (数字越小排序越靠前)</label>
-            <u-input v-model.number="state.tempDiyType.sort" placeholder="请输入排序数字" type="number" />
+            <up-input v-model.number="state.tempDiyType.sort" placeholder="请输入排序数字" type="number" />
           </view>
         </view>
         <view class="modal-footer">
-          <u-button class="cancel-btn" @click="closeDiyTypeModal">取消</u-button>
-          <u-button class="confirm-btn" @click="saveDiyType">确定</u-button>
+          <up-button class="cancel-btn" @click="closeDiyTypeModal">取消</up-button>
+          <up-button class="confirm-btn" @click="saveDiyType">确定</up-button>
         </view>
       </view>
-    </u-popup>
+    </up-popup>
 
     <!-- 酒水模态框 -->
-    <u-popup :show="state.showDrinkModal" mode="center" @close="closeDrinkModal">
+    <up-popup :show="state.showDrinkModal" mode="center" @close="closeDrinkModal">
       <view class="z-modal-lg z-modal">
         <view class="modal-header">
           <text>{{ state.isEditingDrink ? '编辑酒水' : '添加酒水' }}</text>
@@ -215,131 +215,135 @@
 
           <view class="form-group">
             <label>酒水名称</label>
-            <u-input v-model="state.tempDrink.name" placeholder="请输入酒水名称" />
+            <up-input v-model="state.tempDrink.name" placeholder="请输入酒水名称" />
           </view>
 
           <view class="form-group">
             <label>描述</label>
-            <u-input v-model="state.tempDrink.description" type="textarea" placeholder="请输入酒水描述" />
+            <up-input v-model="state.tempDrink.description" type="textarea" placeholder="请输入酒水描述" />
           </view>
 
           <view class="form-group">
             <label>价格 (元)</label>
-            <u-input v-model.number="state.tempDrink.price" placeholder="请输入价格" type="number" />
+            <up-input v-model.number="state.tempDrink.price" placeholder="请输入价格" type="number" />
           </view>
 
           <view class="form-group">
             <label>原价 (元，可选)</label>
-            <u-input v-model.number="state.tempDrink.originalPrice" placeholder="请输入原价" type="number" />
+            <up-input v-model.number="state.tempDrink.originalPrice" placeholder="请输入原价" type="number" />
           </view>
 
           <view class="form-group">
             <label>排序 (数字越小排序越靠前)</label>
-            <u-input v-model.number="state.tempDrink.sort" placeholder="请输入排序数字" type="number" />
+            <up-input v-model.number="state.tempDrink.sort" placeholder="请输入排序数字" type="number" />
           </view>
 
           <view class="form-group switch-group">
             <label>推荐酒水</label>
-            <u-switch v-model="state.tempDrink.isRecommended" active-color="#1989fa"></u-switch>
+            <up-switch v-model="state.tempDrink.isRecommended" active-color="#1989fa"></up-switch>
           </view>
 
           <view class="form-group switch-group">
             <label>上架状态</label>
-            <u-switch v-model="state.tempDrink.isAvailable" active-color="#1989fa"></u-switch>
+            <up-switch v-model="state.tempDrink.isAvailable" active-color="#1989fa"></up-switch>
           </view>
 
           <view class="form-group switch-group">
             <label>启用点单制</label>
-            <u-switch v-model="state.tempDrink.enableOrdering" active-color="#1989fa"></u-switch>
+            <up-switch v-model="state.tempDrink.enableOrdering" active-color="#1989fa"></up-switch>
           </view>
           <view class="form-tip">
             <text class="tip-text">开启后，顾客可以通过扫码点单选择此酒水</text>
           </view>
         </view>
         <view class="modal-footer">
-          <u-button  @click="closeDrinkModal">取消</u-button>
-          <u-button type="primary" @click="saveDrink">确定</u-button>
+          <up-button  @click="closeDrinkModal">取消</up-button>
+          <up-button type="primary" @click="saveDrink">确定</up-button>
         </view>
       </view>
-    </u-popup>
+    </up-popup>
 
     <!-- DIY酒料模态框 -->
-    <u-popup :show="state.showDiyIngredientModal" mode="center" @close="closeDiyIngredientModal">
-      <view class="z-modal-lg z-modal">
-        <view class="modal-header">
-          <text>{{ state.isEditingDiyIngredient ? '编辑酒料' : '添加酒料' }}</text>
-          <view class="close-btn" @click="closeDiyIngredientModal">×</view>
-        </view>
-        <view class="modal-body">
-          <view class="image-upload" @click="uploadDiyIngredientImage">
-            <image 
-              class="drink-image-preview" 
-              :src="state.tempDiyIngredient.image || '/static/images/default-ingredient.png'" 
-              mode="aspectFill"
-            ></image>
-            <view class="upload-icon">
-              <image src="/static/images/icons/camera.png" mode="aspectFit"></image>
+    <up-popup :show="state.showDiyIngredientModal" mode="center" @close="closeDiyIngredientModal">
+        <view class="z-modal-lg z-modal">
+          <view class="modal-header">
+            <text>{{ state.isEditingDiyIngredient ? '编辑酒料' : '添加酒料' }}</text>
+            <view class="close-btn" @click="closeDiyIngredientModal">×</view>
+          </view>
+          <view class="modal-body">
+      <scroll-view class="categories-scroll" scroll-y="true" enhanced="true" show-scrollbar="true" style="max-height: 900rpx;">
+
+            <view class="image-upload" @click="uploadDiyIngredientImage">
+              <image 
+                class="drink-image-preview" 
+                :src="state.tempDiyIngredient.image || '/static/images/default-ingredient.png'" 
+                mode="aspectFill"
+              ></image>
+              <view class="upload-icon">
+                <image src="/static/images/icons/camera.png" mode="aspectFit"></image>
+              </view>
             </view>
-          </view>
 
-          <view class="form-group">
-            <label>酒料名称</label>
-            <u-input v-model="state.tempDiyIngredient.name" placeholder="请输入酒料名称" />
-          </view>
+            <view class="form-group">
+              <label>酒料名称</label>
+              <up-input v-model="state.tempDiyIngredient.name" placeholder="请输入酒料名称" />
+            </view>
 
-          <view class="form-group">
-            <label>描述</label>
-            <u-input v-model="state.tempDiyIngredient.description" type="textarea" placeholder="请输入酒料描述" />
-          </view>
+            <view class="form-group">
+              <label>描述</label>
+              <up-input v-model="state.tempDiyIngredient.description" type="textarea" placeholder="请输入酒料描述" />
+            </view>
 
-          <view class="form-group">
-            <label>附加价格 (元，可选)</label>
-            <u-input v-model.number="state.tempDiyIngredient.price" placeholder="请输入附加价格，0表示免费" type="number" />
-          </view>
+            <view class="form-group">
+              <label>附加价格 (元，可选)</label>
+              <up-input v-model.number="state.tempDiyIngredient.price" placeholder="请输入附加价格，0表示免费" type="number" />
+            </view>
 
-          <view class="form-group">
-            <label>计量单位</label>
-            <u-input v-model="state.tempDiyIngredient.unit" placeholder="例如：份、杯、瓶等" />
-          </view>
+            <view class="form-group">
+              <label>计量单位</label>
+              <up-input v-model="state.tempDiyIngredient.unit" placeholder="例如：份、杯、瓶等" />
+            </view>
 
-          <view class="form-group">
-            <label>排序 (数字越小排序越靠前)</label>
-            <u-input v-model.number="state.tempDiyIngredient.sort" placeholder="请输入排序数字" type="number" />
-          </view>
+            <view class="form-group">
+              <label>排序 (数字越小排序越靠前)</label>
+              <up-input v-model.number="state.tempDiyIngredient.sort" placeholder="请输入排序数字" type="number" />
+            </view>
 
-          <view class="form-group switch-group">
-            <label>推荐酒料</label>
-            <u-switch v-model="state.tempDiyIngredient.isRecommended" active-color="#1989fa"></u-switch>
-          </view>
+            <view class="form-group switch-group">
+              <label>推荐酒料</label>
+              <up-switch v-model="state.tempDiyIngredient.isRecommended" active-color="#1989fa"></up-switch>
+            </view>
 
-          <view class="form-group switch-group">
-            <label>上架状态</label>
-            <u-switch v-model="state.tempDiyIngredient.isAvailable" active-color="#1989fa"></u-switch>
+            <view class="form-group switch-group">
+              <label>上架状态</label>
+              <up-switch v-model="state.tempDiyIngredient.isAvailable" active-color="#1989fa"></up-switch>
+            </view>
+      </scroll-view>
+
+          </view>
+          <view class="modal-footer">
+            <up-button  @click="closeDiyIngredientModal">取消</up-button>
+            <up-button type="primary" @click="saveDiyIngredient">确定</up-button>
           </view>
         </view>
-        <view class="modal-footer">
-          <u-button  @click="closeDiyIngredientModal">取消</u-button>
-          <u-button type="primary" @click="saveDiyIngredient">确定</u-button>
-        </view>
-      </view>
-    </u-popup>
+    </up-popup>
 
     <!-- 删除分类确认模态框 -->
-    <u-modal :show="state.showDeleteCategoryModal" @cancel="closeDeleteCategoryModal" @confirm="deleteCategory" showCancelButton title="提示" 
-    content='删除分类将同时删除该分类下的所有酒水，此操作不可恢复，确定要删除吗？'></u-modal>
+    <up-modal :show="state.showDeleteCategoryModal" @cancel="closeDeleteCategoryModal" @confirm="deleteCategory" showCancelButton title="提示" 
+    content='删除分类将同时删除该分类下的所有酒水，此操作不可恢复，确定要删除吗？'></up-modal>
     
 
     <!-- 删除DIY酒料分类确认模态框 -->
-    <u-modal :show="state.showDeleteDiyTypeModal" @cancel="closeDeleteDiyTypeModal" @confirm="deleteDiyType" showCancelButton title="提示" 
-    content='删除分类将同时删除该分类下的所有DIY酒料，此操作不可恢复，确定要删除吗？'></u-modal>
+    <up-modal :show="state.showDeleteDiyTypeModal" @cancel="closeDeleteDiyTypeModal" @confirm="deleteDiyType" showCancelButton title="提示" 
+    content='删除分类将同时删除该分类下的所有DIY酒料，此操作不可恢复，确定要删除吗？'></up-modal>
 
     <!-- 删除酒水确认模态框 -->
-    <u-modal :show="state.showDeleteDrinkModal" @cancel="closeDeleteDrinkModal" @confirm="deleteDrink" showCancelButton title="提示" 
-    content='删除酒水后将无法恢复，确定要删除吗？'></u-modal>
+    <up-modal :show="state.showDeleteDrinkModal" @cancel="closeDeleteDrinkModal" @confirm="deleteDrink" showCancelButton title="提示" 
+    content='删除酒水后将无法恢复，确定要删除吗？'></up-modal>
 
     <!-- 删除DIY酒料确认模态框 -->
-    <u-modal :show="state.showDeleteDiyIngredientModal" @cancel="closeDeleteDiyIngredientModal" @confirm="deleteDiyIngredient" showCancelButton title="提示" 
-    content='删除酒料后将无法恢复，确定要删除吗？'></u-modal>
+    <up-modal :show="state.showDeleteDiyIngredientModal" @cancel="closeDeleteDiyIngredientModal" @confirm="deleteDiyIngredient" showCancelButton title="提示" 
+    content='删除酒料后将无法恢复，确定要删除吗？'></up-modal>
   </view> 
 </template>
 

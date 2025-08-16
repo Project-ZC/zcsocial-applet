@@ -1,0 +1,145 @@
+<view>
+  <!-- 临时页面，用于解决编译问题 -->
+  <view class="container">
+    <view class="page-header">
+      <text class="page-title">编辑资料</text>
+    </view>
+    <view class="edit-form">
+      <!-- 头像上传区域 -->
+      <view class="avatar-section z-glass-card">
+        <view class="form-header">
+          <text class="section-title">头像</text>
+          <text class="section-subtitle">点击更换头像</text>
+        </view>
+        <view class="avatar-container" bindtap="chooseAvatar">
+          <image class="avatar" src="{{userInfo.avatar}}" mode="aspectFill"></image>
+          <view class="avatar-edit-mask">
+            <view class="icon-camera"></view>
+            <text class="edit-text">更换头像</text>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 基本信息表单 -->
+      <view class="form-card z-glass-card">
+        <view class="form-group">
+          <view class="form-item">
+            <text class="form-label">昵称</text>
+            <input class="form-input" type="text" value="{{userInfo.nickname}}" placeholder="请输入昵称" bindinput="inputNickname"/>
+            <view class="form-icon">
+              <view class="icon-arrow-right"></view>
+            </view>
+          </view>
+          <view class="form-item" bindtap="showGenderPicker">
+            <text class="form-label">性别</text>
+            <view class="form-value">{{genderText[userInfo.gender] || '请选择'}}</view>
+            <view class="form-icon">
+              <view class="icon-arrow-right"></view>
+            </view>
+          </view>
+          <view class="form-item" bindtap="showDatePicker">
+            <text class="form-label">生日</text>
+            <view class="form-value">{{userInfo.birthday || '请选择'}}</view>
+            <view class="form-icon">
+              <view class="icon-arrow-right"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 个人标签 -->
+      <view class="form-card z-glass-card">
+        <view class="form-header">
+          <text class="section-title">个人标签</text>
+          <text class="section-subtitle">选择能代表你的标签，最多可选5个</text>
+        </view>
+        
+        <view class="tags-container">
+          <view 
+            class="tag-item {{userInfo.tags.includes(item) ? 'active' : ''}}" 
+            wx:for="{{tagOptions}}" 
+            wx:key="index"
+            bindtap="toggleTag"
+            data-tag="{{item}}">
+            {{item}}
+          </view>
+        </view>
+      </view>
+      
+      <!-- 个人简介 -->
+      <view class="form-card z-glass-card">
+        <view class="form-header">
+          <text class="section-title">个人简介</text>
+          <text class="section-subtitle">介绍一下自己，让大家了解你</text>
+        </view>
+        
+        <view class="bio-container">
+          <textarea 
+            class="bio-textarea" 
+            value="{{userInfo.bio}}" 
+            placeholder="介绍一下自己，让大家了解你（最多200字）"
+            maxlength="200"
+            bindinput="inputBio"
+            auto-height>
+          </textarea>
+          <text class="word-count">{{userInfo.bio.length}}/200</text>
+        </view>
+      </view>
+      
+      <!-- 保存按钮 -->
+      <view class="bottom-button-area">
+        <button class="save-button glass-btn" bindtap="saveProfile">保存</button>
+      </view>
+      
+      <!-- 性别选择器 -->
+      <view class="modal" wx:if="{{showGenderPicker}}">
+        <view class="modal-mask" bindtap="closeGenderPicker"></view>
+        <view class="picker-container">
+          <view class="picker-header">
+            <text class="picker-title">请选择性别</text>
+            <text class="picker-close" bindtap="closeGenderPicker">关闭</text>
+          </view>
+          <view class="picker-body">
+            <view 
+              class="picker-item" 
+              wx:for="{{genderOptions}}" 
+              wx:key="index"
+              bindtap="selectGender"
+              data-gender="{{item.value}}">
+              <text class="picker-item-text {{userInfo.gender === item.value ? 'active' : ''}}">{{item.text}}</text>
+              <view class="icon-check" wx:if="{{userInfo.gender === item.value}}"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 日期选择器 -->
+      <view class="modal" wx:if="{{showDatePicker}}">
+        <view class="modal-mask" bindtap="closeDatePicker"></view>
+        <view class="picker-container">
+          <view class="picker-header">
+            <text class="picker-title">请选择生日</text>
+            <text class="picker-close" bindtap="closeDatePicker">关闭</text>
+          </view>
+          <picker-view 
+            class="date-picker" 
+            value="{{datePickerValue}}" 
+            bindchange="onDatePickerChange">
+            <picker-view-column>
+              <view class="picker-column-item" wx:for="{{years}}" wx:key="index">{{item}}年</view>
+            </picker-view-column>
+            <picker-view-column>
+              <view class="picker-column-item" wx:for="{{months}}" wx:key="index">{{item}}月</view>
+            </picker-view-column>
+            <picker-view-column>
+              <view class="picker-column-item" wx:for="{{days}}" wx:key="index">{{item}}日</view>
+            </picker-view-column>
+          </picker-view>
+          <view class="picker-footer">
+            <button class="picker-confirm" bindtap="confirmDatePicker">确认</button>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view> 

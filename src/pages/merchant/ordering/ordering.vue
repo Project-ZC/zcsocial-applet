@@ -316,7 +316,7 @@ const onBackPress = (e: any) => {
 			// 标题
 			.item-title {
 				line-height: 86rpx;
-				font-size: $uni-font-size-base;
+				font-size: $up-font-base;
 			}
 
 			.item-subclass {
@@ -340,12 +340,11 @@ const onBackPress = (e: any) => {
 							margin: 10rpx 30rpx 10rpx 20rpx;
 
 							.item-right-name {
-								font-size: $uni-font-size-base;
+								font-size: $up-font-base;
 							}
 
 							.item-right-desc {
-								font-size: $uni-font-size-sm;
-								color: $uni-text-color-grey;
+								font-size: $up-font-sm;
 								margin-top: 10rpx;
 							}
 
@@ -356,15 +355,14 @@ const onBackPress = (e: any) => {
 
 								.item-price {
 									.item-price-iden {
-										font-size: $uni-font-size-sm;
+										font-size: $up-font-sm;
 										font-weight: 500;
 									}
 
 									.item-original-price {
-										font-size: $uni-font-size-sm;
+										font-size: $up-font-sm;
 										margin-left: 5rpx;
 										font-weight: 500;
-										color: $uni-text-color-grey;
 										text-decoration: line-through;
 									}
 								}
@@ -382,7 +380,7 @@ const onBackPress = (e: any) => {
 					.item-number {
 						width: 50rpx;
 						text-align: center;
-						font-size: $uni-font-size-base;
+						font-size: $up-font-base;
 					}
 
 					.iconfont {

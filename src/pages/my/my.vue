@@ -1,18 +1,22 @@
 <template>
-	<view class="my-page container" :class="{ 'dark-theme': isDarkMode }">
+	<view class="my-page container">
 		<!-- 用户信息区域 -->
-		<view class="user-info-section">
+		<view class="user-info-section z-glass-card">
 			<view class="user-avatar">
-				  <u--image
+				  <up-image
 					:showLoading="true"
 					:src="userStore.userInfo?.avatar"
 					width="120rpx"
 					height="120rpx"
-				></u--image>
+				></up-image>
 			</view>
 			<view class="user-details">
 				<view class="username">{{userStore.userInfo?.nickname || '微信用户'}}</view>
 				<view class="user-level">零卡ID：{{userStore.userInfo?.id || ''}}</view>
+			</view>
+
+			<view class="edit-btn">
+				<up-button type="primary" @click="navigateTo('/pages/editProfile/editProfile')">编辑资料</up-button>
 			</view>
 		</view>
 
@@ -54,15 +58,15 @@
 				<view class="menu-arrow">></view>
 			</view>
 		</view> -->
-		<u-cell-group>
-			<u-cell v-for="item in state.cellList" :key="item.title" :icon="item.icon" :title="item.title" :isLink="item.showArrow" @click="navigateTo(item.url)"></u-cell>
-		</u-cell-group>	
-		<!-- <u-button
+		<up-cell-group>
+			<up-cell v-for="item in state.cellList" :key="item.title" :icon="item.icon" :title="item.title" :isLink="item.showArrow" @click="navigateTo(item.url)"></up-cell>
+		</up-cell-group>	
+		<!-- <up-button
 			v-if="userStore.userInfo?.token"
 			class="logout-btn"
 			type="error"
 			@click="handleLogout"
-		>退出登录</u-button> -->
+		>退出登录</up-button> -->
 	</view>
 </template>
 
@@ -194,40 +198,12 @@ defineOptions({
 	}
 	min-height: 100vh;
 	padding-bottom: 40rpx;
-	::v-deep .u-cell__body{
+	::v-deep .up-cell__body{
 		background-color: #fff;
-	}
-
-	&.dark-theme {
-		background-color: #1a1a1a;
-		color: #e0e0e0;
-
-		.user-info-section {
-			background-color: #2c2c2c;
-		}
-
-		.menu-section {
-			background-color: #2c2c2c;
-
-			.menu-item {
-				border-bottom-color: #444;
-
-				.menu-text {
-					color: #e0e0e0;
-				}
-			}
-		}
-
-		.orders-section {
-			.section-title {
-				color: #e0e0e0;
-			}
-		}
 	}
 
 	// 用户信息区域
 	.user-info-section {
-		background-color: #fff;
 		padding: 40rpx 30rpx;
 		display: flex;
 		align-items: center;

@@ -5,26 +5,34 @@
 /* 全局页面背景色 */
 page {
     background-color: #f5f5f5;
-    /* 任意颜色 */
+    font-size: $up-font-base;
+    /* 优化滚动性能 */
+    -webkit-overflow-scrolling: touch;
 }
 
 
 .z-modal {
-
     display: flex;
     flex-direction: column;
-    background: white;
+    height: 100%;
+    // background-color: #fff;
+
+    &-round {
+        border-radius: 100rpx;
+    }
 
     .modal-header {
-        padding: 16rpx 20rpx;
+        padding: 0 20rpx;
         border-bottom: 1px solid #eee;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        height: 80rpx;
+        flex-shrink: 0;
     }
 
     .modal-title {
-        font-size: 32rpx;
+        font-size: $up-font-lg;
         font-weight: bold;
         color: #333;
     }
@@ -35,10 +43,18 @@ page {
         cursor: pointer;
     }
 
+    .scroll-content {
+        margin-bottom: 20rpx;
+        flex: 1;
+    }
+
     .modal-body {
         padding: 20rpx;
-        flex: 1;
-        overflow-y: auto;
+        max-height: 800rpx;
+        margin-bottom: 20rpx;
+        // flex: 1;
+        // overflow-y: auto; // 增加了 scroll-view会卡顿
+
     }
 
     .modal-footer {
@@ -46,11 +62,32 @@ page {
         border-top: 1px solid #eee;
         display: flex;
         justify-content: space-between;
-        gap: 30rpx;
+        gap: 40rpx;
+        flex-shrink: 0;
+        height: 80rpx;
     }
 }
 
 .z-modal-lg {
     width: 650rpx;
-    max-height: 80vh;
+    max-height: 70vh;
+
+}
+
+
+/* 毛玻璃效果 */
+.z-glass-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8rpx);
+    border-radius: 14rpx;
+    box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
+}
+
+// 顶部导航栏
+.z-navbar {
+    height: 80rpx;
+
+    .u-status-bar {
+        display: none;
+    }
 }

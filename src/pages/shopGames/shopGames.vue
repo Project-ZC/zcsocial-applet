@@ -1,24 +1,28 @@
 <template>
-  <view class="container">
+  <pageWrapper>
     <!-- 顶部导航栏 -->
-    <u-navbar
+    <up-navbar
       :title="'店内游戏'"
       :placeholder="true"
-      :border="true"
+      :border="true" 
       leftIcon=""
+      class="z-navbar"
     >
       <template #right>
-        <view class="header-right">
-          <!-- <u-icon name="scan" size="22" @click="generateQRCode"></u-icon> -->
-          <u-icon name="plus" size="22" @click="openAddModal"></u-icon>
+        <view class="header-right"> 
+          <!-- <up-icon name="scan" size="22" @click="generateQRCode"></up-icon> -->
+          <up-icon name="plus" size="22" @click="openAddModal"></up-icon>
         </view>
       </template>
-    </u-navbar>
+    </up-navbar>
+
+    <up-button type="primary">123</up-button>
+
 
     <view class="game-list" v-if="state.games.length > 0">
       <view class="game-item" v-for="(item, index) in state.games" :key="item.id">
         <view class="game-info">
-          <u-image class="game-icon" width="120rpx" height="120rpx" :src="item.icon || '/static/images/default-game.png'" mode="aspectFill"></u-image>
+          <up-image class="game-icon" width="120rpx" height="120rpx" :src="item.icon || '/static/images/default-game.png'" mode="aspectFill"></up-image>
           <view class="game-details">
             <view class="game-name">{{ item.name }}</view>
             <view class="game-type">{{ item.type }}</view>
@@ -31,15 +35,15 @@
         </view>
         <view class="game-actions">
           <view class="status" :class="{ 'active': item.isActive, 'inactive': !item.isActive }">
-            <u-switch v-model="item.isActive" @change="toggleGameStatus(index)" color="#07c160"></u-switch>
+            <up-switch v-model="item.isActive" @change="toggleGameStatus(index)" color="#07c160"></up-switch>
             <text>{{ item.isActive ? '已启用' : '已禁用' }}</text>
           </view>
           <view class="action-btns">
             <view class="edit-btn" @click="openEditModal(index)">
-              <u-icon name="edit-pen" size="36"></u-icon>
+              <up-icon name="edit-pen" size="36"></up-icon>
             </view>
             <view class="delete-btn" @click="openDeleteModal(index)">
-              <u-icon name="trash" size="36"></u-icon>
+              <up-icon name="trash" size="36"></up-icon>
             </view>
           </view>
         </view>
@@ -47,78 +51,69 @@
     </view>
 
     <view class="empty-state" v-else>
-      <u-image src="/static/images/empty-games.png" mode="aspectFit"></u-image>
+      <!-- <up-image src="/static/images/empty-games.png" mode="aspectFit"></up-image> -->
       <text>暂无游戏，点击右上角添加</text>
     </view>
+  </pageWrapper>
 
     <!-- 添加/编辑游戏弹窗 -->
-    <u-popup :show="state.showAddModal" mode="center" @close="closeAddModal" >
+    <up-popup :show="state.showAddModal" mode="center" @close="closeAddModal" >
       <view class="z-modal z-modal-lg">
         <view class="modal-header">
           <text>{{ state.isEdit ? '编辑游戏' : '添加游戏' }}</text>
           <view class="close-btn" @click="closeAddModal">
-            <u-icon name="close" size="40"></u-icon>
+            <up-icon name="close" size="26"></up-icon>
           </view>
         </view>
-        <view class="modal-content">
-          <view class="form-item">
-            <text class="label">游戏名称</text>
-            <u-input v-model="state.tempGame.name" placeholder="请输入游戏名称" border="surround"></u-input>
-          </view>
-          <view class="form-item">
-            <text class="label">游戏类型</text>
-            <u-input v-model="state.tempGame.type" placeholder="桌游、互动、技巧等" border="surround"></u-input>
-          </view>
-          <view class="form-item">
-            <text class="label">游戏描述</text>
-            <u-input v-model="state.tempGame.description" type="textarea" placeholder="请输入游戏描述" border="surround" height="160"></u-input>
-          </view>
-          <view class="form-item">
-            <text class="label">参与人数</text>
-            <u-input v-model="state.tempGame.playerCount" placeholder="如: 2-6人" border="surround"></u-input>
-          </view>
-          <view class="form-item">
-            <text class="label">喜爱程度</text>
-            <u-input v-model="state.tempGame.likeRate" placeholder="如: 87%" border="surround"></u-input>
-          </view>
-          <view class="form-item">
-            <text class="label">游戏图标</text>
-            <view class="upload-box" @click="uploadIcon">
-              <u-image v-if="state.tempGame.icon" :src="state.tempGame.icon" mode="aspectFill"></u-image>
-              <view class="upload-placeholder" v-else>
-                <!-- <u-icon name="upload" size="50"></u-icon> -->
-                <text>点击上传</text>
+        <scroll-view scroll-y class="scroll-content">
+          <view class="modal-body">
+            <view class="form-item">
+              <text class="label">游戏名称</text>
+              <up-input v-model="state.tempGame.name" placeholder="请输入游戏名称" border="surround"></up-input>
+            </view>
+            <view class="form-item">
+              <text class="label">游戏类型</text>
+              <up-input v-model="state.tempGame.type" placeholder="桌游、互动、技巧等" border="surround"></up-input>
+            </view>
+            <view class="form-item">
+              <text class="label">游戏描述</text>
+              <up-input v-model="state.tempGame.description" type="textarea" placeholder="请输入游戏描述" border="surround" height="160"></up-input>
+            </view>
+            <view class="form-item">
+              <text class="label">参与人数</text>
+              <up-input v-model="state.tempGame.playerCount" placeholder="如: 2-6人" border="surround"></up-input>
+            </view>
+            <view class="form-item">
+              <text class="label">喜爱程度</text>
+              <up-input v-model="state.tempGame.likeRate" placeholder="如: 87%" border="surround"></up-input>
+            </view>
+            <view class="form-item">
+              <text class="label">游戏图标</text>
+              <view class="upload-box" @click="uploadIcon">
+                <up-image v-if="state.tempGame.icon" :src="state.tempGame.icon" mode="aspectFill" width="100%" height="100%"></up-image>
+                <view class="upload-placeholder" v-else>
+                  <!-- <up-icon name="upload" size="50"></up-icon> -->
+                  <text>点击上传</text>
+                </view>
               </view>
             </view>
+            <view class="form-item switch-item">
+              <text class="label">启用状态</text>
+              <up-switch v-model="state.tempGame.isActive" color="#07c160"></up-switch>
+            </view>
           </view>
-          <view class="form-item switch-item">
-            <text class="label">启用状态</text>
-            <u-switch v-model="state.tempGame.isActive" color="#07c160"></u-switch>
-          </view>
-        </view>
+        </scroll-view>
         <view class="modal-footer">
-          <u-button @click="closeAddModal">取消</u-button>
-          <u-button type="primary" @click="saveGame">保存</u-button>
+          <up-button @click="closeAddModal">取消</up-button>
+          <up-button type="primary" @click="saveGame">保存</up-button>
         </view>
       </view>
-    </u-popup>
-
-    <!-- 删除确认弹窗 -->
-    <u-popup :show="state.showDeleteModal" mode="center" @close="closeDeleteModal" width="600rpx">
-      <view class="confirm-modal">
-        <view class="confirm-title">删除确认</view>
-        <view class="confirm-content">确定要删除"{{ state.currentGame.name }}"吗？删除后无法恢复。</view>
-        <view class="confirm-btns">
-          <u-button class="cancel-btn" @click="closeDeleteModal">取消</u-button>
-          <u-button class="confirm-btn" @click="deleteGame">确定删除</u-button>
-        </view>
-      </view>
-    </u-popup>
-  </view>
+    </up-popup>
 </template>
 
 <script lang="ts" setup>
 import { reactive, onMounted } from 'vue';
+import pageWrapper from "@/components/page/index.vue";
 
 defineOptions({
   name: 'ShopGamesPage',
@@ -151,7 +146,6 @@ const state = reactive({
     icon: '',
     isActive: true
   } as Game,
-  showDeleteModal: false,
   currentGame: {
     id: '',
     name: '',
@@ -279,11 +273,19 @@ const toggleGameStatus = (index: number) => {
 const openDeleteModal = (index: number) => {
   state.currentGame = { ...state.games[index] };
   state.showDeleteModal = true;
-};
 
-// 关闭删除模态框
-const closeDeleteModal = () => {
-  state.showDeleteModal = false;
+  uni.showModal({
+    title: '提示',
+    content: `确定要删除"${ state.currentGame.name }"吗？删除后无法恢复。`,
+    confirmText: '删除',
+    cancelText: '取消',
+    confirmColor: '#f76560',
+    success: (res) => {
+      if(res.confirm){
+        deleteGame()
+      }
+    }
+  })
 };
 
 // 删除游戏
@@ -292,7 +294,6 @@ const deleteGame = () => {
   if (index !== -1) {
     state.games.splice(index, 1);
   }
-  state.showDeleteModal = false;
   uni.showToast({
     title: '游戏已删除',
     icon: 'success'
@@ -324,6 +325,7 @@ const uploadIcon = () => {
 </script>
 
 <style lang="scss" scoped>
+@import '@/uni.scss';
 .container {
   padding: 0 30rpx;
   min-height: 100vh;
@@ -369,6 +371,9 @@ const uploadIcon = () => {
   margin-top: 20rpx;
 }
 
+.modal-body{
+  // max-height: 600rpx;
+}
 .game-item {
   margin-bottom: 30rpx;
   background-color: #fff;
@@ -455,25 +460,29 @@ const uploadIcon = () => {
   color: #999;
 }
 
-.action-btns {
+::v-deep .action-btns {
   display: flex;
-}
+  .edit-btn, .delete-btn {
+    width: 60rpx;
+    height: 60rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 20rpx;
+  }
 
-.edit-btn, .delete-btn {
-  width: 60rpx;
-  height: 60rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 20rpx;
-}
+  .edit-btn {
 
-.edit-btn {
-  color: #576b95;
-}
+  .u-icon__icon{
+      color: $u-primary!important;
+    }
+  }
 
-.delete-btn {
-  color: #e64340;
+  .delete-btn {
+    .u-icon__icon{
+      color: $u-error!important;
+    }
+  }
 }
 
 /* 空状态样式 */
@@ -485,7 +494,7 @@ const uploadIcon = () => {
   margin-top: 200rpx;
 }
 
-.empty-state u-image {
+.empty-state up-image {
   width: 200rpx;
   height: 200rpx;
   margin-bottom: 30rpx;
@@ -497,43 +506,6 @@ const uploadIcon = () => {
 }
 
 /* 弹窗样式 */
-.modal {
-  width: 680rpx;
-  background-color: #fff;
-  border-radius: 16rpx;
-  overflow: hidden;
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 30rpx;
-  border-bottom: 1rpx solid #f0f0f0;
-}
-
-.modal-header text {
-  font-size: 34rpx;
-  font-weight: 600;
-}
-
-.close-btn {
-  width: 60rpx;
-  height: 60rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  padding: 30rpx;
-  max-height: 60vh;
-  overflow-y: auto;
-}
-
 .form-item {
   margin-bottom: 30rpx;
 }
@@ -545,7 +517,7 @@ const uploadIcon = () => {
   margin-bottom: 10rpx;
 }
 
-u-input, u-input[type="textarea"] {
+up-input, up-input[type="textarea"] {
   width: 100%;
   border: 1rpx solid #ddd;
   border-radius: 8rpx;
@@ -554,7 +526,7 @@ u-input, u-input[type="textarea"] {
   box-sizing: border-box;
 }
 
-u-input[type="textarea"] {
+up-input[type="textarea"] {
   height: 160rpx;
 }
 
@@ -569,7 +541,7 @@ u-input[type="textarea"] {
   justify-content: center;
 }
 
-.upload-box u-image {
+.upload-box up-image {
   width: 100%;
   height: 100%;
   border-radius: 8rpx;
@@ -584,7 +556,7 @@ u-input[type="textarea"] {
   font-size: 24rpx;
 }
 
-.upload-placeholder u-icon {
+.upload-placeholder up-icon {
   font-size: 40rpx;
   margin-bottom: 10rpx;
 }
@@ -600,7 +572,7 @@ u-input[type="textarea"] {
   border-top: 1rpx solid #f0f0f0;
 }
 
-.modal-footer u-button {
+.modal-footer up-button {
   flex: 1;
   height: 90rpx;
   line-height: 90rpx;
@@ -648,7 +620,7 @@ u-input[type="textarea"] {
   border-top: 1rpx solid #f0f0f0;
 }
 
-.confirm-btns u-button {
+.confirm-btns up-button {
   flex: 1;
   height: 90rpx;
   line-height: 90rpx;

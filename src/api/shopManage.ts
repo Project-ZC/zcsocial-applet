@@ -1,5 +1,7 @@
 import { http } from "@/utils/http";
 
+
+// ----------店铺列表-----------
 // 查询店铺列表
 export const getShopList = (data: any) => {
     return http({

@@ -1,16 +1,16 @@
 <template>
   <view class="container">
     <!-- 页面标题 -->
-    <view class="page-header glass-card">
+    <view class="page-header z-glass-card">
       <text class="page-title">门票设置</text>
       <view class="header-actions">
-        <u-button class="add-btn" @click="openAddTicketModal">新增门票</u-button>
+        <up-button class="add-btn" @click="openAddTicketModal">新增门票</up-button>
       </view>
     </view>
     
     <!-- 门票列表 -->
     <view class="ticket-list">
-      <view class="ticket-item glass-card" v-for="ticket in state.tickets" :key="ticket.id">
+      <view class="ticket-item z-glass-card" v-for="ticket in state.tickets" :key="ticket.id">
         <view class="ticket-header">
           <view class="ticket-info">
             <text class="ticket-name">{{ ticket.name }}</text>
@@ -48,11 +48,11 @@
         </view>
         
         <view class="ticket-actions">
-          <u-button class="action-btn edit-btn" @click="openEditTicketModal(ticket.id)">编辑</u-button>
-          <u-button class="action-btn toggle-btn" :class="[ticket.status === 'active' ? 'deactivate' : 'activate']" @click="toggleTicketStatus(ticket.id)">
+          <up-button class="action-btn edit-btn" @click="openEditTicketModal(ticket.id)">编辑</up-button>
+          <up-button class="action-btn toggle-btn" :class="[ticket.status === 'active' ? 'deactivate' : 'activate']" @click="toggleTicketStatus(ticket.id)">
             {{ ticket.status === 'active' ? '停用' : '启用' }}
-          </u-button>
-          <u-button class="action-btn delete-btn" @click="openDeleteTicketModal(ticket.id)">删除</u-button>
+          </up-button>
+          <up-button class="action-btn delete-btn" @click="openDeleteTicketModal(ticket.id)">删除</up-button>
         </view>
       </view>
       
@@ -65,7 +65,7 @@
     </view>
     
     <!-- 添加/编辑门票模态框 -->
-    <u-popup :show="state.showTicketModal" mode="center" @close="closeTicketModal" >
+    <up-popup :show="state.showTicketModal" mode="center" @close="closeTicketModal" >
       <view class="z-modal-lg z-modal">
         <view class="modal-header">
           <text class="modal-title">{{ state.isEditingTicket ? '编辑门票' : '新增门票' }}</text>
@@ -76,7 +76,7 @@
           <scroll-view scroll-y="true" >
           <view class="form-group">
             <label class="form-label">门票名称</label>
-            <u-input class="form-input" v-model="state.tempTicket.name" placeholder="请输入门票名称"></u-input>
+            <up-input class="form-input" v-model="state.tempTicket.name" placeholder="请输入门票名称"></up-input>
           </view>
           
           <!-- 性别价格设置 -->
@@ -87,14 +87,14 @@
                 <text class="gender-label">男性价格</text>
                 <view class="price-input-container">
                   <text class="price-symbol">¥</text>
-                  <u-input class="form-input price-input" type="digit" v-model.number="state.tempTicket.malePrice" placeholder="请输入男性价格"></u-input>
+                  <up-input class="form-input price-input" type="digit" v-model.number="state.tempTicket.malePrice" placeholder="请输入男性价格"></up-input>
                 </view>
               </view>
               <view class="price-item">
                 <text class="gender-label">女性价格</text>
                 <view class="price-input-container">
                   <text class="price-symbol">¥</text>
-                  <u-input class="form-input price-input" type="digit" v-model.number="state.tempTicket.femalePrice" placeholder="请输入女性价格"></u-input>
+                  <up-input class="form-input price-input" type="digit" v-model.number="state.tempTicket.femalePrice" placeholder="请输入女性价格"></up-input>
                 </view>
               </view>
             </view>
@@ -102,49 +102,49 @@
           
           <view class="form-group">
             <label class="form-label">包含酒水数量</label>
-            <u-input class="form-input" type="number" v-model.number="state.tempTicket.drinkCount" placeholder="请输入酒水数量"></u-input>
+            <up-input class="form-input" type="number" v-model.number="state.tempTicket.drinkCount" placeholder="请输入酒水数量"></up-input>
           </view>
           
           <view class="form-group">
             <label class="form-label">使用时间（小时）</label>
-            <u-input class="form-input" type="number" v-model.number="state.tempTicket.validHours" placeholder="请输入使用时间"></u-input>
+            <up-input class="form-input" type="number" v-model.number="state.tempTicket.validHours" placeholder="请输入使用时间"></up-input>
           </view>
           
           <view class="form-group">
             <label class="form-label">有效期（天）</label>
-            <u-input class="form-input" type="number" v-model.number="state.tempTicket.validDays" placeholder="请输入有效期"></u-input>
+            <up-input class="form-input" type="number" v-model.number="state.tempTicket.validDays" placeholder="请输入有效期"></up-input>
           </view>
           
           <view class="form-group">
             <label class="form-label">门票描述</label>
-            <u--textarea class="form-textarea" v-model="state.tempTicket.description" placeholder="请输入门票描述" height="120"></u--textarea>
+            <up-textarea class="form-textarea" v-model="state.tempTicket.description" placeholder="请输入门票描述" height="120"></up-textarea>
           </view>
           
           <view class="form-group switch-group">
             <label>启用状态</label>
-            <u-switch v-model="state.tempTicket.status" true-value="active" false-value="inactive" color="#1989fa"></u-switch>
+            <up-switch v-model="state.tempTicket.status" true-value="active" false-value="inactive" color="#1989fa"></up-switch>
           </view>
           </scroll-view>
         </view>
         
         <view class="modal-footer">
-          <u-button class="modal-btn cancel-btn" @click="closeTicketModal">取消</u-button>
-          <u-button class="modal-btn confirm-btn" @click="saveTicket">保存</u-button>
+          <up-button class="modal-btn cancel-btn" @click="closeTicketModal">取消</up-button>
+          <up-button class="modal-btn confirm-btn" @click="saveTicket">保存</up-button>
         </view>
       </view>
-    </u-popup>
+    </up-popup>
     
     <!-- 删除确认弹窗 -->
-    <u-popup :show="state.showDeleteTicketModal" mode="center" @close="closeDeleteTicketModal">
-      <view class="confirm-content glass-card">
+    <up-popup :show="state.showDeleteTicketModal" mode="center" @close="closeDeleteTicketModal">
+      <view class="confirm-content z-glass-card">
         <text class="confirm-title">确认删除</text>
         <text class="confirm-text">您确定要删除此票券吗？此操作无法撤销。</text>
         <view class="confirm-btns">
-          <u-button class="cancel-btn" @click="closeDeleteTicketModal">取消</u-button>
-          <u-button class="delete-btn" type="error" @click="deleteTicket">确认删除</u-button>
+          <up-button class="cancel-btn" @click="closeDeleteTicketModal">取消</up-button>
+          <up-button class="delete-btn" type="error" @click="deleteTicket">确认删除</up-button>
         </view>
       </view>
-    </u-popup>
+    </up-popup>
   </view>
 </template>
 
@@ -337,13 +337,13 @@ const deleteTicket = () => {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
 
-  .u-button{
+  .up-button{
     border:none;
   }
 }
 
 /* 玻璃卡片效果 */
-.glass-card {
+.z-glass-card {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);

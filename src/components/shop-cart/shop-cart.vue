@@ -270,7 +270,7 @@ onUnmounted(() => {
 }
 
 .left-num {
-  font-size: $uni-font-size-base;
+  font-size: $up-font-base;
   margin-left: 25px;
   color: $uni-text-color-inverse;
 }

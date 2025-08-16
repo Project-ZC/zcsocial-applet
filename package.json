@@ -56,6 +56,7 @@
     "@vant/weapp": "^1.11.4",
     "clipboard": "^2.0.11",
     "dayjs": "^1.11.13",
+    "lodash-es": "^4.17.21",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^4.5.0",
     "pinia-plugin-unistorage": "^0.0.17",

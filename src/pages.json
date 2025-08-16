@@ -1,6 +1,12 @@
 {
 	"pages": [
 		{
+			"path": "pages/shopManage/shopManage",
+			"style": {
+				"navigationBarTitleText": "店铺管理"
+			}
+		},
+		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "首页",
@@ -51,12 +57,6 @@
 			}
 		},
 		{
-			"path": "pages/shopManage/shopManage",
-			"style": {
-				"navigationBarTitleText": "店铺管理"
-			}
-		},
-		{
 			"path": "pages/shopDetail/shopDetail",
 			"style": {
 				"navigationBarTitleText": "店铺详情"
@@ -90,6 +90,12 @@
 			"path": "pages/shopGames/shopGames",
 			"style": {
 				"navigationBarTitleText": "店内游戏"
+			}
+		},
+		{
+			"path": "pages/editProfile/editProfile",
+			"style": {
+				"navigationBarTitleText": "编辑资料"
 			}
 		}
 	],

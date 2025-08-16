@@ -1,0 +1,167 @@
+// 主题CSS变量
+:root,
+page {
+    --primary-1: rgb(219, 235, 255);
+    /* 浅色/白底悬浮 ：#DBEBFF */
+    --primary-2: rgb(207, 226, 246);
+    /* 文字禁用 ：#CFE2F6 */
+    --primary-3: rgb(186, 217, 255);
+    /* 一般禁用 ：#BAD9FF */
+    --primary-4: rgb(110, 175, 255);
+    /* 特殊场景 ：#6EAFFF */
+    --primary-5: rgb(61, 161, 255);
+    /* 悬浮 ：#3DA1FF */
+    --primary-6: rgb(34, 114, 251);
+    /* 常规 ：#2272FB */
+    --primary-7: rgb(46 118 233);
+    /* 点击/高亮 ：#2e76e9 */
+    --border-1: rgb(242, 243, 245);
+    /* 浅 ：#f2f3f5 */
+    --border-2: rgb(229, 230, 235);
+    /* 一般 ：#e5e6eb */
+    --border-3: rgb(201, 205, 212);
+    /* 深/悬浮 ：#c9cdd4 */
+    --border-4: rgb(134, 144, 156);
+    /* 重/按钮描边 ：#86909c */
+    --fill-1: rgb(255, 255, 255);
+    /* 纯白填充 ：#ffffff */
+    --fill-2: rgb(247, 248, 250);
+    /* 浅/禁用 ：#f7f8fa */
+    --fill-3: rgb(242, 243, 245);
+    /* 常规/白底悬浮 ：#f2f3f5 */
+    --fill-4: rgb(229, 230, 235);
+    /* 深/灰底悬浮 ：#e5e6eb */
+    --fill-5: rgb(201, 205, 212);
+    /* 重/特殊场景 ：#c9cdd4 */
+    --text-1: rgb(29, 33, 41);
+    /* 强调/正文标题
+   ：#1d2129 */
+    --text-2: rgb(78, 89, 105);
+    /* 次强调/正文标题 ：#4e5969 */
+    --text-3: rgb(134, 144, 156);
+    /* 次要信息 ：#86909c */
+    --text-4: rgb(201, 205, 212);
+    /* 置灰信息 ：#c9cdd4 */
+    --text-5: rgb(255, 255, 255);
+    /* 纯白文字 ：#ffffff */
+    --bg-1: rgb(242, 243, 245);
+    /* 整体背景色
+   ：#f2f3f5 */
+    --bg-2: rgb(255, 255, 255);
+    /* 一级容器背景
+   ：#ffffff */
+    --bg-3: rgb(255, 255, 255);
+    /* 二级容器背景
+   ：#ffffff */
+    --bg-4: rgb(255, 255, 255);
+    /* 三级容器背景 ：#ffffff */
+    --bg-5: rgb(255, 255, 255);
+    /* 下拉弹出框、Tooltip 背景颜色 ：#ffffff */
+    --bg-6: rgb(16, 22, 37);
+    /* 左侧导航背景 ：#101625 */
+    --warning-1: rgb(255, 247, 232);
+    /* 浅色/白底悬浮
+   ：#fff7e8 */
+    --warning-2: rgb(255, 228, 186);
+    /* 文字禁用 ：#ffe4ba */
+    --warning-3: rgb(255, 207, 139);
+    /* 一般禁用 ：#ffcf8b */
+    --warning-4: rgb(255, 182, 93);
+    /* 特殊场景
+   ：#ffb65d */
+    --warning-5: rgb(255, 154, 46);
+    /* 悬浮 ：#ff9a2e */
+    --warning-6: rgb(255, 125, 0);
+    /* 常规 ：#ff7d00 */
+    --warning-7: rgb(210, 95, 0);
+    /* 点击 ：#d25f00 */
+    --success-1: rgb(232, 255, 234);
+    /* 浅色/白底悬浮 ：#e8ffea */
+    --success-2: rgb(175, 240, 181);
+    /* 文字禁用 ：#aff0b5 */
+    --success-3: rgb(123, 225, 136);
+    /* 一般禁用 ：#7be188 */
+    --success-4: rgb(76, 210, 99);
+    /* 特殊场景 ：#4cd263 */
+    --success-5: rgb(35, 195, 67);
+    /* 悬浮 ：#23c343 */
+    --success-6: rgb(0, 180, 42);
+    /* 常规 ：#00b42a */
+    --success-7: rgb(0, 154, 41);
+    /* 点击 ：#009a29 */
+    --danger-1: rgb(255, 236, 232);
+    /* 浅色/白底悬浮
+   ：#ffece8 */
+    --danger-2: rgb(253, 205, 197);
+    /* 文字禁用 ：#fdcdc5 */
+    --danger-3: rgb(251, 172, 163);
+    /* 一般禁用 ：#fbaca3 */
+    --danger-4: rgb(249, 137, 129);
+    /* 特殊场景 ：#f98981 */
+    --danger-5: rgb(247, 101, 96);
+    /* 悬浮 ：#f76560 */
+    --danger-6: rgb(245, 63, 63);
+    /* 常规 ：#f53f3f */
+    --danger-7: rgb(203, 39, 45);
+    /* 点击 ：#cb272d */
+    --link-1: rgb(232, 243, 255);
+    /* 浅色/白底悬浮
+   ：#e8f3ff */
+    --link-2: rgb(190, 218, 255);
+    /* 文字禁用 ：#bedaff */
+    --link-3: rgb(148, 191, 255);
+    /* 一般禁用 ：#94bfff */
+    --link-4: rgb(106, 161, 255);
+    /* 特殊场景 ：#6aa1ff */
+    --link-5: rgb(64, 128, 255);
+    /* 悬浮 ：#4080ff */
+    --link-6: rgb(22, 93, 255);
+    /* 常规 ：#165dff */
+    --link-7: rgb(14, 66, 210);
+    /* 点击 ：#0e42d2 */
+    --chart-red: rgb(245, 63, 63);
+    /*  ：#f53f3f */
+    --chart-orangered: rgb(247, 114, 52);
+    /*  ：#f77234 */
+    --chart-orange: rgb(255, 125, 0);
+    /*  ：#ff7d00 */
+    --chart-gold: rgb(247, 186, 30);
+    /*  ：#f7ba1e */
+    --chart-lime: rgb(159, 219, 29);
+    /*  ：#9fdb1d */
+    --chart-green: rgb(0, 180, 42);
+    /*  ：#00b42a */
+    --chart-cyan: rgb(15, 198, 194);
+    /*  ：#0fc6c2 */
+    --chart-arcoblue: rgb(22, 93, 255);
+    /*  ：#165dff */
+    --chart-purple: rgb(114, 46, 209);
+    /*  ：#722ed1 */
+    --chart-pinkpurple: rgb(217, 26, 217);
+    /*  ：#d91ad9 */
+    --chart-magenta: rgb(245, 49, 157);
+    /*  ：#f5319d */
+    --chart-gray: rgb(201, 205, 212);
+    /*  ：#c9cdd4 */
+
+
+    // 主色调
+    --theme-primary: var(--primary-6);
+    --theme-success: var(--success-6);
+    --theme-warning: var(--warning-6);
+    --theme-error: var(--danger-6);
+
+    // 文字颜色
+    --theme-main-color: var(--text-1);
+    --theme-content-color: var(--text-2);
+    --theme-tips-color: var(--text-3);
+    --theme-light-color: var(--text-4);
+    --theme-disabled-color: var(--text-5);
+
+    // 背景颜色
+    --theme-bg-color: var(--bg-2);
+    --theme-bg-color-secondary: var(--bg-1);
+
+    // 边框颜色
+    --theme-border-color: var(--border-1);
+}

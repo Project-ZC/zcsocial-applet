@@ -1,6 +1,6 @@
 <view class="container">
   <!-- 页面标题 -->
-  <view class="page-header glass-card">
+  <view class="page-header z-glass-card">
     <view class="back-arrow" bindtap="safeNavigateBack">
       <image src="/static/images/icons/back.png" mode="aspectFit"></image>
     </view>
@@ -9,7 +9,7 @@
   </view>
   
   <!-- 店铺信息表单 -->
-  <view class="shop-form glass-card">
+  <view class="shop-form z-glass-card">
     <!-- 店铺LOGO -->
     <view class="form-item">
       <text class="form-label">店铺LOGO</text>

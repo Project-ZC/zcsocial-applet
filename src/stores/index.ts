@@ -2,6 +2,7 @@ import type { App } from 'vue';
 import { createPinia } from 'pinia';
 // pinia 持久化插件
 import { createPersistedState } from 'pinia-plugin-persistedstate';
+import { uniCache } from '@/utils/storage';
 
 // 导入子模块
 import { useUserStore } from './modules/user';
@@ -14,8 +15,8 @@ function setupStore(app: App) {
 
     const piniaPersist = createPersistedState({
         storage: {
-            getItem: uni.getStorageSync,
-            setItem: uni.setStorageSync,
+            getItem: uniCache.getItem,
+            setItem: uniCache.setItem,
         },
     });
     store.use(piniaPersist);

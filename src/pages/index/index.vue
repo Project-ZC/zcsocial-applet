@@ -1,7 +1,7 @@
 <template>
 	<view class="content container">
 		<Navbar />
-		<view class="scan-box" @tap="handleScan">
+		<view class="scan-box z-glass-card" @tap="handleScan">
 			<up-image width="100" height="100" src="/static/scan-logo.png" />
 			<view class="scan-text">
 				<text>扫码进入店铺</text>
@@ -191,9 +191,6 @@ const handleScan = () => {
 		justify-content: center;
 		box-sizing: border-box;
 		margin: 12px 0;
-		background-color: #fff;
-		border-radius: 16rpx;
-		box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
 		transition: all 0.3s ease;
 
 		&:active {
@@ -219,15 +216,4 @@ const handleScan = () => {
 	}
 }
 
-// 暗色主题样式
-page[data-dark-theme="true"] {
-	.scan-box {
-		background-color: #1c1c1e;
-		box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
-
-		.scan-text {
-			color: #fff;
-		}
-	}
-}
 </style>

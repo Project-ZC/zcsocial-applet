@@ -1,14 +1,14 @@
 <template>
-  <view class="container">
-    <view class="header glass-card">
+   <pageWrapper class="table-manage">
+    <view class="header z-glass-card">
       <text class="page-title">桌位管理</text>
-      <u-button class="add-btn" type="primary" @click="openAddTableModal">添加桌位</u-button>
+      <up-button class="add-btn" type="primary" @click="openAddTableModal">添加桌位</up-button>
     </view>
 
     <!-- 桌位列表 -->
     <view class="table-list">
       <block v-for="table in state.tables" :key="table.id">
-        <view class="table-item glass-card">
+        <view class="table-item z-glass-card">
           <view class="table-info">
             <view class="table-header">
               <text class="table-name">{{ table.number }}</text>
@@ -24,94 +24,85 @@
             </view>
           </view>
           <view class="table-actions">
-            <u-button  type="primary" @click="openEditTableModal(table.id)">编辑</u-button>
-            <u-button  type="error" @click="openDeleteTableModal(table.id)">删除</u-button>
+            <up-button  type="primary" @click="openEditTableModal(table.id)">编辑</up-button>
+            <up-button  type="error" @click="openDeleteTableModal(table.id)">删除</up-button>
           </view>
         </view>
       </block>
-      <view class="empty-state glass-card" v-if="state.tables.length === 0">
+      <view class="empty-state z-glass-card" v-if="state.tables.length === 0">
         <image src="/static/empty.png" mode="widthFix"></image>
         <text>暂无桌位数据</text>
-        <u-button class="add-table-btn" @click="openAddTableModal">添加桌位</u-button>
+        <up-button class="add-table-btn" @click="openAddTableModal">添加桌位</up-button>
       </view>
     </view>
+  </pageWrapper>
 
     <!-- 添加/编辑桌位弹窗 -->
-    <u-popup :show="state.showTableModal" mode="center" @close="closeTableModal">
+    <up-popup :show="state.showTableModal" mode="center" @close="closeTableModal">
       <view class="z-modal z-modal-lg">
         <view class="modal-header">
           <text class="modal-title">{{ state.isEditingTable ? '编辑桌位' : '添加桌位' }}</text>
           <text class="close-btn" @click="closeTableModal">×</text>
         </view>
-        <view class="modal-body">
-          <view class="form-item">
-            <text class="form-label">桌号</text>
-            <u-input class="form-input" v-model="state.tempTable.number" placeholder="请输入桌号（如：1号桌）" border="surround"></u-input>
-          </view>
-          <view class="form-item">
-            <text class="form-label">最大人数</text>
-            <u-input class="form-input" type="number" v-model.number="state.tempTable.maxCount" placeholder="请输入最大人数" border="surround"></u-input>
-          </view>
-          <view class="form-item" v-if="state.isEditingTable">
-            <text class="form-label">当前人数</text>
-            <u-input class="form-input" type="number" v-model.number="state.tempTable.currentCount" placeholder="请输入当前人数" border="surround"></u-input>
-          </view>
-          <view class="form-item">
-            <text class="form-label">服务模式</text>
-            <view class="service-mode-options">
-              <view class="mode-option" :class="[state.tempTable.serviceMode === 'ticket' ? 'active' : '']" @click="selectServiceMode('ticket')">
-                <text class="mode-label">门票制</text>
-                <text class="mode-desc">固定门票价格，包含单点制内容</text>
+          <scroll-view scroll-y class="scroll-content">
+            <view class="modal-body">
+              <view class="form-item">
+                <text class="form-label">桌号</text>
+                <up-input class="form-input" v-model="state.tempTable.number" placeholder="请输入桌号（如：1号桌）" border="surround"></up-input>
               </view>
-              <view class="mode-option" :class="[state.tempTable.serviceMode === 'order' ? 'active' : '']" @click="selectServiceMode('order')">
-                <text class="mode-label">点单制</text>
-                <text class="mode-desc">按实际消费点单收费</text>
+              <view class="form-item">
+                <text class="form-label">最大人数</text>
+                <up-input class="form-input" type="number" v-model.number="state.tempTable.maxCount" placeholder="请输入最大人数" border="surround"></up-input>
               </view>
-            </view>
-          </view>
-          <!-- 二维码设置 -->
-          <view class="form-item">
-            <text class="form-label">桌位二维码</text>
-            <view class="qrcode-section">
-              <view class="qrcode-preview" v-if="state.tempTable.qrcode">
-                <image class="qrcode-image" :src="state.tempTable.qrcode" mode="aspectFit"></image>
-                <view class="qrcode-actions">
-                  <u-button class="qrcode-btn" type="primary" @click="viewQRCode">查看</u-button>
-                  <u-button class="qrcode-btn" type="error" @click="deleteQRCode">删除</u-button>
+              <view class="form-item" v-if="state.isEditingTable">
+                <text class="form-label">当前人数</text>
+                <up-input class="form-input" type="number" v-model.number="state.tempTable.currentCount" placeholder="请输入当前人数" border="surround"></up-input>
+              </view>
+              <view class="form-item">
+                <text class="form-label">服务模式</text>
+                <view class="service-mode-options">
+                  <view class="mode-option" :class="[state.tempTable.serviceMode === 'ticket' ? 'active' : '']" @click="selectServiceMode('ticket')">
+                    <text class="mode-label">门票制</text>
+                    <text class="mode-desc">固定门票价格，包含单点制内容</text>
+                  </view>
+                  <view class="mode-option" :class="[state.tempTable.serviceMode === 'order' ? 'active' : '']" @click="selectServiceMode('order')">
+                    <text class="mode-label">点单制</text>
+                    <text class="mode-desc">按实际消费点单收费</text>
+                  </view>
                 </view>
               </view>
-              <view class="qrcode-upload" v-else>
-                <view class="upload-area" @click="uploadQRCode">
-                  <text class="upload-icon">+</text>
-                  <text class="upload-text">上传二维码图片</text>
-                  <text class="upload-desc">支持JPG、PNG格式，建议尺寸200x200px</text>
+              <!-- 二维码设置 -->
+              <view class="form-item">
+                <text class="form-label">桌位二维码</text>
+                <view class="qrcode-section">
+                  <view class="qrcode-preview" v-if="state.tempTable.qrcode">
+                    <image class="qrcode-image" :src="state.tempTable.qrcode" mode="aspectFit"></image>
+                    <view class="qrcode-actions">
+                      <up-button class="qrcode-btn" type="primary" @click="viewQRCode">查看</up-button>
+                      <up-button class="qrcode-btn" type="error" @click="deleteQRCode">删除</up-button>
+                    </view>
+                  </view>
+                  <view class="qrcode-upload" v-else>
+                    <view class="upload-area" @click="uploadQRCode">
+                      <text class="upload-icon">+</text>
+                      <text class="upload-text">上传二维码图片</text>
+                      <text class="upload-desc">支持JPG、PNG格式，建议尺寸200x200px</text>
+                    </view>
+                  </view>
                 </view>
               </view>
-            </view>
           </view>
-        </view>
+          </scroll-view>
         <view class="modal-footer">
-          <u-button @click="closeTableModal">取消</u-button>
-          <u-button  type="primary" @click="confirmTable">确定</u-button>
+          <up-button @click="closeTableModal">取消</up-button>
+          <up-button  type="primary" @click="confirmTable">确定</up-button>
         </view>
       </view>
-    </u-popup>
-
-    <!-- 删除确认弹窗 -->
-    <u-popup :show="state.showDeleteTableModal" mode="center" @close="closeDeleteTableModal">
-      <view class="confirm-content glass-card">
-        <text class="confirm-title">确认删除</text>
-        <text class="confirm-text">您确定要删除此桌位吗？此操作无法撤销。</text>
-        <view class="confirm-btns">
-          <u-button  @click="closeDeleteTableModal">取消</u-button>
-          <u-button  type="error" @click="deleteTable">确认删除</u-button>
-        </view>
-      </view>
-    </u-popup>
-  </view>
+    </up-popup>
 </template>
 
 <script lang="ts" setup>
+import pageWrapper from "@/components/page/index.vue";
 import { reactive, onMounted } from "vue";
 
 defineOptions({
@@ -145,7 +136,6 @@ const state = reactive({
     qrcode: '',
     sort: 0
   } as Table,
-  showDeleteTableModal: false,
   deleteTableId: ''
 });
 
@@ -278,12 +268,18 @@ const deleteQRCode = () => {
 
 const openDeleteTableModal = (id: string) => {
   state.deleteTableId = id;
-  state.showDeleteTableModal = true;
-};
-
-const closeDeleteTableModal = () => {
-  state.showDeleteTableModal = false;
-  state.deleteTableId = '';
+  uni.showModal({
+    title: '提示',
+    content: '您确定要删除此桌位吗？此操作无法撤销。',
+    confirmText: '删除',
+    cancelText: '取消',
+    confirmColor: '#f76560',
+    success: (res) => {
+      if(res.confirm){
+        deleteTable()
+      }
+    }
+  })
 };
 
 const deleteTable = () => {
@@ -291,7 +287,6 @@ const deleteTable = () => {
   if (index !== -1) {
     state.tables.splice(index, 1);
   }
-  state.showDeleteTableModal = false;
   state.deleteTableId = '';
   uni.showToast({
     title: '桌位已删除',
@@ -301,18 +296,11 @@ const deleteTable = () => {
 </script>
 
 <style lang="scss" scoped>
-.container {
-  padding: 15px;
-  background-color: #f8f8f8;
-  min-height: 100vh;
-}
-
-/* 玻璃卡片效果 */
-.glass-card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+@import '@/uni.scss';
+.table-manage {
+ ::v-deep .content-area{
+    padding: $up-box-pd;
+  }
 }
 
 /* 头部样式 */
@@ -320,56 +308,58 @@ const deleteTable = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px;
-  margin-bottom: 20px;
+  padding: $up-box-pd;
+  margin-bottom: $up-box-mg;
 }
 
 .page-title {
-  font-size: 18px;
+  font-size: 36rpx;
   font-weight: bold;
   color: #333;
 }
 
 .add-btn {
-  font-size: 14px;
-  padding: 8px 16px;
-  border-radius: 20px;
+  font-size: 28rpx;
+  // padding: 16rpx 32rpx;
+  border-radius: 40rpx;
   border: none;
-  width: 120rpx;
+  width: 180rpx!important;
+  margin: 0;
+
 }
 
 /* 桌位列表样式 */
 .table-list {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: $up-box-mg;
 }
 
 .table-item {
-  padding: 15px;
+  padding: $up-box-pd;
 }
 
 .table-info {
-  margin-bottom: 15px;
+  margin-bottom: $up-box-mg;
 }
 
 .table-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: $up-box-mg;
 }
 
 .table-name {
-  font-size: 16px;
+  font-size: $up-font-lg;
   font-weight: bold;
   color: #333;
 }
 
 .table-status {
-  font-size: 12px;
-  padding: 4px 8px;
-  border-radius: 10px;
+  font-size: 24rpx;
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
 }
 
 .table-status.available {
@@ -383,19 +373,19 @@ const deleteTable = () => {
 }
 
 .table-count {
-  font-size: 14px;
+  font-size: 28rpx;
   color: #666;
-  margin-bottom: 8px;
+  margin-bottom: 16rpx;
 }
 
 .table-mode {
-  margin-top: 5px;
+  margin-top: 10rpx;
 }
 
 .mode-tag {
-  font-size: 12px;
-  padding: 3px 8px;
-  border-radius: 8px;
+  font-size: 24rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 16rpx;
   background-color: #f0f0f0;
   color: #666;
 }
@@ -412,30 +402,30 @@ const deleteTable = () => {
 
 .table-actions {
   display: flex;
-  gap: 10px;
+  gap: 20rpx;
 }
 
 
 /* 弹窗样式 */
 
 .form-item {
-  margin-bottom: 15px;
+  margin-bottom: 30rpx;
 }
 
 .form-label {
   display: block;
-  font-size: 14px;
+  font-size: 28rpx;
   color: #666;
-  margin-bottom: 8px;
+  margin-bottom: 16rpx;
 }
 
 .form-input {
   width: 100%;
-  height: 40px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 0 12px;
-  font-size: 14px;
+  height: 80rpx;
+  border: 2rpx solid #e0e0e0;
+  border-radius: 16rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
   color: #333;
   background-color: #fff;
   box-sizing: border-box;
@@ -443,14 +433,14 @@ const deleteTable = () => {
 
 .modal-footer {
   display: flex;
-  gap: 10px;
+  gap: 20rpx;
 }
 
 .cancel-btn, .confirm-btn {
   flex: 1;
-  height: 40px;
-  font-size: 14px;
-  border-radius: 20px;
+  height: 80rpx;
+  font-size: 28rpx;
+  border-radius: 40rpx;
   border: none;
 }
 
@@ -459,14 +449,14 @@ const deleteTable = () => {
 .service-mode-options {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 8px;
+  gap: 24rpx;
+  margin-top: 16rpx;
 }
 
 .mode-option {
-  padding: 16px;
-  border: 2px solid #e0e0e0;
-  border-radius: 12px;
+  padding: 32rpx;
+  border: 4rpx solid #e0e0e0;
+  border-radius: 24rpx;
   background-color: #fff;
   transition: all 0.3s ease;
   cursor: pointer;
@@ -479,10 +469,10 @@ const deleteTable = () => {
 
 .mode-label {
   display: block;
-  font-size: 16px;
+  font-size: 32rpx;
   font-weight: 500;
   color: #333;
-  margin-bottom: 4px;
+  margin-bottom: 8rpx;
 }
 
 .mode-option.active .mode-label {
@@ -491,7 +481,7 @@ const deleteTable = () => {
 
 .mode-desc {
   display: block;
-  font-size: 12px;
+  font-size: 24rpx;
   color: #999;
   line-height: 1.4;
 }
@@ -502,37 +492,37 @@ const deleteTable = () => {
 
 /* 二维码相关样式 */
 .qrcode-section {
-  margin-top: 10px;
+  margin-top: 20rpx;
 }
 
 .qrcode-preview {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 20rpx;
 }
 
 .qrcode-image {
-  width: 120px;
-  height: 120px;
-  border-radius: 8px;
-  border: 2px solid #e0e0e0;
+  width: 240rpx;
+  height: 240rpx;
+  border-radius: 16rpx;
+  border: 4rpx solid #e0e0e0;
 }
 
 .qrcode-actions {
   display: flex;
-  gap: 10px;
+  gap: 20rpx;
 }
 
 .qrcode-btn {
-  font-size: 12px;
-  padding: 6px 12px;
-  border-radius: 15px;
+  font-size: 24rpx;
+  padding: 12rpx 24rpx;
+  border-radius: 30rpx;
   border: none;
 }
 
 .qrcode-upload {
-  margin-top: 10px;
+  margin-top: 20rpx;
 }
 
 .upload-area {
@@ -540,9 +530,9 @@ const deleteTable = () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 30px 20px;
-  border: 2px dashed #d0d0d0;
-  border-radius: 8px;
+  padding: 60rpx 40rpx;
+  border: 4rpx dashed #d0d0d0;
+  border-radius: 16rpx;
   background-color: #fafafa;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -554,19 +544,19 @@ const deleteTable = () => {
 }
 
 .upload-icon {
-  font-size: 32px;
+  font-size: 64rpx;
   color: #999;
-  margin-bottom: 8px;
+  margin-bottom: 16rpx;
 }
 
 .upload-text {
-  font-size: 14px;
+  font-size: 28rpx;
   color: #333;
-  margin-bottom: 4px;
+  margin-bottom: 8rpx;
 }
 
 .upload-desc {
-  font-size: 12px;
+  font-size: 24rpx;
   color: #999;
   text-align: center;
 }
@@ -574,29 +564,29 @@ const deleteTable = () => {
 /* 删除确认弹窗样式 */
 .confirm-content {
   width: 80%;
-  max-width: 300px;
-  padding: 20px;
+  max-width: 600rpx;
+  padding: 40rpx;
 }
 
 .confirm-title {
-  font-size: 18px;
+  font-size: 36rpx;
   font-weight: bold;
   color: #333;
   text-align: center;
-  margin-bottom: 15px;
+  margin-bottom: 30rpx;
 }
 
 .confirm-text {
-  font-size: 14px;
+  font-size: 28rpx;
   color: #666;
-  margin-bottom: 20px;
+  margin-bottom: 40rpx;
   text-align: center;
 }
 
 .confirm-btns {
   display: flex;
   justify-content: space-between;
-  gap: 10px;
+  gap: 20rpx;
 }
 
 .confirm-btns .cancel-btn {

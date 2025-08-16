@@ -1,10 +1,10 @@
 <template>
   <view class="container">
     <!-- 店铺信息表单 -->
-    <view class="shop-form glass-card">
-      <u--form :model="form" ref="uForm" :error-type="['message']" labelPosition="top" labelWidth="auto">
+    <view class="shop-form z-glass-card">
+      <up-form :model="form" ref="uForm" :error-type="['message']" labelPosition="top" labelWidth="auto">
         <!-- 店铺LOGO -->
-        <u-form-item label="店铺LOGO" prop="logo">
+        <up-form-item label="店铺LOGO" prop="logo">
           <view class="logo-uploader" @click="uploadLogo">
             <image class="shop-logo" :src="form.logo" mode="aspectFill" v-if="form.logo"></image>
             <view class="upload-placeholder" v-else>
@@ -12,21 +12,21 @@
               <text class="upload-text">点击上传</text>
             </view>
           </view>
-        </u-form-item>
+        </up-form-item>
         
         <!-- 店铺名称 -->
-        <u-form-item label="店铺名称" prop="name" :rules="[{ required: true, message: '请输入店铺名称' }]">
-          <u-input v-model="form.name" placeholder="请输入店铺名称" />
-        </u-form-item>
+        <up-form-item label="店铺名称" prop="name" :rules="[{ required: true, message: '请输入店铺名称' }]">
+          <up-input v-model="form.name" placeholder="请输入店铺名称" />
+        </up-form-item>
         
         <!-- 店铺简介 -->
-        <u-form-item label="店铺简介" prop="description">
-          <u--textarea  v-model="form.description"  :rows="4" placeholder="请输入店铺简介" maxlength="200" count/>
+        <up-form-item label="店铺简介" prop="description">
+          <up-textarea  v-model="form.description"  :rows="4" placeholder="请输入店铺简介" maxlength="200" count/>
           <!-- <text class="textarea-counter">{{ form.description.length || 0 }}/200</text> -->
-        </u-form-item>
+        </up-form-item>
         
         <!-- 营业时间 -->
-        <u-form-item label="营业时间" prop="openTime" :rules="[{ required: true, message: '请选择营业时间' }]">
+        <up-form-item label="营业时间" prop="openTime" :rules="[{ required: true, message: '请选择营业时间' }]">
           <view class="time-picker-row">
             <view class="time-picker" @click="showOpenTimePicker = true">
               <text>{{ form.openTime || '请选择' }}</text>
@@ -36,19 +36,19 @@
               <text>{{ form.closeTime || '请选择' }}</text>
             </view>
           </view>
-        </u-form-item>
+        </up-form-item>
         
         <!-- 店铺地址 -->
-        <u-form-item label="店铺地址" prop="address" :rules="[{ required: true, message: '请选择店铺地址' }]">
+        <up-form-item label="店铺地址" prop="address" :rules="[{ required: true, message: '请选择店铺地址' }]">
           <view class="location-picker" @click="chooseLocation">
             <text v-if="form.address">{{ form.address }}</text>
             <text v-else class="placeholder-text">点击选择地址</text>
             <view class="location-icon"></view>
           </view>
-        </u-form-item>
+        </up-form-item>
         
         <!-- 店铺标签 -->
-        <u-form-item label="店铺标签" prop="tags">
+        <up-form-item label="店铺标签" prop="tags">
           <view class="tags-container">
             <view class="tags-list">
               <view class="tag-item" v-for="(item, index) in form.tags" :key="index">
@@ -58,14 +58,14 @@
               <view class="add-tag" @click="showTagInput" v-if="!showTagInput && form.tags.length < 5">+</view>
             </view>
             <view class="tag-input-container" v-if="showTagInput">
-              <u-input class="tag-input" v-model="newTag" :focus="showTagInput" placeholder="输入标签名称" maxlength="6" @blur="hideTagInput" />
-              <u-button class="add-tag-btn" @click="addTag" :disabled="!newTag">添加</u-button>
+              <up-input class="tag-input" v-model="newTag" :focus="showTagInput" placeholder="输入标签名称" maxlength="6" @blur="hideTagInput" />
+              <up-button class="add-tag-btn" @click="addTag" :disabled="!newTag">添加</up-button>
             </view>
           </view>
-        </u-form-item>
+        </up-form-item>
         
         <!-- Homebar相册 -->
-        <u-form-item label="Homebar相册" prop="album">
+        <up-form-item label="Homebar相册" prop="album">
           <view class="album-container">
             <view class="album-list">
               <view class="album-item" v-for="(item, index) in form.album" :key="index">
@@ -78,28 +78,28 @@
             </view>
             <text class="album-tip">最多上传9张照片，建议上传店铺环境、特色酒水等照片</text>
           </view>
-        </u-form-item>
-      </u--form>
+        </up-form-item>
+      </up-form>
     </view>
     
     <!-- 保存按钮 -->
-    <u-button class="save-button" type="primary" @click="saveShopInfo">保存</u-button>
+    <up-button class="save-button" type="primary" @click="saveShopInfo">保存</up-button>
     
     <!-- 营业时间选择器 -->
-    <u-datetime-picker
+    <up-datetime-picker
       :show="showOpenTimePicker"
       v-model="openTimeValue"
       mode="time"
       @confirm="confirmOpenTime"
       @cancel="showOpenTimePicker = false"
-    ></u-datetime-picker>
-    <u-datetime-picker
+    ></up-datetime-picker>
+    <up-datetime-picker
       :show="showCloseTimePicker"
       v-model="closeTimeValue"
       mode="time"
       @confirm="confirmCloseTime"
       @cancel="showCloseTimePicker = false"
-    ></u-datetime-picker>
+    ></up-datetime-picker>
   </view> 
 </template>
 
@@ -268,7 +268,7 @@ const saveShopInfo = () => {
 .container {
 }
 
-.glass-card {
+.z-glass-card {
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -618,12 +618,12 @@ const saveShopInfo = () => {
 }
 
 // 自定义样式以确保u-form标签显示在顶部
-// .u-form-item {
+// .up-form-item {
 //   flex-direction: column !important;
 //   align-items: flex-start !important;
 // }
 
-// .u-form-item__body {
+// .up-form-item__body {
 //   width: 100% !important;
 // }
 </style>

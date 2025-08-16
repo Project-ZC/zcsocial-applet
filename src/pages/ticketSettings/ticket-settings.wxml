@@ -1,6 +1,6 @@
 <view class="container">
   <!-- 页面标题 -->
-  <view class="page-header glass-card">
+  <view class="page-header z-glass-card">
     <text class="page-title">门票设置</text>
     <view class="header-actions">
       <button class="add-btn" bindtap="showAddModal">新增门票</button>
@@ -9,7 +9,7 @@
   
   <!-- 门票列表 -->
   <view class="ticket-list">
-    <view class="ticket-item glass-card" wx:for="{{ticketList}}" wx:key="id">
+    <view class="ticket-item z-glass-card" wx:for="{{ticketList}}" wx:key="id">
       <view class="ticket-header">
         <view class="ticket-info">
           <text class="ticket-name">{{item.name}}</text>
