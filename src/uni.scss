@@ -17,7 +17,9 @@
 // @import '@/static/styles/variables.scss';
 
 /* 行为相关颜色 */
-$u-primary: #671aa7;
+$u-primary: #3c9cff;
+// 背景色
+$u-bg-1: #f5f5f5;
 
 /* 文字尺寸 */
 $up-font-sm: 20rpx;
@@ -53,3 +55,6 @@ $up-opacity-disabled: 0.3;
 // 边距盒子外边距 内边距
 $up-box-mg: 20rpx;
 $up-box-pd: 20rpx;
+
+// 顶部导航栏高度
+$up-navbar-h: 44px;

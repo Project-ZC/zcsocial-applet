@@ -7,20 +7,21 @@
 
     <!-- 桌位列表 -->
     <view class="table-list">
+      <template v-if="state.tables.length > 0">
       <block v-for="table in state.tables" :key="table.id">
         <view class="table-item z-glass-card">
           <view class="table-info">
             <view class="table-header">
-              <text class="table-name">{{ table.number }}</text>
+              <text class="table-name">{{ table.tableName }}</text>
               <view class="table-status" :class="[table.status === 'available' ? 'available' : 'occupied']">
                 {{ table.status === 'available' ? '空闲' : '已满' }}
               </view>
             </view>
             <view class="table-count">
-              <text>当前人数：{{ table.currentCount }}/{{ table.maxCount }}人</text>
+              <text>人数：{{ table.personNumber }}人</text>
             </view>
             <view class="table-mode">
-              <text class="mode-tag" :class="[table.serviceMode]">{{ table.serviceMode === 'ticket' ? '门票制' : '点单制' }}</text>
+              <text class="mode-tag" :class="[table.orderMode]">{{ table.orderMode === 'ticket' ? '门票制' : '点单制' }}</text>
             </view>
           </view>
           <view class="table-actions">
@@ -29,10 +30,13 @@
           </view>
         </view>
       </block>
-      <view class="empty-state z-glass-card" v-if="state.tables.length === 0">
-        <image src="/static/empty.png" mode="widthFix"></image>
-        <text>暂无桌位数据</text>
-        <up-button class="add-table-btn" @click="openAddTableModal">添加桌位</up-button>
+      </template>
+      <view class="empty-state z-glass-card" v-else>
+        <emptyData text="暂无桌位">
+          <template #subtext>
+            <text>点击右上角按钮添加桌位</text>
+          </template>
+        </emptyData>
       </view>
     </view>
   </pageWrapper>
@@ -46,51 +50,63 @@
         </view>
           <scroll-view scroll-y class="scroll-content">
             <view class="modal-body">
-              <view class="form-item">
-                <text class="form-label">桌号</text>
-                <up-input class="form-input" v-model="state.tempTable.number" placeholder="请输入桌号（如：1号桌）" border="surround"></up-input>
-              </view>
-              <view class="form-item">
-                <text class="form-label">最大人数</text>
-                <up-input class="form-input" type="number" v-model.number="state.tempTable.maxCount" placeholder="请输入最大人数" border="surround"></up-input>
-              </view>
-              <view class="form-item" v-if="state.isEditingTable">
-                <text class="form-label">当前人数</text>
-                <up-input class="form-input" type="number" v-model.number="state.tempTable.currentCount" placeholder="请输入当前人数" border="surround"></up-input>
-              </view>
-              <view class="form-item">
-                <text class="form-label">服务模式</text>
-                <view class="service-mode-options">
-                  <view class="mode-option" :class="[state.tempTable.serviceMode === 'ticket' ? 'active' : '']" @click="selectServiceMode('ticket')">
-                    <text class="mode-label">门票制</text>
-                    <text class="mode-desc">固定门票价格，包含单点制内容</text>
-                  </view>
-                  <view class="mode-option" :class="[state.tempTable.serviceMode === 'order' ? 'active' : '']" @click="selectServiceMode('order')">
-                    <text class="mode-label">点单制</text>
-                    <text class="mode-desc">按实际消费点单收费</text>
-                  </view>
-                </view>
-              </view>
-              <!-- 二维码设置 -->
-              <view class="form-item">
-                <text class="form-label">桌位二维码</text>
-                <view class="qrcode-section">
-                  <view class="qrcode-preview" v-if="state.tempTable.qrcode">
-                    <image class="qrcode-image" :src="state.tempTable.qrcode" mode="aspectFit"></image>
-                    <view class="qrcode-actions">
-                      <up-button class="qrcode-btn" type="primary" @click="viewQRCode">查看</up-button>
-                      <up-button class="qrcode-btn" type="error" @click="deleteQRCode">删除</up-button>
+              <up-form 
+                :model="state.tempTable" 
+                :rules="state.formRules"
+                ref="formRef"
+                label-width="auto"
+                label-position="top"
+              >
+                <up-form-item label="桌位名称" prop="tableName">
+                  <up-input
+                    v-model="state.tempTable.tableName"
+                    placeholder="请输入桌位名称"
+                    border="surround"
+                    clearable
+                  />
+                </up-form-item> 
+                
+                <up-form-item label="人数" prop="personNumber">
+                  <up-input
+                    v-model="state.tempTable.personNumber"
+                    type="number"
+                    placeholder="请输入人数"
+                    border="surround"
+                    clearable
+                  />
+                </up-form-item>
+                
+                <up-form-item label="点单模式" prop="orderMode">
+                  <view class="service-mode-options">
+                    <view class="mode-option" :class="[state.tempTable.orderMode === 'ticket' ? 'active' : '']" @click="selectServiceMode('ticket')">
+                      <text class="mode-label">门票制</text>
+                      <text class="mode-desc">固定门票价格，包含单点制内容</text>
+                    </view>
+                    <view class="mode-option" :class="[state.tempTable.orderMode === 'order' ? 'active' : '']" @click="selectServiceMode('order')">
+                      <text class="mode-label">点单制</text>
+                      <text class="mode-desc">按实际消费点单收费</text>
                     </view>
                   </view>
+                </up-form-item>
+                <up-form-item label="二维码">
+                  <view class="qrcode-section">
+                    <view class="qrcode-preview" v-if="state.tempTable.qrcode">
+                      <image class="qrcode-image" :src="state.tempTable.qrcode" mode="aspectFit"></image>
+                      <view class="qrcode-actions">
+                        <up-button class="qrcode-btn" type="primary" @click="viewQRCode">查看</up-button>
+                        <up-button class="qrcode-btn" type="error" @click="deleteQRCode">删除</up-button>
+                      </view>
+                    </view>
                   <view class="qrcode-upload" v-else>
                     <view class="upload-area" @click="uploadQRCode">
                       <text class="upload-icon">+</text>
-                      <text class="upload-text">上传二维码图片</text>
-                      <text class="upload-desc">支持JPG、PNG格式，建议尺寸200x200px</text>
+                        <text class="upload-text">上传二维码图片</text>
+                        <text class="upload-desc">支持JPG、PNG格式，建议尺寸200x200px</text>
+                      </view>
                     </view>
                   </view>
-                </view>
-              </view>
+                </up-form-item>
+              </up-form>
           </view>
           </scroll-view>
         <view class="modal-footer">
@@ -103,68 +119,73 @@
 
 <script lang="ts" setup>
 import pageWrapper from "@/components/page/index.vue";
-import { reactive, onMounted } from "vue";
+import { reactive, onMounted, ref } from "vue";
+import emptyData from "@/components/empty-data/index.vue";
+import { onLoad } from '@dcloudio/uni-app'
+import { getAllTableList,addTable,editTable,deleteTable } from "@/api/tableManage";
 
 defineOptions({
   name: "TableManagePage",
 });
 
-// Define interface for table
-interface Table {
-  id: string;
-  number: string;
-  status: 'available' | 'occupied';
-  currentCount: number;
-  maxCount: number;
-  serviceMode: 'ticket' | 'order';
-  qrcode: string;
-  sort: number;
-}
+// 表单引用
+const formRef = ref();
 
 // State management
 const state = reactive({
-  tables: [] as Table[],
+  tables: [] as any,
   showTableModal: false,
   isEditingTable: false,
   tempTable: {
     id: '',
-    number: '',
+    shopId: '',
+    tableName: '',
+    personNumber: '',
+    orderMode: 'ticket',
     status: 'available',
-    currentCount: 0,
-    maxCount: 0,
-    serviceMode: 'ticket',
-    qrcode: '',
-    sort: 0
-  } as Table,
-  deleteTableId: ''
+    qrcode: ''
+  },
+  deleteTableId: '',
+  shopId: '',
+  // 表单验证规则
+  formRules: {
+    tableName: [
+      { required: true, message: '请输入桌位名称', trigger: 'blur' }
+    ],
+    personNumber: [
+      { required: true, message: '请输入人数', trigger: 'blur' },
+      { 
+        validator: (rule: any, value: any, callback: any) => {
+          if (value && (isNaN(value) || parseInt(value) <= 0)) {
+            callback(new Error('人数必须大于0'));
+          } else {
+            callback();
+          }
+        }, 
+        trigger: 'blur' 
+      }
+    ],
+    orderMode: [
+      { required: true, message: '请选择点单模式', trigger: 'change' }
+    ]
+  }
 });
 
+const GetTableList = async () => {
+  try {
+    const res = await getAllTableList({
+      shopId: state.shopId
+    })
+    state.tables = res.data || []
+  } catch (error) {
+    console.error('获取桌位列表失败:', error)
+  }
+}
+
 // Lifecycle hooks
-onMounted(() => {
-  console.log('Table Manage Page loaded');
-  // Initialize with sample data or fetch from API
-  state.tables = [
-    {
-      id: '1',
-      number: '1号桌',
-      status: 'available',
-      currentCount: 0,
-      maxCount: 4,
-      serviceMode: 'ticket',
-      qrcode: '',
-      sort: 1
-    },
-    {
-      id: '2',
-      number: '2号桌',
-      status: 'occupied',
-      currentCount: 4,
-      maxCount: 6,
-      serviceMode: 'order',
-      qrcode: '',
-      sort: 2
-    }
-  ];
+onLoad((query) => {
+  state.shopId = query.shopId
+  GetTableList()
 });
 
 // Table management methods
@@ -172,13 +193,12 @@ const openAddTableModal = () => {
   state.isEditingTable = false;
   state.tempTable = {
     id: '',
-    number: '',
+    shopId: state.shopId,
+    tableName: '',
+    personNumber: '',
+    orderMode: 'ticket',
     status: 'available',
-    currentCount: 0,
-    maxCount: 0,
-    serviceMode: 'ticket',
-    qrcode: '',
-    sort: 0
+    qrcode: ''
   };
   state.showTableModal = true;
 };
@@ -187,62 +207,22 @@ const openEditTableModal = (id: string) => {
   const table = state.tables.find(t => t.id === id);
   if (table) {
     state.isEditingTable = true;
-    state.tempTable = { ...table };
+    state.tempTable = { 
+      ...table,
+      shopId: state.shopId
+    };
     state.showTableModal = true;
   }
 };
 
 const closeTableModal = () => {
   state.showTableModal = false;
+  // 重置表单
+  if (formRef.value) {
+    formRef.value.resetFields();
+  }
 };
 
-const confirmTable = () => {
-  if (!state.tempTable.number) {
-    uni.showToast({
-      title: '请输入桌号',
-      icon: 'none'
-    });
-    return;
-  }
-  if (state.tempTable.maxCount <= 0) {
-    uni.showToast({
-      title: '最大人数必须大于0',
-      icon: 'none'
-    });
-    return;
-  }
-  if (state.isEditingTable && state.tempTable.currentCount > state.tempTable.maxCount) {
-    uni.showToast({
-      title: '当前人数不能大于最大人数',
-      icon: 'none'
-    });
-    return;
-  }
-
-  if (state.isEditingTable) {
-    const index = state.tables.findIndex(t => t.id === state.tempTable.id);
-    if (index !== -1) {
-      state.tables[index] = { ...state.tempTable };
-    }
-  } else {
-    const newTable = {
-      ...state.tempTable,
-      id: Date.now().toString()
-    };
-    state.tables.push(newTable);
-  }
-
-  state.tables.sort((a, b) => a.sort - b.sort);
-  state.showTableModal = false;
-  uni.showToast({
-    title: state.isEditingTable ? '桌位已更新' : '桌位已添加',
-    icon: 'success'
-  });
-};
-
-const selectServiceMode = (mode: 'ticket' | 'order') => {
-  state.tempTable.serviceMode = mode;
-};
 
 const uploadQRCode = () => {
   uni.chooseImage({
@@ -266,6 +246,48 @@ const deleteQRCode = () => {
   state.tempTable.qrcode = '';
 };
 
+const confirmTable = async () => {
+  try {
+    // 表单验证
+    await formRef.value.validate();
+    
+    const params = {
+      shopId: parseInt(state.tempTable.shopId),
+      tableName: state.tempTable.tableName,
+      personNumber: parseInt(state.tempTable.personNumber),
+      orderMode: state.tempTable.orderMode
+    };
+
+    if (state.isEditingTable) {
+      // 编辑桌位
+      await editTable({
+        ...params,
+        id: state.tempTable.id
+      });
+      uni.showToast({
+        title: '桌位已更新',
+        icon: 'success'
+      });
+    } else {
+      // 添加桌位
+      await addTable(params);
+      uni.showToast({
+        title: '桌位已添加',
+        icon: 'success'
+      });
+    }
+    
+    closeTableModal();
+    GetTableList(); // 重新获取列表
+  } catch (error) {
+    console.error('操作失败:', error);
+    uni.showToast({
+      title: '操作失败',
+      icon: 'none'
+    });
+  }
+};
+
 const openDeleteTableModal = (id: string) => {
   state.deleteTableId = id;
   uni.showModal({
@@ -274,24 +296,35 @@ const openDeleteTableModal = (id: string) => {
     confirmText: '删除',
     cancelText: '取消',
     confirmColor: '#f76560',
-    success: (res) => {
+    success: async (res) => {
       if(res.confirm){
-        deleteTable()
+        await deleteTableItem();
       }
     }
   })
 };
 
-const deleteTable = () => {
-  const index = state.tables.findIndex(t => t.id === state.deleteTableId);
-  if (index !== -1) {
-    state.tables.splice(index, 1);
+const selectServiceMode = (mode: 'ticket' | 'order') => {
+  state.tempTable.orderMode = mode;
+};
+
+
+const deleteTableItem = async () => {
+  try {
+    await deleteTable({ id: state.deleteTableId });
+    uni.showToast({
+      title: '桌位已删除',
+      icon: 'success'
+    });
+    GetTableList(); // 重新获取列表
+  } catch (error) {
+    console.error('删除失败:', error);
+    uni.showToast({
+      title: '删除失败',
+      icon: 'none'
+    });
   }
   state.deleteTableId = '';
-  uni.showToast({
-    title: '桌位已删除',
-    icon: 'success'
-  });
 };
 </script>
 
@@ -320,12 +353,10 @@ const deleteTable = () => {
 
 .add-btn {
   font-size: 28rpx;
-  // padding: 16rpx 32rpx;
   border-radius: 40rpx;
   border: none;
   width: 180rpx!important;
   margin: 0;
-
 }
 
 /* 桌位列表样式 */
@@ -405,30 +436,28 @@ const deleteTable = () => {
   gap: 20rpx;
 }
 
-
-/* 弹窗样式 */
-
-.form-item {
-  margin-bottom: 30rpx;
+/* 表单样式 */
+.radio-item {
+  margin-bottom: 20rpx;
 }
 
-.form-label {
-  display: block;
-  font-size: 28rpx;
-  color: #666;
-  margin-bottom: 16rpx;
+.radio-content {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20rpx;
 }
 
-.form-input {
-  width: 100%;
-  height: 80rpx;
-  border: 2rpx solid #e0e0e0;
-  border-radius: 16rpx;
-  padding: 0 24rpx;
+.radio-label {
   font-size: 28rpx;
   color: #333;
-  background-color: #fff;
-  box-sizing: border-box;
+  font-weight: 500;
+  margin-bottom: 8rpx;
+}
+
+.radio-desc {
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.4;
 }
 
 .modal-footer {
@@ -436,21 +465,43 @@ const deleteTable = () => {
   gap: 20rpx;
 }
 
-.cancel-btn, .confirm-btn {
-  flex: 1;
-  height: 80rpx;
-  font-size: 28rpx;
-  border-radius: 40rpx;
-  border: none;
-}
-
-
-/* 服务模式选择器样式 */
-.service-mode-options {
+/* 空状态样式 */
+.empty-state {
   display: flex;
   flex-direction: column;
-  gap: 24rpx;
-  margin-top: 16rpx;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 40rpx;
+  text-align: center;
+}
+
+.empty-state image {
+  width: 200rpx;
+  height: 200rpx;
+  margin-bottom: 40rpx;
+}
+
+.empty-state text {
+  font-size: 28rpx;
+  color: #999;
+  margin-bottom: 40rpx;
+}
+
+.add-table-btn {
+  width: 200rpx;
+}
+
+/* 服务模式选择器样式 */
+.u-form{
+  .service-mode-options {
+    display: flex;
+    flex-direction: column;
+    gap: 24rpx;
+    margin-top: 16rpx;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
 }
 
 .mode-option {
@@ -460,10 +511,11 @@ const deleteTable = () => {
   background-color: #fff;
   transition: all 0.3s ease;
   cursor: pointer;
+  width: 100%;
 }
 
 .mode-option.active {
-  border-color: #3aa9e8;
+  border-color: $u-primary;
   background-color: #f0f8ff;
 }
 
@@ -476,7 +528,7 @@ const deleteTable = () => {
 }
 
 .mode-option.active .mode-label {
-  color: #3aa9e8;
+  color: $u-primary;
 }
 
 .mode-desc {
@@ -559,39 +611,6 @@ const deleteTable = () => {
   font-size: 24rpx;
   color: #999;
   text-align: center;
-}
-
-/* 删除确认弹窗样式 */
-.confirm-content {
-  width: 80%;
-  max-width: 600rpx;
-  padding: 40rpx;
-}
-
-.confirm-title {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #333;
-  text-align: center;
-  margin-bottom: 30rpx;
-}
-
-.confirm-text {
-  font-size: 28rpx;
-  color: #666;
-  margin-bottom: 40rpx;
-  text-align: center;
-}
-
-.confirm-btns {
-  display: flex;
-  justify-content: space-between;
-  gap: 20rpx;
-}
-
-.confirm-btns .cancel-btn {
-  flex: 1;
-  margin-right: 0;
 }
 
 </style>

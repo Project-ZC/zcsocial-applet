@@ -45,25 +45,31 @@ const showFooter = computed(() => props.footerShow);
 </script>
 
 <style scoped lang="scss">
+@import '@/uni.scss';
+$header-h: 100rpx;
 .page-wrapper {
   position: relative;
   width: 100%;
+  height: 100%;
   min-height: 100vh;
   font-family: PingFang SC;
   font-size: $up-font-base;
   display: flex;
   flex-direction: column;
-  background-color: #f5f5f5;
+  background-color: $u-bg-1;
   &-header {
     position: sticky;
     top: 0;
     left: 0;
     width: 100%;
     z-index: 999;
+    height: $header-h;
   }
 }
 
 .content-area {
   font-size: $up-font-base;
+  flex: 1;
+
 }
 </style>

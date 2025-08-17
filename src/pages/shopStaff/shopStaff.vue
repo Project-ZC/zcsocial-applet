@@ -1,5 +1,6 @@
 <template>
-  <pageWrapper>
+  <pageWrapper class="staff">
+    <up-sticky>
     <!-- 顶部导航栏 -->
     <up-navbar
       class="z-navbar"
@@ -14,9 +15,6 @@
         </view>
       </template>
     </up-navbar>
-
-    <!-- 员工管理页 -->
-    <view class="staff-container">
       <!-- 角色筛选 -->
      <scroll-view scroll-x class="role-filter-scroll">
         <view class="role-filter">
@@ -34,24 +32,21 @@
           </view>
         </view>
       </scroll-view>
-
+    </up-sticky>
       <!-- 员工列表 -->
+   <view class="staff-list">
      <scroll-view  
        scroll-y 
-       class="scroll-content" 
-       @scrolltolower="debouncedLoadStaffList"
-       :scroll-top="scrollTop"
-       :scroll-with-animation="false"
-       :enhanced="true"
-       :bounces="false"
-       :show-scrollbar="false"
-       :fast-deceleration="true"
+       show-scrollbar
+       class="scroll-list" 
+       @scrolltolower="loadMore"
+       :style="{height: state.loadMoreParams.scrollHeight + 'px'}"
      >
-      <up-list v-if="!state.isLoading && state.filteredStaffList.length > 0" >
-        <up-list-item 
+      <!-- 员工列表 -->
+      <view v-if="state.filteredStaffList.length > 0">
+        <view 
           v-for="(item, index) in state.filteredStaffList" 
           :key="item.id"
-          :data-index="index"
         >
           <view class="staff-item">
             <view class="staff-avatar">
@@ -83,25 +78,29 @@
               </view>
             </view>
           </view>
-        </up-list-item>
-      </up-list>
+        </view>
+      </view>
       
-      <!-- 加载更多状态 -->
-      <view class="loading-more" v-if="state.isLoading && state.filteredStaffList.length > 0">
-        <view class="loading-text">加载中...</view>
-      </view>
-      </scroll-view>
-
       <!-- 员工列表为空状态 -->
-      <view class="empty-state" v-if="!state.isLoading && state.filteredStaffList.length === 0">
-        <up-empty mode="data" icon="/static/images/empty-staff.png">
-          <template #text>
-            <view class="empty-text">暂无员工</view>
-            <view class="empty-subtext">点击右上角"+"添加员工</view>
+      <view class="empty-state" v-else-if="!state.isLoading && state.filteredStaffList.length === 0">
+        <emptyData text="暂无员工">
+          <template #subtext>
+            <text>点击右上角"+"添加员工</text>
           </template>
-        </up-empty>
+        </emptyData>
       </view>
-    </view>
+     <!-- 加载更多 -->
+        <up-loadmore 
+            v-if="state.filteredStaffList.length >= state.pageParams.pageSize"
+            :status="state.loadMoreParams.loadStatus"
+            :loadText="{
+            loadmore: '上拉加载更多',
+            loading: '正在加载...',
+            nomore: '没有更多了'
+            }"
+        />
+      </scroll-view>
+     </view>
   </pageWrapper>
 
     <!-- 添加/编辑员工模态框 -->
@@ -269,6 +268,8 @@
 </template>
 
 <script lang="ts" setup>
+import { mockApiFetchList, getScrollHeight } from '@/utils/util'
+import { onLoad } from '@dcloudio/uni-app'
 import {cloneDeep} from 'lodash-es'
 import pageWrapper from "@/components/page/index.vue";
 import emptyData from "@/components/empty-data/index.vue";
@@ -278,32 +279,10 @@ import { addShopStaff, getShopStaffList, getAllShopStaffList, editShopStaff, del
 import { getAllUserList } from '@/api/userManage'
 import { getAllRoleList } from '@/api/roleManage'
 
-// 防抖函数
-const debounce = (func: Function, wait: number) => {
-  let timeout: number | undefined
-  return function executedFunction(...args: any[]) {
-    const later = () => {
-      clearTimeout(timeout)
-      func(...args)
-    }
-    clearTimeout(timeout)
-    timeout = setTimeout(later, wait)
-  }
-}
-
-
-interface PermissionOption {
-  value: string
-  name: string
-  description: string
-}
-
-// 滚动位置状态
-const scrollTop = ref(0)
 
 // 状态管理
 const state = reactive({
-  shopId: '123456',
+  shopId: '',
   currentRole: 'all',
   roleList: [
     // { label: '全部', value: 'all' },
@@ -331,7 +310,7 @@ const state = reactive({
       name: '主理人权限',
       description: '店铺运营决策权限，包括活动策划、品牌推广等'
     }
-  ] as PermissionOption[],
+  ] as any,
   
   staffList: [],
   filteredStaffList: [],
@@ -351,7 +330,6 @@ const state = reactive({
     mobile: '',
     introduce: '',
     roleIds: [] as string[],
-
   },
   
   isEdit: true,
@@ -363,25 +341,54 @@ const state = reactive({
     pageSize: 10,
     total: 0,
   },
+  loadMoreParams: {
+    scrollHeight: 0,
+    hasMore: false,
+    loadStatus: 'loading',
+  }
 })
 
 // 加载员工列表
 const loadStaffList = async() => {
   state.isLoading = true;
+  // 分页下拉加载
+  // state.loadMoreParams.loadStatus = 'loading'
+//   try {
+//     const res = await getShopStaffList({
+//      pageNum: state.pageParams.pageNum,
+//      pageSize: state.pageParams.pageSize,
+//      shopId: state.shopId,
+//      roleId: state.currentRole == 'all'? '' : state.currentRole
+//     })
+//     const list = res.data?.list || [];
+//     // let res = await mockApiFetchList(state.pageParams)
+//     // state.pageParams.total = res.total;
+//     // const list = res.list || [];
+//     if (state.pageParams.pageNum === 1) {
+//       state.filteredStaffList = list;
+//     } else {
+//       state.filteredStaffList.push(...list);
+//     }
+//     state.staffList = cloneDeep(state.filteredStaffList)
+//     // 更新加载状态
+//     state.loadMoreParams.loadStatus = state.filteredStaffList.length < state.pageParams.total ? 'loadmore' : 'nomore'
+//   } catch (error) {
+//     state.loadMoreParams.loadStatus = 'loadmore';
+//     state.pageParams.pageNum--;
+//   } finally {
+//     state.isLoading = false;
+//   }
   try {
-    const res = await getShopStaffList({
-     pageNum: state.pageParams.pageNum,
-     pageSize: state.pageParams.pageSize,
+    const res = await getAllShopStaffList({
+    //  pageNum: state.pageParams.pageNum,
+    //  pageSize: state.pageParams.pageSize,
+     shopId: state.shopId,
      roleId: state.currentRole == 'all'? '' : state.currentRole
     })
-    const list = res.data.list;
-    state.pageParams.total = res.data.total;
-    if (state.pageParams.pageNum === 1) {
-      state.filteredStaffList = list;
-    } else {
-      state.filteredStaffList.push(...list);
-    }
+    const list = res.data || [];
+    state.filteredStaffList = list;
     state.staffList = cloneDeep(state.filteredStaffList)
+    // 更新加载状态
   } catch (error) {
   } finally {
     state.isLoading = false;
@@ -389,17 +396,16 @@ const loadStaffList = async() => {
 }
 
 // 防抖处理的滚动到底部加载
-const debouncedLoadStaffList = debounce(() => {
-  if (state.filteredStaffList.length < state.pageParams.total) {
-    state.pageParams.pageNum++;
-    loadStaffList();
-  }
-}, 200);
-
+const loadMore = ()=>{
+  // if (state.isLoading || state.loadMoreParams.loadStatus == 'loading' || state.loadMoreParams.loadStatus == 'nomore') return;
+  // state.pageParams.pageNum++;
+  // loadStaffList();
+}
 // 筛选员工角色
 const filterByRole = (role: string = state.currentRole) => {
   state.pageParams.pageNum = 1;
   state.currentRole = role;
+  state.filteredStaffList = []
   loadStaffList();
   // if (role === 'all') {
   //   state.filteredStaffList = [...state.staffList]
@@ -432,6 +438,12 @@ const openEditModal = (staff: any) => {
   for(const key in staff){
     state.tempStaff[key] = staff[key]
   }
+  state.tempStaff.avatar = staff.userAvatar;
+  state.tempStaff.mobile = staff.userMobile;
+  state.tempStaff.nickname = staff.userNickname;
+  state.tempStaff.introduce = staff.userIntroduce;
+  state.tempStaff.roleIds = staff.userRoleIds || [];
+  state.tempStaff.role = staff.userRoleNames?.[0];
   state.showModal = true
 }
 
@@ -454,8 +466,6 @@ const closeModal = () => {
 
 // 选择权限（单选）
 const selectPermission = (permissionId: string) => {
-  console.log('选择权限:', permissionId)
-  
   // 如果已经选中，则取消选中
   if (state.tempStaff.roleIds.includes(permissionId)) {
     state.tempStaff.roleIds = []
@@ -470,49 +480,6 @@ const selectPermission = (permissionId: string) => {
   }
 }
 
-// 切换权限（保留原有函数以兼容）
-const togglePermission = (permission: string) => {
-  const roleIds = [...state.tempStaff.roleIds]
-  const index = roleIds.indexOf(permission)
-  
-  if (index > -1) {
-    roleIds.splice(index, 1)
-  } else {
-    roleIds.push(permission)
-  }
-  
-  state.tempStaff.roleIds = roleIds
-  state.tempStaff.role = generateRoleByPermissions(roleIds)
-}
-
-// 生成权限名称数组
-const generatePermissionNames = (roleIds: string[]) => {
-  // 单选模式，只处理第一个权限
-  if (!roleIds || roleIds.length === 0) {
-    return []
-  }
-  
-  const permissionId = roleIds[0]
-  const role = state.roleList.find(role => role.id === permissionId)
-  return role ? [role.name] : []
-}
-
-// 根据权限生成职位描述
-const generateRoleByPermissions = (roleIds: string[]) => {
-  if (!roleIds || roleIds.length === 0) {
-    return ''
-  }
-  
-  // 单选模式，只取第一个权限
-  const permissionId = roleIds[0]
-  const selectedRole = state.roleList.find(role => role.id === permissionId)
-  
-  if (!selectedRole) {
-    return ''
-  }
-  
-  return selectedRole.name
-}
 
 // 打开删除确认模态框
 const openDeleteModal = (staff: any) => {
@@ -542,69 +509,38 @@ const saveStaff = async() => {
       })
       return
     }
-  // uni.showLoading({ title: '保存中...' })
   try {
     let params = {
       roleIds: state.tempStaff.roleIds,
-      userId: state.tempStaff.id,
+    } as any;
+    if(state.isEdit){
+      params.id = state.tempStaff.id
+      await editShopStaff(params);
+    }else{
+      params.shopId = state.shopId;
+      params.userId = state.tempStaff.id;
+      await addShopStaff(params);
     }
-    await addShopStaff(params);
     uni.showToast({
-      title: '保存成功',
-      icon: 'success'
+      title:state.isEdit? '编辑成功' : '添加成功',
+      icon: 'success',
     })
     closeModal()
     loadStaffList()
   } catch (error) {}
-  
-  // setTimeout(() => {
-  //   let staffList = [...state.staffList]
-    
-  //   if (staff.id && isEdit) {
-  //     // 编辑现有员工
-  //     const index = staffList.findIndex(item => item.id === staff.id)
-  //     if (index !== -1) {
-  //       staffList[index] = {
-  //         ...staffList[index],
-  //         roleIds: staff.roleIds || [],
-  //         permissionNames: generatePermissionNames(staff.roleIds || []),
-  //         role: generateRoleByPermissions(staff.roleIds || [])
-  //       }
-  //     }
-  //   } else {
-  //     // 添加新员工
-  //     const newStaff: Staff = {
-  //       ...staff,
-  //       id: Date.now().toString(),
-  //       avatar: staff.avatar || '/static/images/default-avatar.png',
-  //       permissionNames: generatePermissionNames(staff.roleIds || [])
-  //     }
-  //     staffList.push(newStaff)
-  //   }
-    
-  //   state.staffList = staffList
-  //   state.showModal = false
-  //   filterByRole()
-    
-  //   uni.hideLoading()
-  //   uni.showToast({
-  //     title: isEdit ? '权限更新成功' : '添加成功',
-  //     icon: 'success'
-  //   })
-  // }, 800)
 }
 
 // 删除员工
 const deleteStaff = async (staff: any) => {
   if (!staff || !staff.id) return
-  // uni.showLoading({ title: '删除中...' })
   try {
     // 调用删除员工API
     await deleteShopStaff({ userId: staff.id })
     // 删除成功后刷新列表
     uni.showToast({
       title: '删除成功',
-      icon: 'success'
+      icon: 'success',
+      duration: 1000
     })
     await loadStaffList()
   } catch (error) {
@@ -671,7 +607,6 @@ const chooseImage = () => {
   //   sourceType: ['album', 'camera'],
   //   success: (res) => {
   //     const tempFilePath = res.tempFilePaths[0]
-  //     uni.showLoading({ title: '上传中...' })
       
   //     setTimeout(() => {
   //       state.tempStaff.avatar = tempFilePath
@@ -705,16 +640,30 @@ const shareQRCode = () => {
   })
 }
 
-
-// 初始化
-onMounted(async () => {
+onLoad(async(query)=>{
+  console.log(query, 1234)
+  if (query.shopId) {
+    state.shopId = query.shopId
+    // console.log('获取到店铺ID:', query.shopId)
+  } 
+  state.loadMoreParams.scrollHeight = await getScrollHeight({navbarHeight: 44,footerHeight: 0})
+  // 从路由取shopId
   await GetAllRoleList()  // 先获取角色列表
   loadStaffList()
 })
+
+
 </script>
 
 <style lang="scss" scoped>
 @import '@/uni.scss';
+$role-filter-h: 60rpx;
+
+.staff{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
 .header-right {
   display: flex;
   align-items: center;
@@ -732,7 +681,7 @@ onMounted(async () => {
   background-color: #fff;
   margin-bottom: $up-box-mg;
   white-space: nowrap;
-  height: 60rpx;
+  height: $role-filter-h;
   /* 优化横向滚动性能 */
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
@@ -873,11 +822,6 @@ onMounted(async () => {
   font-size: 30rpx;
   color: #999;
   margin-bottom: 20rpx;
-}
-
-.empty-subtext {
-  font-size: 26rpx;
-  color: #bbb;
 }
 
 /* 加载更多状态 */
@@ -1089,5 +1033,8 @@ onMounted(async () => {
   color: #666;
   padding: 20rpx;
   text-align: center;
+}
+.staff-list{
+  padding-bottom: 40rpx;
 }
 </style>

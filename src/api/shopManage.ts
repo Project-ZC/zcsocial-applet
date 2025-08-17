@@ -10,6 +10,14 @@ export const getShopList = (data: any) => {
         data,
     });
 };
+// 查询店铺列表
+export const getShopDetail = (data: any) => {
+    return http({
+        url: "/v1/shop/detail",
+        method: "POST",
+        data,
+    });
+};
 
 // 删除店铺
 export const deleteShop = (data: any) => {

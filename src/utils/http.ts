@@ -70,9 +70,9 @@ interface Data<T> {
 
 export const http = <T>(options: UniApp.RequestOptions) => {
 	return new Promise<Data<T>>((resolve, reject) => {
-		uni.showLoading({
-			title: "加载中...",
-		});
+		// uni.showLoading({ 
+		// 	title: "加载中...",
+		// });
 		uni.request({
 			...options,
 			success(res) {

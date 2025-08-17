@@ -5,11 +5,11 @@
     <!-- 店铺基本信息 -->
     <view class="shop-info-card z-glass-card">
       <view class="shop-header">
-        <up-image class="shop-logo" src="/static/images/logo.png" mode="aspectFill" width="60px" height="60px" border-radius="8px"></up-image>
+        <up-image class="shop-logo"  :src="shopInfo.logo || '/static/images/logo.png'" mode="aspectFill" width="60px" height="60px" border-radius="8px"></up-image>
         <view class="shop-basic-info">
           <text class="shop-name">{{shopInfo.name}}</text>
-          <view class="shop-status {{shopInfo.status === 'open' ? 'open' : 'closed'}}">
-            <text>{{shopInfo.status === 'open' ? '营业中' : '休息中'}}</text>
+          <view class="shop-status {{shopInfo.state}}">
+            <text>{{statusEnum[shopInfo.state]}}</text>
           </view>
         </view>
       </view>
@@ -32,7 +32,7 @@
     
     <!-- 功能按钮 -->
     <view class="function-grid">
-      <view class="function-item z-glass-card" v-for="(item, index) in functionItems" :key="index" @click="navigateTo(item.url)">
+      <view class="function-item z-glass-card" v-for="(item, index) in functionItems" :key="index" @click="navigateTo(item.url, item.id)">
         <view class="function-icon" :class="item.iconClass"></view>
         <text class="function-name">{{item.name}}</text>
         <text class="function-desc">{{item.desc}}</text>
@@ -116,9 +116,16 @@
 </template>
 
 <script lang="ts" setup>
+import {onLoad} from '@dcloudio/uni-app'
 import pageWrapper from "@/components/page/index.vue";
 import { onMounted, reactive, ref } from "vue";
-import { getShopList, deleteShop, addShop, editShop } from "@/api/shopManage";
+import { getShopList, deleteShop, addShop, editShop, getShopDetail } from "@/api/shopManage";
+
+const statusEnum = {
+  open: '营业',
+  close: '暂停营业 ',
+  close_manual: '暂停营业(手动)',
+}
 
 // 定义组件选项
 defineOptions({
@@ -126,21 +133,23 @@ defineOptions({
 });
 
 // 店铺信息数据
-const shopInfo = reactive({
-  id: '1',
-  logo: '',
-  name: '醉美酒吧',
-  isOpen: true,
-  status: 'open',
-  address: '北京市朝阳区三里屯SOHO 3号楼2层',
-  openTime: '18:00',
-  closeTime: '02:00',
-  phone: '010-12345678',
-  tags: ['静吧', '精致', '鸡尾酒', '情调', '约会'],
-  visitorCount: 1245,
-  orderCount: 368,
-  ratingScore: '4.5'
-});
+// let shopInfo = reactive({
+//   id: '',
+//   logo: '',
+//   shopName: '',
+//   isOpen: true,
+//   status: 'open',
+//   address: '北京市朝阳区三里屯SOHO 3号楼2层',
+//   openTime: '18:00',
+//   closeTime: '02:00',
+//   phone: '010-12345678',
+//   tags: ['静吧', '精致', '鸡尾酒', '情调', '约会'],
+//   visitorCount: 1245,
+//   orderCount: 368,
+//   ratingScore: '4.5'
+// }
+// });
+let shopInfo = ref({})
 
 // 编辑表单数据
 const editForm = reactive({
@@ -172,36 +181,25 @@ const functionItems = ref([
   { name: '门票设置', desc: '定制门票酒水数量和使用时间', url: '/pages/ticketSettings/ticketSettings', iconClass: 'ticket-settings-icon' }
 ]);
 
-onMounted(() => {
-  getShopInfo();
-});
 
 // 获取店铺信息
-const getShopInfo = async () => {
+const getShopInfo = async (shopId) => {
   // 实际项目中，这里应该调用接口获取店铺信息
   console.log('获取店铺信息');
   try {
-	const res = await getShopList({
-		pageNum: 1,
-		pageSize: 10,
-	});
-	console.log(res);
+	// const res = await getShopList({
+	// 	pageNum: 1,
+	// 	pageSize: 10,
+	// });
+  const res = await getShopDetail({
+    id: shopId,
+  });
+	// console.log(res); 
+  shopInfo.value = res.data || {};
+  console.log(shopInfo,21234)
   } catch (error) {
 	console.log(error);
   }
-  
-  // 初始化编辑表单
-  initEditForm();
-};
-
-// 初始化编辑表单
-const initEditForm = () => {
-  editForm.name = shopInfo.name;
-  editForm.address = shopInfo.address;
-  editForm.openTime = shopInfo.openTime;
-  editForm.closeTime = shopInfo.closeTime;
-  editForm.phone = shopInfo.phone;
-  editForm.tags = [...shopInfo.tags];
 };
 
 // 切换店铺营业状态
@@ -218,7 +216,6 @@ const toggleShopStatus = () => {
 
 // 编辑店铺信息
 const editShopInfo = () => {
-  initEditForm();
   showEditPopup.value = true;
 };
 
@@ -245,15 +242,6 @@ const saveShopInfo = () => {
     });
     return;
   }
-  
-  // 实际项目中，这里应该调用接口保存店铺信息
-  shopInfo.name = editForm.name;
-  shopInfo.address = editForm.address;
-  shopInfo.openTime = editForm.openTime;
-  shopInfo.closeTime = editForm.closeTime;
-  shopInfo.phone = editForm.phone;
-  shopInfo.tags = [...editForm.tags];
-  
   // 关闭弹窗
   showEditPopup.value = false;
   
@@ -295,9 +283,7 @@ const removeTag = (index: number) => {
 
 // 页面导航
 const navigateTo = (url: string) => {
-  uni.navigateTo({
-    url: url
-  });
+  uni.navigateTo({url: `${url}?shopId=${shopInfo.id}`});
 };
 
 // 创建活动
@@ -404,6 +390,14 @@ const viewShopAnalytics = () => {
 const viewQRCode = () => {
   showQRCodeOptions();
 };
+
+onLoad((query) => {
+ query.shopId = '10000008'
+ if(query.shopId){
+  shopInfo.id = query.shopId
+  getShopInfo(query.shopId)
+ }
+})
 </script>
 
 <style lang="scss" scoped>
@@ -479,8 +473,12 @@ const viewQRCode = () => {
   background-color: #34C759;
 }
 
-.shop-status.closed {
+.shop-status.close {
   background-color: #FF3B30;
+}
+
+.shop-status.close_manual {
+  background-color: #0caa88;
 }
 
 /* 店铺统计数据 */

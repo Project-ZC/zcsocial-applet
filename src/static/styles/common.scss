@@ -1,10 +1,8 @@
-.container {
-    padding: 12px 12px 30px;
-}
+@import '@/uni.scss';
 
 /* 全局页面背景色 */
 page {
-    background-color: #f5f5f5;
+    background-color: $u-bg-1;
     font-size: $up-font-base;
     /* 优化滚动性能 */
     -webkit-overflow-scrolling: touch;
@@ -74,7 +72,6 @@ page {
 
 }
 
-
 /* 毛玻璃效果 */
 .z-glass-card {
     background: rgba(255, 255, 255, 0.8);
@@ -85,7 +82,11 @@ page {
 
 // 顶部导航栏
 .z-navbar {
-    height: 80rpx;
+    height: $up-navbar-h;
+
+    .u-navbar__content {
+        height: $up-navbar-h !important;
+    }
 
     .u-status-bar {
         display: none;
