@@ -4,7 +4,6 @@
       <text class="page-title">桌位管理</text>
       <up-button class="add-btn" type="primary" @click="openAddTableModal">添加桌位</up-button>
     </view>
-
     <!-- 桌位列表 -->
     <view class="table-list">
       <template v-if="state.tables.length > 0">
@@ -25,8 +24,8 @@
             </view>
           </view>
           <view class="table-actions">
-            <up-button  type="primary" @click="openEditTableModal(table.id)">编辑</up-button>
-            <up-button  type="error" @click="openDeleteTableModal(table.id)">删除</up-button>
+            <up-button  type="primary" @click="openEditTableModal(table)">编辑</up-button>
+            <up-button  type="error" @click="openDeleteTableModal(table)">删除</up-button>
           </view>
         </view>
       </block>
@@ -41,85 +40,87 @@
     </view>
   </pageWrapper>
 
-    <!-- 添加/编辑桌位弹窗 -->
-    <up-popup :show="state.showTableModal" mode="center" @close="closeTableModal">
-      <view class="z-modal z-modal-lg">
-        <view class="modal-header">
-          <text class="modal-title">{{ state.isEditingTable ? '编辑桌位' : '添加桌位' }}</text>
-          <text class="close-btn" @click="closeTableModal">×</text>
-        </view>
-          <scroll-view scroll-y class="scroll-content">
-            <view class="modal-body">
-              <up-form 
-                :model="state.tempTable" 
-                :rules="state.formRules"
-                ref="formRef"
-                label-width="auto"
-                label-position="top"
-              >
-                <up-form-item label="桌位名称" prop="tableName">
-                  <up-input
-                    v-model="state.tempTable.tableName"
-                    placeholder="请输入桌位名称"
-                    border="surround"
-                    clearable
-                  />
-                </up-form-item> 
-                
-                <up-form-item label="人数" prop="personNumber">
-                  <up-input
-                    v-model="state.tempTable.personNumber"
-                    type="number"
-                    placeholder="请输入人数"
-                    border="surround"
-                    clearable
-                  />
-                </up-form-item>
-                
-                <up-form-item label="点单模式" prop="orderMode">
-                  <view class="service-mode-options">
-                    <view class="mode-option" :class="[state.tempTable.orderMode === 'ticket' ? 'active' : '']" @click="selectServiceMode('ticket')">
-                      <text class="mode-label">门票制</text>
-                      <text class="mode-desc">固定门票价格，包含单点制内容</text>
-                    </view>
-                    <view class="mode-option" :class="[state.tempTable.orderMode === 'order' ? 'active' : '']" @click="selectServiceMode('order')">
-                      <text class="mode-label">点单制</text>
-                      <text class="mode-desc">按实际消费点单收费</text>
-                    </view>
-                  </view>
-                </up-form-item>
-                <up-form-item label="二维码">
-                  <view class="qrcode-section">
-                    <view class="qrcode-preview" v-if="state.tempTable.qrcode">
-                      <image class="qrcode-image" :src="state.tempTable.qrcode" mode="aspectFit"></image>
-                      <view class="qrcode-actions">
-                        <up-button class="qrcode-btn" type="primary" @click="viewQRCode">查看</up-button>
-                        <up-button class="qrcode-btn" type="error" @click="deleteQRCode">删除</up-button>
-                      </view>
-                    </view>
-                  <view class="qrcode-upload" v-else>
-                    <view class="upload-area" @click="uploadQRCode">
-                      <text class="upload-icon">+</text>
-                        <text class="upload-text">上传二维码图片</text>
-                        <text class="upload-desc">支持JPG、PNG格式，建议尺寸200x200px</text>
-                      </view>
-                    </view>
-                  </view>
-                </up-form-item>
-              </up-form>
-          </view>
-          </scroll-view>
-        <view class="modal-footer">
-          <up-button @click="closeTableModal">取消</up-button>
-          <up-button  type="primary" @click="confirmTable">确定</up-button>
-        </view>
+  <!-- 添加/编辑桌位弹窗 -->
+  <up-popup :show="state.showTableModal" mode="center" @close="closeTableModal">
+    <view class="z-modal z-modal-lg">
+      <view class="modal-header">
+        <text class="modal-title">{{ state.isEditingTable ? '编辑桌位' : '添加桌位' }}</text>
+        <text class="close-btn" @click="closeTableModal">
+          <up-icon name="close" size="26" color="#999"></up-icon>
+        </text>
       </view>
-    </up-popup>
+        <scroll-view scroll-y class="scroll-content">
+          <view class="modal-body">
+            <up-form 
+              :model="state.tempTable" 
+              :rules="state.formRules"
+              ref="formRef"
+              label-width="auto"
+              label-position="top"
+            >
+              <up-form-item label="桌号" prop="tableName">
+                <up-input
+                  v-model="state.tempTable.tableName"
+                  placeholder="请输入桌号（如：1号桌）"
+                  clearable
+                />
+              </up-form-item> 
+              
+              <up-form-item label="最大人数" prop="personNumber">
+                <up-input
+                  v-model="state.tempTable.personNumber"
+                  type="number"
+                  placeholder="请输入人数"
+                  border="surround"
+                  clearable
+                />
+              </up-form-item>
+              
+              <up-form-item label="点单模式" prop="orderMode">
+                <view class="service-mode-options">
+                  <view class="mode-option" :class="[state.tempTable.orderMode === 'ticket' ? 'active' : '']" @click="selectServiceMode('ticket')">
+                    <text class="mode-label">门票制</text>
+                    <text class="mode-desc">固定门票价格，包含单点制内容</text>
+                  </view>
+                  <view class="mode-option" :class="[state.tempTable.orderMode === 'order' ? 'active' : '']" @click="selectServiceMode('order')">
+                    <text class="mode-label">点单制</text>
+                    <text class="mode-desc">按实际消费点单收费</text>
+                  </view>
+                </view>
+              </up-form-item>
+              <up-form-item label="二维码">
+                <view class="
+                ">
+                  <view class="qrcode-preview" v-if="state.tempTable.qrcode">
+                    <image class="qrcode-image" :src="state.tempTable.qrcode" mode="aspectFit"></image>
+                    <view class="qrcode-actions">
+                      <up-button class="qrcode-btn" type="primary" @click="viewQRCode">查看</up-button>
+                      <up-button class="qrcode-btn" type="error" @click="deleteQRCode">删除</up-button>
+                    </view>
+                  </view>
+                <view class="qrcode-upload" v-else>
+                  <view class="upload-area" @click="uploadQRCode">
+                    <text class="upload-icon">+</text>
+                      <text class="upload-text">上传二维码图片</text>
+                      <text class="upload-desc">支持JPG、PNG格式，建议尺寸200x200px</text>
+                    </view>
+                  </view>
+                </view>
+              </up-form-item>
+            </up-form>
+        </view>
+        </scroll-view>
+      <view class="modal-footer">
+        <up-button @click="closeTableModal">取消</up-button>
+        <up-button  type="primary" @click="confirmTable">确定</up-button>
+      </view>
+    </view>
+  </up-popup>
 </template>
 
 <script lang="ts" setup>
 import pageWrapper from "@/components/page/index.vue";
-import { reactive, onMounted, ref } from "vue";
+import { reactive, ref } from "vue";
 import emptyData from "@/components/empty-data/index.vue";
 import { onLoad } from '@dcloudio/uni-app'
 import { getAllTableList,addTable,editTable,deleteTable } from "@/api/tableManage";
@@ -138,7 +139,6 @@ const state = reactive({
   isEditingTable: false,
   tempTable: {
     id: '',
-    shopId: '',
     tableName: '',
     personNumber: '',
     orderMode: 'ticket',
@@ -150,10 +150,10 @@ const state = reactive({
   // 表单验证规则
   formRules: {
     tableName: [
-      { required: true, message: '请输入桌位名称', trigger: 'blur' }
+      { required: true, message: '请输入桌号', trigger: 'blur' }
     ],
     personNumber: [
-      { required: true, message: '请输入人数', trigger: 'blur' },
+      { required: true, message: '请输入最大人数', trigger: 'blur' },
       { 
         validator: (rule: any, value: any, callback: any) => {
           if (value && (isNaN(value) || parseInt(value) <= 0)) {
@@ -191,25 +191,23 @@ onLoad((query) => {
 // Table management methods
 const openAddTableModal = () => {
   state.isEditingTable = false;
-  state.tempTable = {
-    id: '',
-    shopId: state.shopId,
-    tableName: '',
-    personNumber: '',
-    orderMode: 'ticket',
-    status: 'available',
-    qrcode: ''
-  };
+  // state.tempTable = {
+  //   id: '',
+  //   shopId: state.shopId,
+  //   tableName: '',
+  //   personNumber: '',
+  //   orderMode: 'ticket',
+  //   status: 'available',
+  //   qrcode: ''
+  // };
   state.showTableModal = true;
 };
 
-const openEditTableModal = (id: string) => {
-  const table = state.tables.find(t => t.id === id);
+const openEditTableModal = (table: any) => {
   if (table) {
     state.isEditingTable = true;
     state.tempTable = { 
       ...table,
-      shopId: state.shopId
     };
     state.showTableModal = true;
   }
@@ -246,13 +244,13 @@ const deleteQRCode = () => {
   state.tempTable.qrcode = '';
 };
 
+// 保存桌位
 const confirmTable = async () => {
   try {
     // 表单验证
     await formRef.value.validate();
-    
     const params = {
-      shopId: parseInt(state.tempTable.shopId),
+      shopId: state.shopId,
       tableName: state.tempTable.tableName,
       personNumber: parseInt(state.tempTable.personNumber),
       orderMode: state.tempTable.orderMode
@@ -276,16 +274,9 @@ const confirmTable = async () => {
         icon: 'success'
       });
     }
-    
     closeTableModal();
     GetTableList(); // 重新获取列表
-  } catch (error) {
-    console.error('操作失败:', error);
-    uni.showToast({
-      title: '操作失败',
-      icon: 'none'
-    });
-  }
+  } catch (error) { }
 };
 
 const openDeleteTableModal = (id: string) => {
@@ -492,16 +483,13 @@ const deleteTableItem = async () => {
 }
 
 /* 服务模式选择器样式 */
-.u-form{
-  .service-mode-options {
-    display: flex;
-    flex-direction: column;
-    gap: 24rpx;
-    margin-top: 16rpx;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
+.service-mode-options {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+  margin-top: 16rpx;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .mode-option {
@@ -512,6 +500,7 @@ const deleteTableItem = async () => {
   transition: all 0.3s ease;
   cursor: pointer;
   width: 100%;
+   box-sizing: border-box;
 }
 
 .mode-option.active {
@@ -543,19 +532,19 @@ const deleteTableItem = async () => {
 }
 
 /* 二维码相关样式 */
-.qrcode-section {
-  margin-top: 20rpx;
+.qrcode-section{
+  width: 100%;
 }
-
 .qrcode-preview {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20rpx;
+  width: 100%;
 }
 
 .qrcode-image {
-  width: 240rpx;
+  width: 100%;
   height: 240rpx;
   border-radius: 16rpx;
   border: 4rpx solid #e0e0e0;
@@ -588,6 +577,7 @@ const deleteTableItem = async () => {
   background-color: #fafafa;
   cursor: pointer;
   transition: all 0.3s ease;
+  width: 100%;
 }
 
 .upload-area:active {
@@ -613,4 +603,7 @@ const deleteTableItem = async () => {
   text-align: center;
 }
 
+.modal-body{
+  // max-height: 60vh;
+}
 </style>

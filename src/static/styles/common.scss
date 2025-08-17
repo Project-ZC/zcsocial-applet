@@ -8,7 +8,6 @@ page {
     -webkit-overflow-scrolling: touch;
 }
 
-
 .z-modal {
     display: flex;
     flex-direction: column;
@@ -48,11 +47,11 @@ page {
 
     .modal-body {
         padding: 20rpx;
-        max-height: 800rpx;
+        // max-height: 800rpx;
+        max-height: 70vh;
         margin-bottom: 20rpx;
         // flex: 1;
         // overflow-y: auto; // 增加了 scroll-view会卡顿
-
     }
 
     .modal-footer {
@@ -68,8 +67,7 @@ page {
 
 .z-modal-lg {
     width: 650rpx;
-    max-height: 70vh;
-
+    max-height: 85vh;
 }
 
 /* 毛玻璃效果 */
@@ -92,3 +90,7 @@ page {
         display: none;
     }
 }
+
+// input {
+//     caret-color: #3c9cff !important;
+// }

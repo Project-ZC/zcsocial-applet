@@ -17,11 +17,21 @@ function setupUI(app: App) {
             radio: {
                 // size: 20
             },
+            // 设置input组件的全局默认属性
+            input: {
+                // // 始终嵌入键盘
+                // "alwaysEmbed": true, // 无此数据
+                // // 自动调整位置
+                // "adjustPosition": true,
+                // // 光标距离键盘的距离
+                // "cursorSpacing": 30,
+                // 光标颜色
+                "cursorColor": "#3c9cff"
+            },
             // 其他组件属性配置
             // ......
         },
     });
-
     app.use(uviewPlus);
 }
 

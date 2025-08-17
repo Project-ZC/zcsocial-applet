@@ -55,7 +55,12 @@
             <view class="staff-info">
               <view class="staff-header">
                 <view class="staff-name">{{ item.userNickname }}</view>
-                <view class="staff-role" v-if="item.userRoleNames">{{ item.userRoleNames }}</view>
+                <!-- <view class="staff-role" v-if="item.userRoleNames">{{ item.userRoleNames }}</view> -->
+                 <view class="staff-roleIds" v-if="item.userRoleNames && item.userRoleNames.length > 0">
+                <text class="staff-role" v-for="(permission, pIndex) in item.userRoleNames" :key="pIndex">
+                  {{ permission }}
+                </text>
+              </view>
               </view>
               <view class="staff-intro">{{ item.userIntroduce }}</view>
               <view class="staff-contact" v-if="item.userMobile || item.id">
@@ -63,11 +68,7 @@
                 <text v-if="item.userMobile && item.id"> | </text>
                 <text v-if="item.id">零卡id: {{ item.id }}</text>
               </view>
-              <view class="staff-roleIds" v-if="item.userRoleNames && item.userRoleNames.length > 0">
-                <text class="permission-tag" v-for="(permission, pIndex) in item.userRoleNames" :key="pIndex">
-                  {{ permission }}
-                </text>
-              </view>
+              
             </view>
             <view class="staff-actions">
               <view class="action-edit" @click="openEditModal(item)">
@@ -167,13 +168,13 @@
               disabled
             />
           </view>
-          <view class="form-item">
+          <!-- <view class="form-item">
             <view class="form-label">职位</view>
             <view class="role-display">
               <view class="current-role">{{ state.tempStaff.role || '暂无职位' }}</view>
               <view class="role-tip">职位将根据所选权限自动生成</view>
             </view>
-          </view>
+          </view> -->
 
           <view class="form-item">
             <view class="form-label">手机号</view>
@@ -197,7 +198,7 @@
           </view>
 
              <view class="form-item">
-              <view class="form-label">员工权限</view>
+              <view class="form-label">职位</view>
                 <view class="roleIds-list">
                  <view
                    v-for="(item, index) in state.roleList"
@@ -816,23 +817,6 @@ $role-filter-h: 60rpx;
   width: 200rpx;
   height: 200rpx;
   margin-bottom: 40rpx;
-}
-
-.empty-text {
-  font-size: 30rpx;
-  color: #999;
-  margin-bottom: 20rpx;
-}
-
-/* 加载更多状态 */
-.loading-more {
-  padding: 30rpx;
-  text-align: center;
-}
-
-.loading-text {
-  font-size: 26rpx;
-  color: #999;
 }
 
 .form-item {

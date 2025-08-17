@@ -12,14 +12,83 @@
  * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
  */
 
-@import 'uview-plus/theme.scss';
+// @import 'uview-plus/theme.scss';
 // @import '@/static/styles/theme.scss'; // 不生效var(--)
 // @import '@/static/styles/variables.scss';
 
-/* 行为相关颜色 */
+
+$u-main-color: #303133;
+$u-content-color: #606266;
+$u-tips-color: #909193;
+$u-light-color: #c0c4cc;
+$u-border-color: #dadbde;
+$u-bg-color: #f3f4f6;
+$u-disabled-color: #c8c9cc;
+
 $u-primary: #3c9cff;
+$u-primary-dark: #398ade;
+$u-primary-disabled: #9acafc;
+$u-primary-light: #ecf5ff;
+
+$u-warning: #f9ae3d;
+$u-warning-dark: #f1a532;
+$u-warning-disabled: #f9d39b;
+$u-warning-light: #fdf6ec;
+
+$u-success: #5ac725;
+$u-success-dark: #53c21d;
+$u-success-disabled: #a9e08f;
+$u-success-light: #f5fff0;
+
+$u-error: #f56c6c;
+$u-error-dark: #e45656;
+$u-error-disabled: #f7b2b2;
+$u-error-light: #fef0f0;
+
+$u-info: #909399;
+$u-info-dark: #767a82;
+$u-info-disabled: #c4c6c9;
+$u-info-light: #f4f4f5;
+
+
 // 背景色
 $u-bg-1: #f5f5f5;
+
+/* 颜色变量 */
+
+/* 行为相关颜色 */
+$uni-color-primary: #007aff;
+$uni-color-success: #4cd964;
+$uni-color-warning: #f0ad4e;
+$uni-color-error: #dd524d;
+
+/* 文字基本颜色 */
+$uni-text-color: #333; // 基本色
+$uni-text-color-inverse: #fff; // 反色
+$uni-text-color-grey: #999; // 辅助灰色，如加载更多的提示信息
+$uni-text-color-placeholder: #808080;
+$uni-text-color-disable: #c0c0c0;
+
+/* 背景颜色 */
+$uni-bg-color: #fff;
+$uni-bg-color-grey: #f8f8f8;
+$uni-bg-color-hover: #f1f1f1; // 点击状态颜色
+$uni-bg-color-mask: rgba(0, 0, 0, 0.4); // 遮罩颜色
+
+/* 边框颜色 */
+$uni-border-color: #c8c7cc;
+
+// scss混入，为了少写几行#ifndef
+@mixin flex($direction: row) {
+    /* #ifndef APP-NVUE */
+    display: flex;
+    /* #endif */
+    flex-direction: $direction;
+}
+
+
+
+
 
 /* 文字尺寸 */
 $up-font-sm: 20rpx;

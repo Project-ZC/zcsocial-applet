@@ -26,7 +26,7 @@ const props = withDefaults(defineProps(), {
 <style lang="scss" scoped>
 @import '@/uni.scss';
 .subtext{
-  font-size: $up-font-sm;
+  font-size: $up-font-sm; 
   color: #999;
   margin-top: 10rpx;
 }

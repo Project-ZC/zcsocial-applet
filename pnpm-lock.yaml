@@ -81,8 +81,8 @@ importers:
         specifier: ^0.16.4
         version: 0.16.7(rollup@4.46.2)
       uview-plus:
-        specifier: 3.4.94
-        version: 3.4.94
+        specifier: 3.4.98
+        version: 3.4.98
       vue:
         specifier: ^3.4.21
         version: 3.5.18(typescript@5.9.2)
@@ -3795,8 +3795,8 @@ packages:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
 
-  uview-plus@3.4.94:
-    resolution: {integrity: sha512-Iac3pFldcBEyCOmXl8gvRSM0PmHlBd6GMeK56Jehm0L4usyh4NyMYsQ+kmmVgq+P/dDpEiJXTbdcgKvNuYZU/g==}
+  uview-plus@3.4.98:
+    resolution: {integrity: sha512-44oLUVJGWGv8FIj8IaR3UFbRc4+nSbV3DdHVeytn3oEEAu9D1byUFj8uR9aiVvQFdFgYKhAhoRCQKz+zPdcBqw==, tarball: https://registry.npmjs.org/uview-plus/-/uview-plus-3.4.98.tgz}
     engines: {HBuilderX: ^3.1.0, uni-app: ^4.66, uni-app-x: ''}
 
   v8-to-istanbul@8.1.1:
@@ -8723,7 +8723,7 @@ snapshots:
 
   utils-merge@1.0.1: {}
 
-  uview-plus@3.4.94:
+  uview-plus@3.4.98:
     dependencies:
       clipboard: 2.0.11
       dayjs: 1.11.13
