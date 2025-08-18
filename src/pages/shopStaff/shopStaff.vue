@@ -66,7 +66,7 @@
               <view class="staff-contact" v-if="item.userMobile || item.id">
                 <text v-if="item.userMobile">电话: {{ item.userMobile }}</text>
                 <text v-if="item.userMobile && item.id"> | </text>
-                <text v-if="item.id">零卡id: {{ item.id }}</text>
+                <text v-if="item.id">玩点id: {{ item.id }}</text>
               </view>
               
             </view>
@@ -136,13 +136,13 @@
               :class="{ active: state.searchType === 'zero' }"
               @click="switchSearchType('zero')"
             >
-              零卡ID
+              玩点ID
             </view>
           </view>
           <view class="search-box">
             <up-input
               v-model="state.searchKeyword"
-              :placeholder="state.searchType === 'mobile' ? '请输入手机号码' : '请输入零卡ID'"
+              :placeholder="state.searchType === 'mobile' ? '请输入手机号码' : '请输入玩点ID'"
               :type="state.searchType === 'mobile' ? 'number' : 'text'"
               clearable
             />
@@ -188,10 +188,10 @@
           </view>
 
           <view class="form-item">
-            <view class="form-label">零卡id</view>
+            <view class="form-label">玩点id</view>
             <up-input
               v-model="state.tempStaff.id"
-              placeholder="请输入零卡id"
+              placeholder="请输入玩点id"
               border="surround"
               disabled
             />
@@ -270,7 +270,7 @@
 
 <script lang="ts" setup>
 import { mockApiFetchList, getScrollHeight } from '@/utils/util'
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad, onPullDownRefresh } from '@dcloudio/uni-app'
 import {cloneDeep} from 'lodash-es'
 import pageWrapper from "@/components/page/index.vue";
 import emptyData from "@/components/empty-data/index.vue";
@@ -346,7 +346,7 @@ const state = reactive({
     scrollHeight: 0,
     hasMore: false,
     loadStatus: 'loading',
-  }
+  } as any
 })
 
 // 加载员工列表
@@ -573,7 +573,7 @@ const onSearch = async() => {
     return
   }
   
-  const searchTypeText = searchType === 'mobile' ? '手机号' : '零卡ID'
+  const searchTypeText = searchType === 'mobile' ? '手机号' : '玩点ID'
   const params = {} as any;
   if(searchType === 'mobile'){
     params.mobile = keyword;
@@ -641,6 +641,7 @@ const shareQRCode = () => {
   })
 }
 
+// 接收参数
 onLoad(async(query)=>{
   console.log(query, 1234)
   if (query.shopId) {
@@ -652,6 +653,15 @@ onLoad(async(query)=>{
   await GetAllRoleList()  // 先获取角色列表
   loadStaffList()
 })
+
+// 下拉刷新监听
+onPullDownRefresh(async () => {
+  try {
+    await loadStaffList();
+  } finally {
+    uni.stopPullDownRefresh();
+  }
+});
 
 
 </script>

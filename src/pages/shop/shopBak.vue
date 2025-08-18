@@ -41,43 +41,43 @@
     
     <!-- 其他管理功能 -->
     <view class="more-functions z-glass-card">
-      <view class="more-function-title">其他功能</view>
-      <up-cell-group>
-        <up-cell
-          title="店铺状态"
-          :value="shopInfo.status === 'open' ? '营业中' : '休息中'"
-          @click="toggleShopStatus"
-          is-link
-        >
-          <template #icon>
-            <view class="more-function-icon" :class="shopInfo.status === 'open' ? 'close-icon' : 'open-icon'"></view>
-          </template>
-          <template #value>
-            <text class="cell-value" :class="shopInfo.status === 'open' ? 'open-status' : 'closed-status'">{{shopInfo.status === 'open' ? '营业中 (点击设为休息)' : '休息中 (点击设为营业)'}}</text>
-          </template>
-        </up-cell>
-        <up-cell
-          title="店铺数据"
-          value="查看统计数据"
-          @click="viewShopAnalytics"
-          is-link
-        >
-          <template #icon>
-            <view class="more-function-icon analytics-icon"></view>
-          </template>
-        </up-cell>
-        <up-cell
-          title="店铺二维码"
-          value="生成并分享"
-          @click="viewQRCode"
-          is-link
-        >
-          <template #icon>
-            <view class="more-function-icon qrcode-icon"></view>
-          </template>
-        </up-cell>
-      </up-cell-group>
-    </view>
+      <view class="z-cell-title">其他功能</view>
+        <up-cell-group>
+          <up-cell
+            title="店铺状态"
+            :value="shopInfo.status === 'open' ? '营业中' : '休息中'"
+            @click="toggleShopStatus"
+            is-link
+          >
+            <template #icon>
+              <view class="more-function-icon" :class="shopInfo.status === 'open' ? 'close-icon' : 'open-icon'"></view>
+            </template>
+            <template #value>
+              <text class="cell-value" :class="shopInfo.status === 'open' ? 'open-status' : 'closed-status'">{{shopInfo.status === 'open' ? '营业中 (点击设为休息)' : '休息中 (点击设为营业)'}}</text>
+            </template>
+          </up-cell>
+          <up-cell
+            title="店铺数据"
+            value="查看统计数据"
+            @click="viewShopAnalytics"
+            is-link
+          >
+            <template #icon>
+              <view class="more-function-icon analytics-icon"></view>
+            </template>
+          </up-cell>
+          <up-cell
+            title="店铺二维码"
+            value="生成并分享"
+            @click="viewQRCode"
+            is-link
+          >
+            <template #icon>
+              <view class="more-function-icon qrcode-icon"></view>
+            </template>
+          </up-cell>
+        </up-cell-group>
+      </view> 
     </view>
     
     <!-- 二维码选项弹窗 -->
@@ -116,7 +116,7 @@
 </template>
 
 <script lang="ts" setup>
-import {onLoad} from '@dcloudio/uni-app'
+import { onLoad } from '@dcloudio/uni-app'
 import pageWrapper from "@/components/page/index.vue";
 import { onMounted, reactive, ref } from "vue";
 import { getShopList, deleteShop, addShop, editShop, getShopDetail } from "@/api/shopManage";
@@ -392,7 +392,7 @@ const viewQRCode = () => {
 };
 
 onLoad((query) => {
- query.shopId = '10000008'
+//  query.shopId = '10000008'
  if(query.shopId){
   shopInfo.id = query.shopId
   getShopInfo(query.shopId)
@@ -603,13 +603,6 @@ onLoad((query) => {
   overflow: hidden;
 }
 
-.more-function-title {
-  font-size: $up-font-lg;
-  font-weight: bold;
-  color: #333;
-  padding: $up-box-pd;
-  border-bottom: 1rpx solid #f0f0f0;
-}
 
 .more-function-item {
   display: flex;

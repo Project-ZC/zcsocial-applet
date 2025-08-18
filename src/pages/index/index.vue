@@ -1,8 +1,11 @@
 <template>
-	<view class="content container">
+<pageWrapper :showTabbar="true">
+	<up-sticky offset-top="0">
 		<Navbar />
+	</up-sticky>
+	<view class="content">
 		<view class="scan-box z-glass-card" @tap="handleScan">
-			<up-image width="100" height="100" src="/static/scan-logo.png" />
+			<up-image width="100" height="100" src="/static/images/scan-logo.png" />
 			<view class="scan-text">
 				<text>扫码进入店铺</text>
 			</view>
@@ -24,26 +27,16 @@
 			</up-list>
 		</view>
 	</view>
+	</pageWrapper>
 </template>
 
 <script lang="ts" setup>
+import { ref } from "vue";
+import { onPullDownRefresh } from '@dcloudio/uni-app';
+import pageWrapper from "@/components/page/index.vue";
 import Navbar from "@/components/navbar/navbar.vue";
 import ShopCard from "@/components/shop-card/shop-card.vue";
 import ActivityCard from "@/components/activity-card/activity-card.vue";
-import { ref } from "vue";
-const listHeight = ref(0);
-// uni.getSystemInfo({
-//   success: (res) => {
-//     let view = uni.createSelectorQuery().select(".shop-list");
-//     view
-//       .boundingClientRect((data) => {
-//         listHeight.value = res.windowHeight - uni.upx2px(100) - data.top - 100;
-//         console.log("信息", listHeight.value);
-//       })
-//       .exec();
-//   },
-// });
-const value = ref("");
 const shopList = ref([
 	{
 		title: "海伦司小酒馆",
@@ -179,11 +172,21 @@ const handleScan = () => {
 			});
 		},
 	});
+	
 };
+
+// 下拉刷新监听
+onPullDownRefresh(async () => {
+  try {
+  } finally {
+    uni.stopPullDownRefresh();
+  }
+});
 </script>
 
 <style lang="scss" scoped>
 .content {
+	padding: $up-box-pd;
 	.scan-box {
 		display: flex;
 		flex-direction: column;
@@ -191,6 +194,7 @@ const handleScan = () => {
 		justify-content: center;
 		box-sizing: border-box;
 		margin: 12px 0;
+		padding: $up-box-pd;
 		transition: all 0.3s ease;
 
 		&:active {

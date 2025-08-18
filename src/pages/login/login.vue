@@ -12,7 +12,7 @@
 						mode="aspectFit"
 					></image>
 				</view>
-				<text class="app-name">零卡社交</text>
+				<text class="app-name">玩点社交</text>
 			</view>
 
 			<!-- 登录区域 -->
@@ -37,7 +37,7 @@
 						<up-checkbox label=""></up-checkbox>
 					</up-checkbox-group>
 					<text class="agreement-text">
-						登录零卡社交服务账号且代表您已经同意
+						登录玩点社交服务账号且代表您已经同意
 						<text class="link" @click.stop="openUserAgreement"
 							>《用户协议》</text
 						>

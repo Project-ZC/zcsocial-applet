@@ -49,6 +49,7 @@ defineOptions({
 </script>
 
 <style lang="scss" scoped>
+@import '@/uni.scss';
 .activity-card-box {
   padding: 5rpx;
   box-sizing: border-box;
@@ -94,7 +95,7 @@ defineOptions({
         }
 
         text:last-child {
-          color: #000;
+          color: $u-main-color;
         }
       }
     }

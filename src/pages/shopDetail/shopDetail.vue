@@ -1,106 +1,108 @@
 <template>
-  <view class="container">
-    <!-- 店铺信息表单 -->
-    <view class="shop-form z-glass-card">
-      <up-form :model="form" ref="uForm" :error-type="['message']" labelPosition="top" labelWidth="auto">
-        <!-- 店铺LOGO -->
-        <up-form-item label="店铺LOGO" prop="logo">
-          <view class="logo-uploader" @click="uploadLogo">
-            <image class="shop-logo" :src="form.logo" mode="aspectFill" v-if="form.logo"></image>
-            <view class="upload-placeholder" v-else>
-              <view class="upload-icon"></view>
-              <text class="upload-text">点击上传</text>
-            </view>
-          </view>
-        </up-form-item>
-        
-        <!-- 店铺名称 -->
-        <up-form-item label="店铺名称" prop="name" :rules="[{ required: true, message: '请输入店铺名称' }]">
-          <up-input v-model="form.name" placeholder="请输入店铺名称" />
-        </up-form-item>
-        
-        <!-- 店铺简介 -->
-        <up-form-item label="店铺简介" prop="description">
-          <up-textarea  v-model="form.description"  :rows="4" placeholder="请输入店铺简介" maxlength="200" count/>
-          <!-- <text class="textarea-counter">{{ form.description.length || 0 }}/200</text> -->
-        </up-form-item>
-        
-        <!-- 营业时间 -->
-        <up-form-item label="营业时间" prop="openTime" :rules="[{ required: true, message: '请选择营业时间' }]">
-          <view class="time-picker-row">
-            <view class="time-picker" @click="showOpenTimePicker = true">
-              <text>{{ form.openTime || '请选择' }}</text>
-            </view>
-            <text class="time-separator">至</text>
-            <view class="time-picker" @click="showCloseTimePicker = true">
-              <text>{{ form.closeTime || '请选择' }}</text>
-            </view>
-          </view>
-        </up-form-item>
-        
-        <!-- 店铺地址 -->
-        <up-form-item label="店铺地址" prop="address" :rules="[{ required: true, message: '请选择店铺地址' }]">
-          <view class="location-picker" @click="chooseLocation">
-            <text v-if="form.address">{{ form.address }}</text>
-            <text v-else class="placeholder-text">点击选择地址</text>
-            <view class="location-icon"></view>
-          </view>
-        </up-form-item>
-        
-        <!-- 店铺标签 -->
-        <up-form-item label="店铺标签" prop="tags">
-          <view class="tags-container">
-            <view class="tags-list">
-              <view class="tag-item" v-for="(item, index) in form.tags" :key="index">
-                {{ item }}
-                <text class="remove-tag" @click="removeTag(index)">×</text>
-              </view>
-              <view class="add-tag" @click="showTagInput" v-if="!showTagInput && form.tags.length < 5">+</view>
-            </view>
-            <view class="tag-input-container" v-if="showTagInput">
-              <up-input class="tag-input" v-model="newTag" :focus="showTagInput" placeholder="输入标签名称" maxlength="6" @blur="hideTagInput" />
-              <up-button class="add-tag-btn" @click="addTag" :disabled="!newTag">添加</up-button>
-            </view>
-          </view>
-        </up-form-item>
-        
-        <!-- Homebar相册 -->
-        <up-form-item label="Homebar相册" prop="album">
-          <view class="album-container">
-            <view class="album-list">
-              <view class="album-item" v-for="(item, index) in form.album" :key="index">
-                <image :src="item" mode="aspectFill"></image>
-                <view class="delete-image" @click="deleteAlbumImage(index)">×</view>
-              </view>
-              <view class="add-image" @click="uploadAlbumImage" v-if="form.album.length < 9">
-                <view class="add-icon">+</view>
+  <pageWrapper>
+    <view class="shop-detail">
+      <!-- 店铺信息表单 -->
+      <view class="shop-form z-glass-card">
+        <up-form :model="form" ref="uForm" :error-type="['message']" labelPosition="top" labelWidth="auto">
+          <!-- 店铺LOGO -->
+          <up-form-item label="店铺LOGO" prop="logo">
+            <view class="logo-uploader" @click="uploadLogo">
+              <image class="shop-logo" :src="form.logo" mode="aspectFill" v-if="form.logo"></image>
+              <view class="upload-placeholder" v-else>
+                <view class="upload-icon"></view>
+                <text class="upload-text">点击上传</text>
               </view>
             </view>
-            <text class="album-tip">最多上传9张照片，建议上传店铺环境、特色酒水等照片</text>
-          </view>
-        </up-form-item>
-      </up-form>
-    </view>
-    
-    <!-- 保存按钮 -->
-    <up-button class="save-button" type="primary" @click="saveShopInfo">保存</up-button>
-    
-    <!-- 营业时间选择器 -->
-    <up-datetime-picker
-      :show="showOpenTimePicker"
-      v-model="openTimeValue"
-      mode="time"
-      @confirm="confirmOpenTime"
-      @cancel="showOpenTimePicker = false"
-    ></up-datetime-picker>
-    <up-datetime-picker
-      :show="showCloseTimePicker"
-      v-model="closeTimeValue"
-      mode="time"
-      @confirm="confirmCloseTime"
-      @cancel="showCloseTimePicker = false"
-    ></up-datetime-picker>
-  </view> 
+          </up-form-item>
+          
+          <!-- 店铺名称 -->
+          <up-form-item label="店铺名称" prop="name" :rules="[{ required: true, message: '请输入店铺名称' }]">
+            <up-input v-model="form.name" placeholder="请输入店铺名称" />
+          </up-form-item>
+          
+          <!-- 店铺简介 -->
+          <up-form-item label="店铺简介" prop="description">
+            <up-textarea  v-model="form.description"  :rows="4" placeholder="请输入店铺简介" maxlength="200" count/>
+            <!-- <text class="textarea-counter">{{ form.description.length || 0 }}/200</text> -->
+          </up-form-item>
+          
+          <!-- 营业时间 -->
+          <up-form-item label="营业时间" prop="openTime" :rules="[{ required: true, message: '请选择营业时间' }]">
+            <view class="time-picker-row">
+              <view class="time-picker" @click="showOpenTimePicker = true">
+                <text>{{ form.openTime || '请选择' }}</text>
+              </view>
+              <text class="time-separator">至</text>
+              <view class="time-picker" @click="showCloseTimePicker = true">
+                <text>{{ form.closeTime || '请选择' }}</text>
+              </view>
+            </view>
+          </up-form-item>
+          
+          <!-- 店铺地址 -->
+          <up-form-item label="店铺地址" prop="address" :rules="[{ required: true, message: '请选择店铺地址' }]">
+            <view class="location-picker" @click="chooseLocation">
+              <text v-if="form.address">{{ form.address }}</text>
+              <text v-else class="placeholder-text">点击选择地址</text>
+              <view class="location-icon"></view>
+            </view>
+          </up-form-item>
+          
+          <!-- 店铺标签 -->
+          <up-form-item label="店铺标签" prop="tags">
+            <view class="tags-container">
+              <view class="tags-list">
+                <view class="tag-item" v-for="(item, index) in form.tags" :key="index">
+                  {{ item }}
+                  <text class="remove-tag" @click="removeTag(index)">×</text>
+                </view>
+                <view class="add-tag" @click="showTagInput" v-if="!showTagInput && form.tags.length < 5">+</view>
+              </view>
+              <view class="tag-input-container" v-if="showTagInput">
+                <up-input class="tag-input" v-model="newTag" :focus="showTagInput" placeholder="输入标签名称" maxlength="6" @blur="hideTagInput" />
+                <up-button class="add-tag-btn" @click="addTag" :disabled="!newTag">添加</up-button>
+              </view>
+            </view>
+          </up-form-item>
+          
+          <!-- Homebar相册 -->
+          <up-form-item label="Homebar相册" prop="album">
+            <view class="album-container">
+              <view class="album-list">
+                <view class="album-item" v-for="(item, index) in form.album" :key="index">
+                  <image :src="item" mode="aspectFill"></image>
+                  <view class="delete-image" @click="deleteAlbumImage(index)">×</view>
+                </view>
+                <view class="add-image" @click="uploadAlbumImage" v-if="form.album.length < 9">
+                  <view class="add-icon">+</view>
+                </view>
+              </view>
+              <text class="album-tip">最多上传9张照片，建议上传店铺环境、特色酒水等照片</text>
+            </view>
+          </up-form-item>
+        </up-form>
+      </view>
+      
+      <!-- 保存按钮 -->
+      <up-button class="save-button" type="primary" @click="saveShopInfo">保存</up-button>
+      
+      <!-- 营业时间选择器 -->
+      <up-datetime-picker
+        :show="showOpenTimePicker"
+        v-model="openTimeValue"
+        mode="time"
+        @confirm="confirmOpenTime"
+        @cancel="showOpenTimePicker = false"
+      ></up-datetime-picker>
+      <up-datetime-picker
+        :show="showCloseTimePicker"
+        v-model="closeTimeValue"
+        mode="time"
+        @confirm="confirmCloseTime"
+        @cancel="showCloseTimePicker = false"
+      ></up-datetime-picker>
+    </view> 
+  </pageWrapper>
 </template>
 
 <script lang="ts" setup>
@@ -265,7 +267,11 @@ const saveShopInfo = () => {
 </script>
 
 <style lang="scss" scoped>
-.container {
+.shop-detail {
+  // padding: $up-box-pd;
+  // min-height: 100vh;
+  // padding-bottom: 40rpx;
+  // background-color: #f5f5f5;
 }
 
 .z-glass-card {

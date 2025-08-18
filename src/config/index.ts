@@ -41,7 +41,7 @@ const getConfig = (): Config => {
 		},
 
 		app: {
-			name: "零卡社交",
+			name: "玩点社交",
 			version: "1.0.0",
 		},
 

@@ -50,33 +50,8 @@ $u-info-dark: #767a82;
 $u-info-disabled: #c4c6c9;
 $u-info-light: #f4f4f5;
 
-
 // 背景色
 $u-bg-1: #f5f5f5;
-
-/* 颜色变量 */
-
-/* 行为相关颜色 */
-$uni-color-primary: #007aff;
-$uni-color-success: #4cd964;
-$uni-color-warning: #f0ad4e;
-$uni-color-error: #dd524d;
-
-/* 文字基本颜色 */
-$uni-text-color: #333; // 基本色
-$uni-text-color-inverse: #fff; // 反色
-$uni-text-color-grey: #999; // 辅助灰色，如加载更多的提示信息
-$uni-text-color-placeholder: #808080;
-$uni-text-color-disable: #c0c0c0;
-
-/* 背景颜色 */
-$uni-bg-color: #fff;
-$uni-bg-color-grey: #f8f8f8;
-$uni-bg-color-hover: #f1f1f1; // 点击状态颜色
-$uni-bg-color-mask: rgba(0, 0, 0, 0.4); // 遮罩颜色
-
-/* 边框颜色 */
-$uni-border-color: #c8c7cc;
 
 // scss混入，为了少写几行#ifndef
 @mixin flex($direction: row) {
@@ -86,12 +61,33 @@ $uni-border-color: #c8c7cc;
     flex-direction: $direction;
 }
 
+/* 颜色变量 */
+// /* 行为相关颜色 */
+// $uni-color-primary: #007aff;
+// $uni-color-success: #4cd964;
+// $uni-color-warning: #f0ad4e;
+// $uni-color-error: #dd524d;
 
+// /* 文字基本颜色 */
+// $uni-text-color: #333; // 基本色
+// $uni-text-color-inverse: #fff; // 反色
+// $uni-text-color-grey: #999; // 辅助灰色，如加载更多的提示信息
+// $uni-text-color-placeholder: #808080;
+// $uni-text-color-disable: #c0c0c0;
+
+// /* 背景颜色 */
+// $uni-bg-color: #fff;
+// $uni-bg-color-grey: #f8f8f8;
+// $uni-bg-color-hover: #f1f1f1; // 点击状态颜色
+// $uni-bg-color-mask: rgba(0, 0, 0, 0.4); // 遮罩颜色
+
+/* 边框颜色 */
+// $uni-border-color: #c8c7cc;
 
 
 
 /* 文字尺寸 */
-$up-font-sm: 20rpx;
+$up-font-sm: 24rpx;
 $up-font-base: 28rpx; // 750/ 14px
 $up-font-md: 32rpx;
 $up-font-lg: 36rpx;
@@ -127,3 +123,6 @@ $up-box-pd: 20rpx;
 
 // 顶部导航栏高度
 $up-navbar-h: 44px;
+
+// 底部tab切换
+$up-tabbar-h: 58px;

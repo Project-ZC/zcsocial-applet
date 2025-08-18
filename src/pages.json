@@ -1,22 +1,25 @@
 {
 	"pages": [
 		{
-			"path": "pages/index/index",
+			"path": "pages/shop/shop",
 			"style": {
-				"navigationBarTitleText": "首页",
-				"navigationStyle": "custom"
+				"navigationBarTitleText": "店铺",
+				"enablePullDownRefresh": true
 			}
 		},
 		{
-			"path": "pages/shopManage/shopManage",
+			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "店铺管理"
+				"navigationBarTitleText": "首页",
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": true
 			}
 		},
 		{
 			"path": "pages/message/message",
 			"style": {
-				"navigationBarTitleText": "通知"
+				"navigationBarTitleText": "消息",
+				"enablePullDownRefresh": true
 			}
 		},
 		{
@@ -26,11 +29,24 @@
 			}
 		},
 		{
-			"path": "pages/shop/shop",
+			"path": "pages/milkTeaOrder/milkTeaOrder",
 			"style": {
-				"navigationBarTitleText": "店铺详情"
+				"navigationBarTitleText": "奶茶点单"
 			}
 		},
+		{
+			"path": "pages/milkTeaDemo/milkTeaDemo",
+			"style": {
+				"navigationBarTitleText": "奶茶点单演示"
+			}
+		},
+		{
+			"path": "pages/orderDemo/orderDemo",
+			"style": {
+				"navigationBarTitleText": "订单卡片演示"
+			}
+		},
+		
 		{
 			"path": "pages/orders/orders",
 			"style": {
@@ -50,7 +66,7 @@
 			}
 		},
 		{
-			"path": "pages/vertical-tabs-demo/vertical-tabs-demo",
+			"path": "pages/verticalTabsDemo/verticalTabsDemo",
 			"style": {
 				"navigationBarTitleText": "纵向Tab演示",
 				"navigationStyle": "custom"
@@ -65,31 +81,36 @@
 		{
 			"path": "pages/shopMenu/shopMenu",
 			"style": {
-				"navigationBarTitleText": "酒单管理"
+				"navigationBarTitleText": "酒单管理",
+				"enablePullDownRefresh": true
 			}
 		},
 		{
 			"path": "pages/shopStaff/shopStaff",
 			"style": {
-				"navigationBarTitleText": "员工管理"
+				"navigationBarTitleText": "员工管理",
+				"enablePullDownRefresh": true
 			}
 		},
 		{
 			"path": "pages/tableManage/tableManage",
 			"style": {
-				"navigationBarTitleText": "桌位管理"
+				"navigationBarTitleText": "桌位管理",
+				"enablePullDownRefresh": true
 			}
 		},
 		{
 			"path": "pages/ticketSettings/ticketSettings",
 			"style": {
-				"navigationBarTitleText": "门票设置"
+				"navigationBarTitleText": "门票设置",
+				"enablePullDownRefresh": true
 			}
 		},
 		{
 			"path": "pages/shopGames/shopGames",
 			"style": {
-				"navigationBarTitleText": "店内游戏"
+				"navigationBarTitleText": "店内游戏",
+				"enablePullDownRefresh": true
 			}
 		},
 		{
@@ -109,13 +130,21 @@
 	"tabBar": {
 		"color": "#999999",
 		"selectedColor": "#000000",
-		"backgroundColor": "#ffffff",
+		"backgroundColor": "black",
 		"borderStyle": "black",
 		"list": [
-			{ "pagePath": "pages/index/index" },
-			{ "pagePath": "pages/message/message" },
-			{ "pagePath": "pages/shop/shop" },
-			{ "pagePath": "pages/my/my" }
+			{
+				"pagePath": "pages/index/index"
+			},
+			{
+				"pagePath": "pages/message/message"
+			},
+			{
+				"pagePath": "pages/shop/shop"
+			},
+			{
+				"pagePath": "pages/my/my"
+			}
 		]
 	},
 	"easycom": {

@@ -91,6 +91,17 @@ page {
     }
 }
 
-// input {
-//     caret-color: #3c9cff !important;
-// }
+
+.z-cell-title {
+    font-size: $up-font-lg;
+    font-weight: bold;
+    color: $u-main-color;
+    padding: $up-box-pd;
+    border-bottom: 1rpx solid #f0f0f0;
+}
+
+.u-cell{
+    .u-cell__title-text{
+        font-size: $up-font-md!important;
+    }
+}

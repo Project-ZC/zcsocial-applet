@@ -1,4 +1,5 @@
 <template>
+<pageWrapper showTabbar>
 	<view class="message-container">
 		<template v-if="role">
 			<up-sticky bgColor="#fff">
@@ -46,9 +47,12 @@
 			</view>
 		</template>
 	</view>
+	</pageWrapper>
 </template>
 
 <script lang="ts" setup>
+import pageWrapper from '@/components/page/index.vue'
+import { onPullDownRefresh } from '@dcloudio/uni-app';
 import MessageNotification from "@/components/message-notification/message-notification.vue";
 import OrderCard from "@/components/order-card/order-card.vue";
 import VerticalTabs from "@/components/vertical-tabs/vertical-tabs.vue";
@@ -312,6 +316,14 @@ const handleOrderActionClick = (order: any, action: any) => {
 	console.log("订单操作点击:", order, action);
 	// 这里可以处理订单相关的操作
 };
+// 下拉刷新监听
+onPullDownRefresh(async () => {
+  try {
+  } finally {
+    uni.stopPullDownRefresh();
+  }
+});
+
 </script>
 
 <style lang="scss">

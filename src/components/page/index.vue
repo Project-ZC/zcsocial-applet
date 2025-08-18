@@ -1,5 +1,5 @@
 <template>
-  <view class="page-wrapper" theme="LightBlue" >
+  <view class="page-wrapper" theme="LightBlue" :class="{ 'show-tabbar': showTabbar }" :style="{ paddingBottom: paddingBottomValue }">
     <!-- <view class="page-wrapper-header" :style="{
       position: currentPage === 'index' ? 'unset' : 'sticky',
       backgroundColor: ['index', 'login'].includes(currentPage) ? 'transparent' : '#fff',
@@ -10,7 +10,9 @@
     <view class="content-area">
       <slot></slot>
     </view>
-    <footer-view v-if="showFooter">
+
+    <tabbar v-if="showTabbar" />
+    <footer-view v-if="showFooter" :style="{ paddingBottom: paddingBottomValue }">
       <slot name="footer"></slot>
     </footer-view>
   </view>
@@ -19,14 +21,17 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import footerView from "./footer-view.vue";
+import tabbar from "./tabbar.vue";
 
 // 定义 props
 const props = defineProps<{
   title: string;
   footerShow: boolean;
+  showTabbar: boolean;
 }>();
 
 // 定义数据
+const paddingBottomValue = ref('0px')
 const showBackButton = ref(false);
 const currentPage = ref('');
 
@@ -38,6 +43,17 @@ onMounted(() => {
   showBackButton.value = !(current as any).isTabBarPage;
   const currentPageInstance = pages[pages.length - 1];
   currentPage.value = currentPageInstance.route.split("/").pop() || '';
+
+
+  const systemInfo = uni.getSystemInfoSync();
+	const bottomSafeArea = systemInfo.safeAreaInsets ? systemInfo.safeAreaInsets.bottom : 0;
+	paddingBottomValue.value = bottomSafeArea + 'px'; // 设置底部安全区域的填充
+
+  if(props.showTabbar){
+    paddingBottomValue.value = bottomSafeArea + 58 + 'px'; // 设置底部安全区域的填充
+  }else{
+    paddingBottomValue.value = bottomSafeArea+'px'; // 设置底部安全区域的填充
+  }
 });
 
 // 使用 props 中的值
@@ -66,6 +82,10 @@ $header-h: 100rpx;
     height: $header-h;
   }
 }
+
+// .show-tabbar{
+//   padding-bottom: $up-tabbar-h + paddingBottomValue;
+// }
 
 .content-area {
   font-size: $up-font-base;

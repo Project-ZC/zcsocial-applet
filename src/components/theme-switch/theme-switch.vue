@@ -1,6 +1,6 @@
 <template>
   <view class="theme-switch" @tap="toggleTheme">
-    <van-icon :name="isDarkMode ? 'sunny-o' : 'moon-o'" size="24px" />
+    <van-icon :name="isDarkMode ? 'sunny-o' : 'moon-o'" size="24" />
   </view>
 </template>
 

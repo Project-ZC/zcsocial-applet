@@ -9,7 +9,7 @@
       >
         <up-icon name="map" color="#000" />
         <text class="address">{{ currentAddress }}</text>
-        <up-icon v-if="isLocating" name="loading" color="#000" />
+        <!-- <up-icon v-if="isLocating" name="loading" color="#000" /> -->
       </view>
       <view class="search-box" :style="{ width: screenInfo.screenWidth - menuButton.width - 80 + 'px' }">
         <up-search
@@ -24,7 +24,7 @@
       ></view>
     </view>
     <!-- 设置胶囊离内容距离 -->
-    <view class="nav-bar-buttom" style="height: 8px"></view>
+    <!-- <view class="nav-bar-buttom" style="height: 8px"></view> -->
   </view>
 </template>
 
@@ -311,7 +311,8 @@ const handleLocationClick = () => {
     .address-box {
       display: flex;
       align-items: center;
-      color: #000;
+      color: $u-main-color;
+      font-size: $up-font-sm;
       cursor: pointer;
       transition: opacity 0.3s ease;
 
@@ -320,8 +321,8 @@ const handleLocationClick = () => {
       }
 
       .address {
-        margin-left: 5rpx;
-        font-size: 28rpx;
+        margin-left: 3rpx;
+        font-size: $up-font-sm;
       }
     }
 

@@ -156,7 +156,7 @@
 import pageWrapper from "@/components/page/index.vue";
 import { reactive, ref } from "vue";
 import emptyData from "@/components/empty-data/index.vue";
-import { onLoad } from "@dcloudio/uni-app";
+import { onLoad,onPullDownRefresh } from "@dcloudio/uni-app";
 import { API_CONFIG } from "@/api/common/apiConfig";
 import {
 	getAllTableList,
@@ -233,12 +233,7 @@ const GetTableList = async () => {
 	}
 };
 
-// Lifecycle hooks
-onLoad(async (query) => {
-	state.shopId = query.shopId;
-	await getOrderModeList();
-	GetTableList();
-});
+
 
 // Table management methods
 const openAddTableModal = () => {
@@ -369,6 +364,21 @@ const deleteTableItem = async () => {
 	} catch (error) {}
 	state.deleteTableId = "";
 };
+
+onLoad(async (query) => {
+	state.shopId = query.shopId;
+	await getOrderModeList();
+	GetTableList();
+});
+
+// 下拉刷新监听
+onPullDownRefresh(async () => {
+  try {
+    await GetTableList();
+  } finally {
+    uni.stopPullDownRefresh();
+  }
+});
 </script>
 
 <style lang="scss" scoped>

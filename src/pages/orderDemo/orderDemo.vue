@@ -19,8 +19,8 @@
 
 <script lang="ts" setup>
 import OrderCard from '@/components/order-card/order-card.vue';
+import { ActionType, OrderStatus } from '@/enums/order';
 import type { ActionButton, OrderInfo } from '@/types/order';
-import { ActionType, OrderStatus } from '@/types/order';
 
 // 示例订单数据
 const sampleOrders: OrderInfo[] = [

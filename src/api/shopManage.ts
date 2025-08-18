@@ -2,7 +2,7 @@ import { http } from "@/utils/http";
 
 
 // ----------店铺列表-----------
-// 查询店铺列表
+// 查询自己可以管理店铺列表
 export const getShopList = (data: any) => {
     return http({
         url: "/v1/shop/list",
@@ -41,6 +41,27 @@ export const addShop = (data: any) => {
 export const editShop = (data: any) => {
     return http({
         url: "/v1/shop/edit",
+        method: "POST",
+        data,
+    });
+};
+
+
+
+// ------------店铺配置-------------
+
+// 查询店铺列表
+export const getShopConfigList = (data: any) => {
+    return http({
+        url: "/v1/shop/config/all/my/query",
+        method: "POST",
+        data,
+    });
+};
+// 修改店铺配置
+export const editShopConfig = (data: any) => {
+    return http({
+        url: "/v1/shop/config/modify",
         method: "POST",
         data,
     });

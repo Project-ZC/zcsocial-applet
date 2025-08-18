@@ -24,11 +24,11 @@
         <view class="category-actions" v-if="state.categories.length > 0">
           <view class="action-btn edit-category-btn" @click="openEditCategoryModal">
             <!-- <image src="/static/images/icons/edit.png" mode="aspectFit"></image> -->
-            <up-icon name="plus-circle-fill" size="56rpx"></up-icon>
+            <up-icon name="plus-circle-fill" size="56"></up-icon>
           </view>
           <view class="action-btn delete-category-btn" @click="openDeleteCategoryModal">
             <!-- <image src="/static/images/icons/delete.png" mode="aspectFit"></image> -->
-            <up-icon name="minus-circle-fill" size="56rpx"></up-icon>
+            <up-icon name="minus-circle-fill" size="56"></up-icon>
           </view>
         </view>
       </view>
@@ -95,11 +95,11 @@
         <view class="category-actions" v-if="state.diyTypes.length > 0">
           <view class="action-btn edit-category-btn" @click="openEditDiyTypeModal">
             <!-- <image src="/static/images/icons/edit.png" mode="aspectFit"></image> -->
-            <up-icon name="plus-circle-fill" size="56rpx"></up-icon>
+            <up-icon name="plus-circle-fill" size="56"></up-icon>
           </view>
           <view class="action-btn delete-category-btn" @click="openDeleteDiyTypeModal">
             <!-- <image src="/static/images/icons/delete.png" mode="aspectFit"></image> -->
-            <up-icon name="minus-circle-fill" size="56rpx"></up-icon>
+            <up-icon name="minus-circle-fill" size="56"></up-icon>
           </view>
         </view>
       </view>

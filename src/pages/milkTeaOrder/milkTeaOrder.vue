@@ -342,6 +342,7 @@ const onBackPress = (e: any) => {
 </script>
 
 <style lang="scss" scoped>
+@import "@/uni.scss";
 /* 模块分类 */
 .classify-list {
   width: 100%;
@@ -442,7 +443,7 @@ const onBackPress = (e: any) => {
 
               .item-right-desc {
                 font-size: $up-font-sm;
-                color: $up-main-color;
+                color: $u-main-color;
                 margin-top: 10rpx;
               }
 
@@ -461,7 +462,7 @@ const onBackPress = (e: any) => {
                     font-size: $up-font-sm;
                     margin-left: 5rpx;
                     font-weight: 500;
-                    color: $up-main-color;
+                    color: $u-main-color;
                     text-decoration: line-through;
                   }
                 }

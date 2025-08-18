@@ -1,66 +1,44 @@
 <template>
-	<view class="my-page container">
+<pageWrapper :showTabbar="true">
+	<view class="my-page">
 		<!-- 用户信息区域 -->
 		<view class="user-info-section z-glass-card">
-			<view class="user-avatar">
-				  <up-image
-					:showLoading="true"
-					:src="userStore.userInfo?.avatar"
-					width="120rpx"
-					height="120rpx"
-				></up-image>
-			</view>
-			<view class="user-details">
-				<view class="username">{{userStore.userInfo?.nickname || '微信用户'}}</view>
-				<view class="user-level">零卡ID：{{userStore.userInfo?.id || ''}}</view>
-			</view>
+			<view class="user-info-header">
+				<view class="user-avatar" @click="navigateTo('/pages/editProfile/editProfile')">
+					<!-- <up-image
+						:showLoading="true"
+						:src="userStore.userInfo?.avatar"
+						width="120rpx"
+						height="120rpx"
+					></up-image> -->
+					<up-avatar :src="userStore.userInfo?.avatar || '/static/images/default-avatar.png'" size="140rpx"></up-avatar>
+					<view class="avatar-upload-icon" v-if="!userStore.userInfo?.avatar">
+						<up-icon name="camera" color="#fff" size="16"></up-icon>
+					</view>
+				</view>
+				<view class="user-details">
+					<view class="username">{{userStore.userInfo?.nickname || '微信用户'}}</view>
+					<view class="user-level">玩点ID：{{userStore.userInfo?.id || ''}}</view>
 
-			<view class="edit-btn">
-				<up-button type="primary" @click="navigateTo('/pages/editProfile/editProfile')">编辑资料</up-button>
+					<view class="user-intro">
+						{{userStore.userInfo?.introduce || '这个人很懒，什么都没有留下'}}
+					</view>
+
+					<view class="tags flex-row" v-if="userStore.userInfo?.tags?.length > 0">
+						<up-tag size="mini" class="tag" type="primary" plain plainFill  :text="tag" v-for="(tag, index) in userStore.userInfo?.tags" :key="index"></up-tag>
+					</view>
+				</view>
+			</view>
+		   <view class="edit-btn">
+				<up-button type="primary" shape="circle" @click="navigateTo('/pages/editProfile/editProfile')">编辑资料</up-button>
 			</view>
 		</view>
-
-		<!-- 功能菜单 -->
-		<!-- <view class="menu-section">
-			<view class="menu-item" @tap="navigateToOrders">
-				<view class="menu-icon">📋</view>
-				<view class="menu-text">我的订单</view>
-				<view class="menu-arrow">></view>
-			</view>
-			<view class="menu-item" @tap="navigateToFavorites">
-				<view class="menu-icon">❤️</view>
-				<view class="menu-text">我的收藏</view>
-				<view class="menu-arrow">></view>
-			</view>
-			<view class="menu-item" @tap="navigateToSettings">
-				<view class="menu-icon">⚙️</view>
-				<view class="menu-text">设置</view>
-				<view class="menu-arrow">></view>
-			</view>
-			<view class="menu-item" @tap="navigateToMerchantOrders">
-				<view class="menu-icon">🏪</view>
-				<view class="menu-text">商家订单管理</view>
-				<view class="menu-arrow">></view>
-			</view>
-			<view class="menu-item" @tap="navigateToOrderDemo">
-				<view class="menu-icon">📱</view>
-				<view class="menu-text">订单卡片演示</view>
-				<view class="menu-arrow">></view>
-			</view>
-			<view class="menu-item" @tap="navigateToMilkTeaOrder">
-				<view class="menu-icon">🥤</view>
-				<view class="menu-text">奶茶点单</view>
-				<view class="menu-arrow">></view>
-			</view>
-			<view class="menu-item" @tap="navigateToMilkTeaDemo">
-				<view class="menu-icon">📖</view>
-				<view class="menu-text">奶茶点单演示</view>
-				<view class="menu-arrow">></view>
-			</view>
-		</view> -->
-		<up-cell-group>
-			<up-cell v-for="item in state.cellList" :key="item.title" :icon="item.icon" :title="item.title" :isLink="item.showArrow" @click="navigateTo(item.url)"></up-cell>
+		<view class="z-glass-card">
+		<up-cell-group v-for="main in state.cellList" :key="main.title">
+			<view class="z-cell-title">{{main.title}}</view>
+			<up-cell  v-for="item in main.children" :key="item.title" :icon="item.icon" :title="item.title" :isLink="item.showArrow" @click="itemClick(item)"></up-cell>
 		</up-cell-group>	
+		</view>
 		<!-- <up-button
 			v-if="userStore.userInfo?.token"
 			class="logout-btn"
@@ -68,72 +46,89 @@
 			@click="handleLogout"
 		>退出登录</up-button> -->
 	</view>
+</pageWrapper>
 </template>
 
 <script lang="ts" setup>
+import pageWrapper from "@/components/page/index.vue";
 import { useThemeStore } from "@/stores/modules/theme";
 import { useUserStore } from "@/stores/modules/user";
 import { ActionType } from "@/enums/order";
 import { computed, reactive } from "vue";
 
-const themeStore = useThemeStore();
 const userStore = useUserStore();
-const isDarkMode = computed(() => themeStore.isDarkMode);
 
 const state = reactive({
 	cellList: [
-	{
-		title: '我的订单',
-		icon: 'star-fill',
-		url: '/pages/orders/orders',
-		showArrow: true,
+		{
+		title: '游客中心',
+		children: [
+			{
+			title: '我的订单',
+			icon: 'star-fill',
+			url: '/pages/orders/orders',
+				showArrow: true,
+			},
+			{
+				title: '浏览历史',
+				icon: 'star-fill',
+				url: '/pages/favorites/favorites',
+				showArrow: true,
+			},
+		]
 	},
 	{
-		title: '我的收藏',
-		icon: 'star-fill',
-		url: '/pages/favorites/favorites',
-		showArrow: true,
-	},
-	
-	{
-		title: '设置',
-		icon: 'setting-fill',
-		url: '/pages/settings/settings',
-		showArrow: true,
-	},
-	{
-		title: '商家订单管理',
-		icon: 'star-fill',
-		url: '/pages/merchant/orders',
-		showArrow: true,
-	},
-	{
-		title: '订单卡片演示',
-		icon: 'star-fill',
-		url: '/pages/order-demo/order-demo',
-		showArrow: true,
-	},
-	{
-		title: '奶茶点单',
-		icon: 'star-fill',
-		url: '/pages/milk-tea-order/milk-tea-order',
-		showArrow: true,
-	},
-	{
-		title: '奶茶点单演示',
-		icon: 'star-fill',
-		url: '/pages/milk-tea-demo/milk-tea-demo',
-		showArrow: true,
-	},
-	{
-		title: '店铺管理',
-		icon: 'star-fill',
-		url: '/pages/shopManage/shopManage',
-		showArrow: true,
+		title: '通用设置',
+		children: [
+			{
+				title: '通用设置',
+				icon: 'setting-fill',
+				url: '',
+				showArrow: true,
+			},
+			{
+				title: '联系我们',
+				icon: 'setting-fill',
+				url: '',
+				showArrow: true,
+				type: 'contactUs',
+			},
+			{
+				title: '关于我们',
+				icon: 'setting-fill',
+				url: '',
+				showArrow: true,
+				type: 'aboutUs',
+			},
+		]
 	},
 ]
 })
 
+const itemClick = (item: any) => {
+	if(item.url){
+		navigateTo(item.url)
+	} else if(item.type == 'contactUs'){
+		uni.showModal({
+			title: '联系我们',
+			content: '客服电话: 400-123-4567\n工作时间: 9:00-18:00',
+			showCancel: false
+		});
+	} else if(item.type == 'aboutUs'){
+			// 关于我们
+		uni.showModal({
+		title: '首页社交',
+		content: '版本: 1.0.0\n首页社交是一款专注于酒吧社交的小程序，致力于为用户提供更好的社交体验。',
+		showCancel: false,
+		confirmText: '知道了'
+		});
+	}else{
+		uni.showToast({
+			title: '功能开发中',
+			icon: 'none',
+		});
+	}
+}
 const navigateTo = (url: string) => {
 	url && uni.navigateTo({
 		url,
@@ -185,6 +180,14 @@ const handleLogout = () => {
 	});
 };
 
+// 下拉刷新监听
+// onPullDownRefresh(async () => {
+//   try {
+//   } finally {
+//     uni.stopPullDownRefresh();
+//   }
+// });
+
 defineOptions({
 	styleIsolation: "shared",
 });
@@ -192,7 +195,8 @@ defineOptions({
 
 <style lang="scss" scoped>
 .my-page {
-	.logout-btn{
+	padding:$up-box-pd;
+.logout-btn{
 		width: 90%;
 		margin-top: 40rpx;
 	}
@@ -205,16 +209,34 @@ defineOptions({
 	// 用户信息区域
 	.user-info-section {
 		padding: 40rpx 30rpx;
-		display: flex;
-		align-items: center;
-		margin-bottom: 20rpx;
-
-		.user-avatar {
-			width: 120rpx;
-			height: 120rpx;
-			border-radius: 60rpx;
-			overflow: hidden;
+		margin-bottom: $up-box-mg;
+		background: #fff;
+		.user-info-header{
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+		.avatar-upload-icon {
+			position: absolute;
+			bottom: 0;
+			right: 0;
+			width: 50rpx;
+			height: 50rpx;
+			background-color: #1890ff;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #fff;
+			font-size: 24rpx;
+			}
+ 		.user-avatar {
+			// width: 140rpx;
+			// height: 140rpx;
+			// border-radius: 60rpx;
+			// overflow: hidden;
 			margin-right: 30rpx;
+			position: relative;
 
 			image {
 				width: 100%;
@@ -224,21 +246,25 @@ defineOptions({
 
 		.user-details {
 			flex: 1;
-
 			.username {
-				font-size: 36rpx;
+				font-size: $up-font-lg;
 				font-weight: 600;
-				color: #333;
+				color: $u-main-color;
 				margin-bottom: 10rpx;
 			}
 
 			.user-level {
-				font-size: 28rpx;
+				font-size: $up-font-base;
 				color: #ff6b35;
 				background-color: #fff7e6;
 				padding: 8rpx 16rpx;
 				border-radius: 20rpx;
 				display: inline-block;
+			}
+			.user-intro {
+				font-size: $up-font-base;
+				color: $u-content-color;
+				margin-top: 10rpx;
 			}
 		}
 	}
@@ -276,17 +302,24 @@ defineOptions({
 		}
 	}
 
-	// 订单示例区域
-	.orders-section {
-		padding: 0 20rpx;
+	.tags {
+		flex-wrap: wrap;
+		margin-top: 8rpx;
+		display: flex;
+		align-items: center;
+		gap: 12rpx;
+	}
+	
+	.tag {
+		// font-size: $up-font-sm;
+		// padding: 2rpx 8rpx;
+		// margin-right: 5rpx;
+		// margin-bottom: 2rpx;
+	}
 
-		.section-title {
-			font-size: 32rpx;
-			font-weight: 600;
-			color: #333;
-			margin-bottom: 20rpx;
-			padding: 0 10rpx;
-		}
+	.edit-btn{
+		margin: 0 auto;
+		margin-top: 20rpx;
 	}
 }
 </style>

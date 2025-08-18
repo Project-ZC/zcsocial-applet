@@ -3,15 +3,11 @@
     <view class="edit-form">
       <!-- 头像上传区域 -->
       <view class="avatar-section z-glass-card">
-        <view class="form-header">
-          <text class="section-title">头像</text>
-          <text class="section-subtitle">点击更换头像</text>
-        </view>
         <view class="avatar-container" @click="chooseAvatar">
           <up-image class="avatar" :src="state.userInfo.avatar" mode="aspectFill"></up-image>
           <view class="avatar-edit-mask">
             <view class="icon-camera"></view>
-            <text class="edit-text">更换头像</text>
+            <text class="edit-text">点击更换头像</text>
           </view>
         </view>
       </view>
@@ -84,7 +80,7 @@
       
       <!-- 保存按钮 -->
       <view class="bottom-button-area">
-        <up-button class="save-button" @click="saveProfile">保存</up-button>
+        <up-button class="save-button" type="primary" @click="saveProfile">保存</up-button>
       </view>
       
       <!-- 性别选择器 -->
@@ -292,12 +288,12 @@ const inputBio = (e: any) => {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  opacity: 0;
+  opacity: 0.4;
   transition: opacity 0.3s;
 }
 
@@ -439,20 +435,20 @@ const inputBio = (e: any) => {
 
 /* 底部按钮 */
 .bottom-button-area {
-  padding: 40rpx 30rpx;
+  padding: 30rpx;
 }
 
 .save-button {
   width: 100%;
-  height: 88rpx;
-  line-height: 88rpx;
-  text-align: center;
-  background: linear-gradient(135deg, #007AFF, #0056b3);
-  color: #fff;
-  font-size: 32rpx;
-  font-weight: bold;
-  border-radius: 44rpx;
-  border: none;
+  // height: 88rpx;
+  // line-height: 88rpx;
+  // text-align: center;
+  // background: linear-gradient(135deg, #007AFF, #0056b3);
+  // color: #fff;
+  // font-size: 32rpx;
+  // font-weight: bold;
+  // border-radius: 44rpx;
+  // border: none;
 }
 
 /* 选择器弹窗 */
