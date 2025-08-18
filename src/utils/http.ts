@@ -2,28 +2,33 @@
 // 如果需要用户 token，可以将其作为参数传递给 http 函数
 // import { useUserStore } from '@/stores/index';
 import { uniCache } from "@/utils/storage";
+import { baseUrl } from "@/api/common/apiConfig";
 
 // const userStore = useUserStore();
 
-const baseURL = "http://115.190.120.193:8080";
+const baseURL = baseUrl;
 // 自定义错误处理回调函数，以便在应用层处理登录过期的情况
 let onAuthErrorCallback: ((error: any) => Promise<void>) | null = null;
 let isRefreshing = false;
 let requestsQueue: Array<() => Promise<any>> = [];
 
-export function setOnAuthErrorCallback(callback: (error: any) => Promise<void>) {
+export function setOnAuthErrorCallback(
+	callback: (error: any) => Promise<void>
+) {
 	onAuthErrorCallback = callback;
 }
 
 // 通知登录成功并触发请求重发
 export function notifyLoginSuccess() {
 	if (isRefreshing) {
-		console.log('收到登录成功通知，重新发送队列中的请求');
-		requestsQueue.forEach(request => request().catch(err => console.error('重新请求失败:', err)));
+		console.log("收到登录成功通知，重新发送队列中的请求");
+		requestsQueue.forEach((request) =>
+			request().catch((err) => console.error("重新请求失败:", err))
+		);
 		requestsQueue = [];
 		isRefreshing = false;
 	} else {
-		console.log('收到登录成功通知，但当前不在刷新状态');
+		console.log("收到登录成功通知，但当前不在刷新状态");
 	}
 }
 // 请求队列处理
@@ -31,12 +36,12 @@ const addRequest = (config) => {
 	return new Promise((resolve) => {
 		requestsQueue.push(() => {
 			// 更新Token后重发请求
-			const user = uniCache.getItem('user')
-			config.header.Authorization = `Bearer ${user?.userInfo?.token}`
-			resolve(uni.request(config))
-		})
-	})
-}
+			const user = uniCache.getItem("user");
+			config.header.Authorization = `Bearer ${user?.userInfo?.token}`;
+			resolve(uni.request(config));
+		});
+	});
+};
 
 //添加拦截器
 const httpInterceptor = {
@@ -52,7 +57,7 @@ const httpInterceptor = {
 			"X-App-Platform": "wechat",
 		};
 		// 添加token
-		const user = uniCache.getItem('user')
+		const user = uniCache.getItem("user");
 		if (user?.userInfo?.token) {
 			args.header["X-App-Token"] = user?.userInfo?.token;
 		}
@@ -67,10 +72,9 @@ interface Data<T> {
 	data: T;
 }
 
-
 export const http = <T>(options: UniApp.RequestOptions) => {
 	return new Promise<Data<T>>((resolve, reject) => {
-		// uni.showLoading({ 
+		// uni.showLoading({
 		// 	title: "加载中...",
 		// });
 		uni.request({
@@ -88,16 +92,18 @@ export const http = <T>(options: UniApp.RequestOptions) => {
 					// 抛出特定错误，让上层应用逻辑处理登录过期
 					const authError = { ...val, isAuthError: true };
 					if (onAuthErrorCallback) {
-						onAuthErrorCallback(authError).then(() => {
-							isRefreshing = true;
-							notifyLoginSuccess()
-							resolve(val);
-						}).catch(err => {
-							reject(err);
-						});
+						onAuthErrorCallback(authError)
+							.then(() => {
+								isRefreshing = true;
+								notifyLoginSuccess();
+								resolve(val);
+							})
+							.catch((err) => {
+								reject(err);
+							});
 					}
 					// 将当前请求加入队列
-					addRequest(options)
+					addRequest(options);
 					reject(authError);
 				} else {
 					if (val.message) {
