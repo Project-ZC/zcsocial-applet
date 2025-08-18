@@ -1,16 +1,16 @@
 {
 	"pages": [
 		{
-			"path": "pages/shopManage/shopManage",
-			"style": {
-				"navigationBarTitleText": "店铺管理"
-			}
-		},
-		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "首页",
 				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/shopManage/shopManage",
+			"style": {
+				"navigationBarTitleText": "店铺管理"
 			}
 		},
 		{
@@ -112,24 +112,10 @@
 		"backgroundColor": "#ffffff",
 		"borderStyle": "black",
 		"list": [
-			{
-				"pagePath": "pages/index/index",
-				"text": "首页",
-				"iconPath": "static/images/tabbar/home.png",
-				"selectedIconPath": "static/images/tabbar/home-active.png"
-			},
-			{
-				"pagePath": "pages/message/message",
-				"text": "通知",
-				"iconPath": "static/images/tabbar/message.png",
-				"selectedIconPath": "static/images/tabbar/message-active.png"
-			},
-			{
-				"pagePath": "pages/my/my",
-				"text": "我的",
-				"iconPath": "static/images/tabbar/my.png",
-				"selectedIconPath": "static/images/tabbar/my-active.png"
-			}
+			{ "pagePath": "pages/index/index" },
+			{ "pagePath": "pages/message/message" },
+			{ "pagePath": "pages/shop/shop" },
+			{ "pagePath": "pages/my/my" }
 		]
 	},
 	"easycom": {
