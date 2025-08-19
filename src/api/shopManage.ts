@@ -72,3 +72,14 @@ export const editShopConfig = (data: any) => {
 		data,
 	});
 };
+
+// 查询全部店铺配置
+export const getAllShopConfig = (data: any) => {
+	return http({
+		url: "/v1/shop/config/all/query",
+		method: "POST",
+		data,
+	});
+};
+
+

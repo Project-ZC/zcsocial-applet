@@ -2,7 +2,6 @@
 	<view
 		class="page-wrapper"
 		theme="LightBlue"
-		:class="{ 'show-tabbar': showTabbar }"
 		:style="{ paddingBottom: paddingBottomValue }"
 	>
 		<!-- <view class="page-wrapper-header" :style="{
@@ -11,24 +10,21 @@
     }">
       <slot name="header"></slot>
     </view> -->
-
 		<view class="content-area">
 			<slot></slot>
 		</view>
 
 		<tabbar v-if="showTabbar" />
-		<footer-view
-			v-if="showFooter"
-			:style="{ paddingBottom: paddingBottomValue }"
-		>
+
+		<footer-view v-if="showFooter" >
 			<slot name="footer"></slot>
 		</footer-view>
 	</view>
 </template>
 
 <script setup lang="ts">
+import footerView from './footer-view.vue';
 import { ref, onMounted, computed } from "vue";
-import footerView from "./footer-view.vue";
 import tabbar from "./tabbar.vue";
 
 defineOptions({
@@ -37,7 +33,7 @@ defineOptions({
 // 定义 props
 const props = defineProps<{
 	title: string;
-	footerShow: boolean;
+	showFooter: boolean;
 	showTabbar: boolean;
 }>();
 
@@ -61,15 +57,15 @@ onMounted(() => {
 		: 0;
 	paddingBottomValue.value = bottomSafeArea + "px"; // 设置底部安全区域的填充
 
-	if (props.showTabbar) {
-		paddingBottomValue.value = bottomSafeArea + 58 + "px"; // 设置底部安全区域的填充
+		const tabbarH = 58;
+	if (props.showTabbar || props.showFooter) {
+		paddingBottomValue.value = (bottomSafeArea + tabbarH) + "px"; // 设置底部安全区域的填充
 	} else {
-		paddingBottomValue.value = bottomSafeArea + "px"; // 设置底部安全区域的填充
+		paddingBottomValue.value = (bottomSafeArea) + "px"; // 设置底部安全区域的填充
 	}
 });
 
 // 使用 props 中的值
-const showFooter = computed(() => props.footerShow);
 </script>
 
 <style scoped lang="scss">
@@ -84,6 +80,7 @@ $header-h: 100rpx;
 	display: flex;
 	flex-direction: column;
 	background-color: $u-bg-1;
+	
 	&-header {
 		position: sticky;
 		top: 0;
@@ -93,10 +90,6 @@ $header-h: 100rpx;
 		height: $header-h;
 	}
 }
-
-// .show-tabbar{
-//   padding-bottom: $up-tabbar-h + paddingBottomValue;
-// }
 
 .content-area {
 	font-size: $up-font-base;

@@ -220,8 +220,8 @@ const GetShopConfigList = async () => {
 			// 将店铺数据添加到店铺列表中
 			state.shopList = res.data || [];
 			// 设置当前店铺ID
-			if (state.shopList.length > 0 && !shopInfo.value.id) {
-				shopInfo.value.id = state.shopList[0].id;
+			if (state.shopList.length > 0 && !shopInfo.value.shopId) {
+				shopInfo.value.shopId = state.shopList[0].shopId;
 			}
 		}
 	} catch (error) {}
@@ -255,7 +255,7 @@ const itemClick = (item: any) => {
 	}
 };
 const navigateTo = (url: string) => {
-	const shopId = shopInfo.value?.id || "";
+	const shopId = shopInfo.value?.shopId || "";
 	url &&
 		uni.navigateTo({
 			url: `${url}?shopId=${shopId}`,

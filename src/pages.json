@@ -151,7 +151,9 @@
 		"custom": {
 			"^u--(.*)": "uview-plus/components/u-$1/u-$1.vue",
 			"^up-(.*)": "uview-plus/components/u-$1/u-$1.vue",
-			"^u-([^-].*)": "uview-plus/components/u-$1/u-$1.vue"
+			"^u-([^-].*)": "uview-plus/components/u-$1/u-$1.vue",
+			"emptyData": "@/components/empty-data/index.vue",
+			"pageWrapper": "@/components/page/index.vue"
 		}
 	}
 }
