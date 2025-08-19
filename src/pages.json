@@ -46,7 +46,7 @@
 				"navigationBarTitleText": "订单卡片演示"
 			}
 		},
-		
+
 		{
 			"path": "pages/orders/orders",
 			"style": {

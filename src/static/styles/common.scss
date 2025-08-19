@@ -93,15 +93,29 @@ page {
 
 
 .z-cell-title {
-    font-size: $up-font-lg;
+    font-size: $up-font-md;
     font-weight: bold;
     color: $u-main-color;
     padding: $up-box-pd;
     border-bottom: 1rpx solid #f0f0f0;
 }
+.z-cell-left-icon{
+    font-size: 40rpx;
+    margin-right: 10rpx;
+    width: 52rpx;
+    height: 52rpx;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
 
 .u-cell{
+    .u-cell__body{
+        padding: 24rpx 30rpx!important;
+    }
     .u-cell__title-text{
-        font-size: $up-font-md!important;
+        font-size: $up-font-base!important;
     }
 }

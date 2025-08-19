@@ -20,6 +20,15 @@ export function setOnAuthErrorCallback(
 
 // 通知登录成功并触发请求重发
 export function notifyLoginSuccess() {
+	// // 获取当前页面路径
+	// const pages = getCurrentPages();
+	// const currentPage = pages[pages.length - 1];
+	// const currentPath = "/" + currentPage.route;
+	// console.log("收到登录成功通知，刷新当前页面", currentPath);
+	// // 重新加载当前页面
+	// uni.redirectTo({
+	// 	url: currentPath,
+	// });
 	if (isRefreshing) {
 		console.log("收到登录成功通知，重新发送队列中的请求");
 		requestsQueue.forEach((request) =>

@@ -1,52 +1,99 @@
 <template>
-<pageWrapper :showTabbar="true">
-	<view class="my-page">
-		<!-- 用户信息区域 -->
-		<view class="user-info-section z-glass-card">
-			<view class="user-info-header">
-				<view class="user-avatar" @click="navigateTo('/pages/editProfile/editProfile')">
-					<!-- <up-image
+	<pageWrapper :showTabbar="true">
+		<view class="my-page">
+			<!-- 用户信息区域 -->
+			<view class="user-info-section z-glass-card">
+				<view class="user-info-header">
+					<view
+						class="user-avatar"
+						@click="navigateTo('/pages/editProfile/editProfile')"
+					>
+						<!-- <up-image
 						:showLoading="true"
 						:src="userStore.userInfo?.avatar"
 						width="120rpx"
 						height="120rpx"
 					></up-image> -->
-					<up-avatar :src="userStore.userInfo?.avatar || '/static/images/default-avatar.png'" size="140rpx"></up-avatar>
-					<view class="avatar-upload-icon" v-if="!userStore.userInfo?.avatar">
-						<up-icon name="camera" color="#fff" size="16"></up-icon>
+						<up-avatar
+							:src="
+								userStore.userInfo?.avatar ||
+								'/static/images/default-avatar.png'
+							"
+							size="140rpx"
+						></up-avatar>
+						<view class="avatar-upload-icon" v-if="!userStore.userInfo?.avatar">
+							<up-icon name="camera" color="#fff" size="16"></up-icon>
+						</view>
+					</view>
+					<view class="user-details">
+						<view class="username">{{
+							userStore.userInfo?.nickname || "微信用户"
+						}}</view>
+						<view class="user-level"
+							>玩点ID：{{ userStore.userInfo?.id || "" }}</view
+						>
+
+						<view class="user-intro">
+							{{
+								userStore.userInfo?.introduce || "这个人很懒，什么都没有留下"
+							}}
+						</view>
+
+						<view
+							class="tags flex-row"
+							v-if="userStore.userInfo?.tags?.length > 0"
+						>
+							<up-tag
+								size="mini"
+								class="tag"
+								type="primary"
+								plain
+								plainFill
+								:text="tag"
+								v-for="(tag, index) in userStore.userInfo?.tags"
+								:key="index"
+							></up-tag>
+						</view>
 					</view>
 				</view>
-				<view class="user-details">
-					<view class="username">{{userStore.userInfo?.nickname || '微信用户'}}</view>
-					<view class="user-level">玩点ID：{{userStore.userInfo?.id || ''}}</view>
-
-					<view class="user-intro">
-						{{userStore.userInfo?.introduce || '这个人很懒，什么都没有留下'}}
-					</view>
-
-					<view class="tags flex-row" v-if="userStore.userInfo?.tags?.length > 0">
-						<up-tag size="mini" class="tag" type="primary" plain plainFill  :text="tag" v-for="(tag, index) in userStore.userInfo?.tags" :key="index"></up-tag>
-					</view>
+				<view class="edit-btn">
+					<up-button
+						type="primary"
+						shape="circle"
+						@click="navigateTo('/pages/editProfile/editProfile')"
+						>编辑资料</up-button
+					>
 				</view>
 			</view>
-		   <view class="edit-btn">
-				<up-button type="primary" shape="circle" @click="navigateTo('/pages/editProfile/editProfile')">编辑资料</up-button>
+			<view class="z-glass-card">
+				<up-cell-group v-for="main in state.cellList" :key="main.title">
+					<view class="z-cell-title">{{ main.title }}</view>
+					<up-cell
+						v-for="item in main.children"
+						:key="item.title"
+						:title="item.title"
+						:isLink="item.showArrow"
+						@click="itemClick(item)"
+					>
+						<template #icon>
+							<view
+								class="z-cell-left-icon"
+								:style="{ backgroundColor: item.bgc }"
+							>
+								<view :class="`wd-icon wd-icon-${item.wdIcon}`"></view>
+							</view>
+						</template>
+					</up-cell>
+				</up-cell-group>
 			</view>
-		</view>
-		<view class="z-glass-card">
-		<up-cell-group v-for="main in state.cellList" :key="main.title">
-			<view class="z-cell-title">{{main.title}}</view>
-			<up-cell  v-for="item in main.children" :key="item.title" :icon="item.icon" :title="item.title" :isLink="item.showArrow" @click="itemClick(item)"></up-cell>
-		</up-cell-group>	
-		</view>
-		<!-- <up-button
+			<!-- <up-button
 			v-if="userStore.userInfo?.token"
 			class="logout-btn"
 			type="error"
 			@click="handleLogout"
 		>退出登录</up-button> -->
-	</view>
-</pageWrapper>
+		</view>
+	</pageWrapper>
 </template>
 
 <script lang="ts" setup>
@@ -61,78 +108,85 @@ const userStore = useUserStore();
 const state = reactive({
 	cellList: [
 		{
-		title: '游客中心',
-		children: [
-			{
-			title: '我的订单',
-			icon: 'star-fill',
-			url: '/pages/orders/orders',
-				showArrow: true,
-			},
-			{
-				title: '浏览历史',
-				icon: 'star-fill',
-				url: '/pages/favorites/favorites',
-				showArrow: true,
-			},
-		]
-	},
-	{
-		title: '通用设置',
-		children: [
-			{
-				title: '通用设置',
-				icon: 'setting-fill',
-				url: '',
-				showArrow: true,
-			},
-			{
-				title: '联系我们',
-				icon: 'setting-fill',
-				url: '',
-				showArrow: true,
-				type: 'contactUs',
-			},
-			{
-				title: '关于我们',
-				icon: 'setting-fill',
-				url: '',
-				showArrow: true,
-				type: 'aboutUs',
-			},
-		]
-	},
-]
-})
+			title: "游客中心",
+			children: [
+				{
+					title: "我的订单",
+					wdIcon: "my-order",
+					url: "/pages/orders/orders",
+					showArrow: true,
+					bgc: "#2196F3",
+				},
+				{
+					title: "浏览历史",
+					wdIcon: "history",
+					url: "/pages/favorites/favorites",
+					showArrow: true,
+					bgc: "#FF9800",
+				},
+			],
+		},
+		{
+			title: "通用设置",
+			children: [
+				{
+					title: "通用设置",
+					wdIcon: "setting",
+					url: "",
+					showArrow: true,
+					bgc: "#607d8b",
+				},
+				{
+					title: "联系我们",
+					wdIcon: "contact-us",
+					url: "",
+					showArrow: true,
+					type: "contactUs",
+					bgc: "#ff5722",
+				},
+				{
+					title: "关于我们",
+					wdIcon: "about-us",
+					url: "",
+					showArrow: true,
+					type: "aboutUs",
+					bgc: "#795548",
+				},
+			],
+		},
+	],
+});
 
 const itemClick = (item: any) => {
-	if(item.url){
-		navigateTo(item.url)
-	} else if(item.type == 'contactUs'){
+	if (item.url) {
+		navigateTo(item.url);
+	} else if (item.type == "contactUs") {
 		uni.showModal({
-			title: '联系我们',
-			content: '客服电话: 400-123-4567\n工作时间: 9:00-18:00',
-			showCancel: false
+			title: "联系我们",
+			content: "客服电话: 400-123-4567\n工作时间: 9:00-18:00",
+			showCancel: false,
 		});
-	} else if(item.type == 'aboutUs'){
-			// 关于我们
+	} else if (item.type == "aboutUs") {
+		// 关于我们
 		uni.showModal({
-		title: '首页社交',
-		content: '版本: 1.0.0\n首页社交是一款专注于酒吧社交的小程序，致力于为用户提供更好的社交体验。',
-		showCancel: false,
-		confirmText: '知道了'
+			title: "首页社交",
+			content:
+				"版本: 1.0.0\n首页社交是一款专注于酒吧社交的小程序，致力于为用户提供更好的社交体验。",
+			showCancel: false,
+			confirmText: "知道了",
 		});
-	}else{
+	} else {
 		uni.showToast({
-			title: '功能开发中',
-			icon: 'none',
+			title: "功能开发中",
+			icon: "none",
 		});
 	}
-}
+};
 const navigateTo = (url: string) => {
-	url && uni.navigateTo({
-		url,
-	});
+	url &&
+		uni.navigateTo({
+			url,
+		});
 };
 
 // 处理操作按钮点击
@@ -195,14 +249,14 @@ defineOptions({
 
 <style lang="scss" scoped>
 .my-page {
-	padding:$up-box-pd;
-.logout-btn{
+	padding: $up-box-pd;
+	.logout-btn {
 		width: 90%;
 		margin-top: 40rpx;
 	}
 	min-height: 100vh;
 	padding-bottom: 40rpx;
-	::v-deep .up-cell__body{
+	::v-deep .up-cell__body {
 		background-color: #fff;
 	}
 
@@ -211,7 +265,7 @@ defineOptions({
 		padding: 40rpx 30rpx;
 		margin-bottom: $up-box-mg;
 		background: #fff;
-		.user-info-header{
+		.user-info-header {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
@@ -229,8 +283,8 @@ defineOptions({
 			justify-content: center;
 			color: #fff;
 			font-size: 24rpx;
-			}
- 		.user-avatar {
+		}
+		.user-avatar {
 			// width: 140rpx;
 			// height: 140rpx;
 			// border-radius: 60rpx;
@@ -309,7 +363,7 @@ defineOptions({
 		align-items: center;
 		gap: 12rpx;
 	}
-	
+
 	.tag {
 		// font-size: $up-font-sm;
 		// padding: 2rpx 8rpx;
@@ -317,7 +371,7 @@ defineOptions({
 		// margin-bottom: 2rpx;
 	}
 
-	.edit-btn{
+	.edit-btn {
 		margin: 0 auto;
 		margin-top: 20rpx;
 	}

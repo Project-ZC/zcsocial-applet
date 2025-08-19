@@ -1,38 +1,38 @@
 <template>
-<pageWrapper :showTabbar="true">
-	<up-sticky offset-top="0">
-		<Navbar />
-	</up-sticky>
-	<view class="content">
-		<view class="scan-box z-glass-card" @tap="handleScan">
-			<up-image width="100" height="100" src="/static/images/scan-logo.png" />
-			<view class="scan-text">
-				<text>扫码进入店铺</text>
+	<pageWrapper :showTabbar="true">
+		<up-sticky offset-top="0">
+			<Navbar />
+		</up-sticky>
+		<view class="content">
+			<view class="scan-box z-glass-card" @tap="handleScan">
+				<up-image width="100" height="100" src="/static/images/scan-logo.png" />
+				<view class="scan-text">
+					<text>扫码进入店铺</text>
+				</view>
+			</view>
+			<view class="title">已参与的活动</view>
+			<view class="shop-list">
+				<up-list height="100%" @scrolltolower="scrolltolower">
+					<up-list-item v-for="(item, index) in activityList" :key="index">
+						<activity-card :activity-info="item" />
+					</up-list-item>
+				</up-list>
+			</view>
+			<view class="title">浏览过的店铺</view>
+			<view class="shop-list">
+				<up-list height="100%" @scrolltolower="scrolltolower">
+					<up-list-item v-for="(item, index) in shopList" :key="index">
+						<shop-card :shop-info="item" />
+					</up-list-item>
+				</up-list>
 			</view>
 		</view>
-		<view class="title">已参与的活动</view>
-		<view class="shop-list">
-			<up-list height="100%" @scrolltolower="scrolltolower">
-				<up-list-item v-for="(item, index) in activityList" :key="index">
-					<activity-card :activity-info="item" />
-				</up-list-item>
-			</up-list>
-		</view>
-		<view class="title">浏览过的店铺</view>
-		<view class="shop-list">
-			<up-list height="100%" @scrolltolower="scrolltolower">
-				<up-list-item v-for="(item, index) in shopList" :key="index">
-					<shop-card :shop-info="item" />
-				</up-list-item>
-			</up-list>
-		</view>
-	</view>
 	</pageWrapper>
 </template>
 
 <script lang="ts" setup>
 import { ref } from "vue";
-import { onPullDownRefresh } from '@dcloudio/uni-app';
+import { onPullDownRefresh } from "@dcloudio/uni-app";
 import pageWrapper from "@/components/page/index.vue";
 import Navbar from "@/components/navbar/navbar.vue";
 import ShopCard from "@/components/shop-card/shop-card.vue";
@@ -150,7 +150,7 @@ const activityList = ref([
 ]);
 
 const handleScan = () => {
-	wx.scanCode({
+	uni.scanCode({
 		onlyFromCamera: true, // 只允许从相机扫码
 		scanType: ["qrCode"], // 只扫描二维码
 		success: (res) => {
@@ -159,28 +159,27 @@ const handleScan = () => {
 			const shopId = res.result;
 			if (shopId) {
 				// 跳转到店铺页面
-				wx.navigateTo({
+				uni.navigateTo({
 					url: `/pages/shop/shop?id=${shopId}`,
 				});
 			}
 		},
 		fail: (err) => {
 			console.error("扫码失败：", err);
-			wx.showToast({
+			uni.showToast({
 				title: "扫码失败",
 				icon: "none",
 			});
 		},
 	});
-	
 };
 
 // 下拉刷新监听
 onPullDownRefresh(async () => {
-  try {
-  } finally {
-    uni.stopPullDownRefresh();
-  }
+	try {
+	} finally {
+		uni.stopPullDownRefresh();
+	}
 });
 </script>
 
@@ -219,5 +218,4 @@ onPullDownRefresh(async () => {
 		box-sizing: border-box;
 	}
 }
-
 </style>

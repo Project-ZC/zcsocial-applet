@@ -156,7 +156,7 @@
 import pageWrapper from "@/components/page/index.vue";
 import { reactive, ref } from "vue";
 import emptyData from "@/components/empty-data/index.vue";
-import { onLoad,onPullDownRefresh } from "@dcloudio/uni-app";
+import { onLoad, onPullDownRefresh } from "@dcloudio/uni-app";
 import { API_CONFIG } from "@/api/common/apiConfig";
 import {
 	getAllTableList,
@@ -232,8 +232,6 @@ const GetTableList = async () => {
 		console.error("获取桌位列表失败:", error);
 	}
 };
-
-
 
 // Table management methods
 const openAddTableModal = () => {
@@ -373,11 +371,11 @@ onLoad(async (query) => {
 
 // 下拉刷新监听
 onPullDownRefresh(async () => {
-  try {
-    await GetTableList();
-  } finally {
-    uni.stopPullDownRefresh();
-  }
+	try {
+		await GetTableList();
+	} finally {
+		uni.stopPullDownRefresh();
+	}
 });
 </script>
 
@@ -408,7 +406,6 @@ onPullDownRefresh(async () => {
 	font-size: 28rpx;
 	border-radius: 40rpx;
 	border: none;
-	width: 180rpx !important;
 	margin: 0;
 }
 
@@ -487,57 +484,6 @@ onPullDownRefresh(async () => {
 .table-actions {
 	display: flex;
 	gap: 20rpx;
-}
-
-/* 表单样式 */
-.radio-item {
-	margin-bottom: 20rpx;
-}
-
-.radio-content {
-	display: flex;
-	flex-direction: column;
-	margin-left: 20rpx;
-}
-
-.radio-label {
-	font-size: 28rpx;
-	color: #333;
-	font-weight: 500;
-	margin-bottom: 8rpx;
-}
-
-.radio-desc {
-	font-size: 24rpx;
-	color: #666;
-	line-height: 1.4;
-}
-
-.modal-footer {
-	display: flex;
-	gap: 20rpx;
-}
-
-/* 空状态样式 */
-.empty-state {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	padding: 100rpx 40rpx;
-	text-align: center;
-}
-
-.empty-state image {
-	width: 200rpx;
-	height: 200rpx;
-	margin-bottom: 40rpx;
-}
-
-.empty-state text {
-	font-size: 28rpx;
-	color: #999;
-	margin-bottom: 40rpx;
 }
 
 .add-table-btn {
