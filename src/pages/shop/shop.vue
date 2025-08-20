@@ -39,19 +39,30 @@
 					</view>
 				</view>
 				<view
-					class="current-shop"
+					class="shop-switch-section"
 					@click="openShopModal"
 					v-if="state.shopList.length > 0"
 				>
-					<up-button type="primary" plain shape="circle" size="small">
-						<text>切换店铺</text>
-						<up-icon
-							class="switch-icon"
-							name="arrow-down"
-							size="24"
-							color="#666"
-						></up-icon>
-					</up-button>
+					<view class="shop-switch-btn">
+						<view class="btn-content">
+							<!-- <up-icon
+								class="switch-icon"
+								name="shop"
+								size="20"
+								color="var(--primary-6)"
+							></up-icon> -->
+							<text class="btn-text">切换店铺</text>
+							<up-icon
+								class="arrow-icon"
+								name="arrow-down"
+								size="16"
+								color="var(--primary-6)"
+							></up-icon>
+						</view>
+						<view class="shop-count" v-if="state.shopList.length > 1">
+							{{ state.shopList.length }}家店铺
+						</view>
+					</view>
 				</view>
 			</view>
 			<view class="z-glass-card">
@@ -384,25 +395,62 @@ defineOptions({
 	.shop-status-btn {
 		margin-top: 40rpx;
 	}
-	.current-shop {
+
+	.shop-switch-section {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: 20rpx 30rpx;
-		margin-bottom: 20rpx;
-		width: 60%;
-		margin: 0 auto;
-		.shop-name {
-			font-size: 32rpx;
-			font-weight: 600;
-			color: #333;
-			margin-bottom: 8rpx;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-		}
-		.switch-icon {
-			margin-left: 20rpx;
+		margin-bottom: 12rpx;
+
+		.shop-switch-btn {
+			background: linear-gradient(
+				135deg,
+				var(--primary-1) 0%,
+				var(--primary-2) 100%
+			);
+			border: 1px solid var(--primary-3);
+			border-radius: 16rpx;
+			padding: 10rpx 24rpx;
+			min-width: 200rpx;
+			box-shadow: 0 4rpx 12rpx rgba(34, 114, 251, 0.1);
+			transition: all 0.3s ease;
+			cursor: pointer;
+
+			&:active {
+				transform: scale(0.98);
+				box-shadow: 0 2rpx 8rpx rgba(34, 114, 251, 0.15);
+			}
+
+			.btn-content {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 12rpx;
+
+				.switch-icon {
+					flex-shrink: 0;
+				}
+
+				.btn-text {
+					font-size: 28rpx;
+					font-weight: 600;
+					color: var(--primary-6);
+					letter-spacing: 1rpx;
+				}
+
+				.arrow-icon {
+					flex-shrink: 0;
+					transition: transform 0.3s ease;
+				}
+			}
+
+			.shop-count {
+				text-align: center;
+				margin-top: 6rpx;
+				font-size: 20rpx;
+				color: var(--text-2);
+				opacity: 0.8;
+			}
 		}
 	}
 }

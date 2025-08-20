@@ -44,9 +44,8 @@ page {
     /* 置灰信息 ：#c9cdd4 */
     --text-5: rgb(255, 255, 255);
     /* 纯白文字 ：#ffffff */
-    --bg-1: rgb(242, 243, 245);
-    /* 整体背景色
-   ：#f2f3f5 */
+    --bg-1: #f5f5f5;
+    /* 整体背景色*/
     --bg-2: rgb(255, 255, 255);
     /* 一级容器背景
    ：#ffffff */
@@ -144,24 +143,23 @@ page {
     --chart-gray: rgb(201, 205, 212);
     /*  ：#c9cdd4 */
 
-
     // 主色调
-    --theme-primary: var(--primary-6);
-    --theme-success: var(--success-6);
-    --theme-warning: var(--warning-6);
-    --theme-error: var(--danger-6);
+    // --theme-primary: var(--primary-6);
+    // --theme-success: var(--success-6);
+    // --theme-warning: var(--warning-6);
+    // --theme-error: var(--danger-6);
 
-    // 文字颜色
-    --theme-main-color: var(--text-1);
-    --theme-content-color: var(--text-2);
-    --theme-tips-color: var(--text-3);
-    --theme-light-color: var(--text-4);
-    --theme-disabled-color: var(--text-5);
+    // // 文字颜色
+    // --theme-main-color: var(--text-1);
+    // --theme-content-color: var(--text-2);
+    // --theme-tips-color: var(--text-3);
+    // --theme-light-color: var(--text-4);
+    // --theme-disabled-color: var(--text-5);
 
-    // 背景颜色
-    --theme-bg-color: var(--bg-2);
-    --theme-bg-color-secondary: var(--bg-1);
+    // // 背景颜色
+    // --theme-bg-color: var(--bg-2);
+    // --theme-bg-color-secondary: var(--bg-1);
 
-    // 边框颜色
-    --theme-border-color: var(--border-1);
+    // // 边框颜色
+    // --theme-border-color: var(--border-1);
 }

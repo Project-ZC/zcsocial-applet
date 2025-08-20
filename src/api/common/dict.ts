@@ -8,3 +8,12 @@ export const getGender = (data: any) => {
 		data,
 	});
 };
+
+// 获取标签列表
+export const getTagList = (data: any) => {
+	return http({
+		url: "/v1/tag/all/query",
+		method: "POST",
+		data,
+	});
+};

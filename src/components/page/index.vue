@@ -16,14 +16,14 @@
 
 		<tabbar v-if="showTabbar" />
 
-		<footer-view v-if="showFooter" >
+		<footer-view v-if="showFooter">
 			<slot name="footer"></slot>
 		</footer-view>
 	</view>
 </template>
 
 <script setup lang="ts">
-import footerView from './footer-view.vue';
+import footerView from "./footer-view.vue";
 import { ref, onMounted, computed } from "vue";
 import tabbar from "./tabbar.vue";
 
@@ -55,13 +55,14 @@ onMounted(() => {
 	const bottomSafeArea = systemInfo.safeAreaInsets
 		? systemInfo.safeAreaInsets.bottom
 		: 0;
+
 	paddingBottomValue.value = bottomSafeArea + "px"; // 设置底部安全区域的填充
 
-		const tabbarH = 58;
+	const footerH = 50;
 	if (props.showTabbar || props.showFooter) {
-		paddingBottomValue.value = (bottomSafeArea + tabbarH) + "px"; // 设置底部安全区域的填充
+		paddingBottomValue.value = bottomSafeArea + footerH + "px"; // 设置底部安全区域的填充
 	} else {
-		paddingBottomValue.value = (bottomSafeArea) + "px"; // 设置底部安全区域的填充
+		paddingBottomValue.value = bottomSafeArea + "px"; // 设置底部安全区域的填充
 	}
 });
 
@@ -80,7 +81,7 @@ $header-h: 100rpx;
 	display: flex;
 	flex-direction: column;
 	background-color: $u-bg-1;
-	
+
 	&-header {
 		position: sticky;
 		top: 0;
