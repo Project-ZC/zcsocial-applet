@@ -25,7 +25,6 @@
 							</view>
 						</view> -->
 					</up-form-item>
-
 					<!-- 店铺名称 -->
 					<up-form-item label="店铺名称" prop="name">
 						<up-input v-model="form.name" placeholder="请输入店铺名称" />
@@ -179,7 +178,7 @@
 					<!-- Homebar相册 -->
 					<up-form-item label="Homebar相册" prop="photo">
 						<view class="photo-container">
-							<view class="photo-list">
+							<!-- <view class="photo-list">
 								<view
 									class="photo-item"
 									v-for="(item, index) in form.photo"
@@ -197,10 +196,12 @@
 								>
 									<view class="add-icon">+</view>
 								</view>
-							</view>
-							<text class="photo-tip"
-								>最多上传9张照片，建议上传店铺环境、特色酒水等照片</text
-							>
+							</view> -->
+              <Upload :fileList="state.photoFileList" :uploadType="'image'" :maxCount="9" @update:images="handleImagesUpdate">
+                <template #tips>
+                  <text class="photo-tip">最多上传9张照片，建议上传店铺环境、特色酒水等照片</text>
+                </template>
+              </Upload>
 						</view>
 					</up-form-item>
 				</up-form>
@@ -232,8 +233,10 @@
 	></up-datetime-picker>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import uploadFile from "@/components/uploadFile/index.vue";
+import Upload from "@/components/uploadFile/uploadFile.vue";
+import { getDownloadUrl } from "@/api/common/upload";
 import { reactive, ref, nextTick, computed, watch } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
 import {
@@ -293,6 +296,7 @@ const state = reactive({
 	rules: {
 		name: [{ required: true, message: "请输入店铺名称", trigger: "blur" }],
 	},
+  photoFileList:[]
 });
 
 // 计算属性：可选的标签列表（排除已选择的）
@@ -312,6 +316,10 @@ const filteredTags = computed(() => {
 	);
 });
 
+const handleImagesUpdate = (images) => {
+	form.photo = images;
+};
+
 const GtShopDetail = () => {
 	getAllShopConfig({
 		shopId: form.shopId,
@@ -324,6 +332,11 @@ const GtShopDetail = () => {
 				form[key] = data[key] || "";
 			}
 		}
+		// state.photoFileList = form.photo.map(item => {
+		// 	return {
+		// 		url: getDownloadUrl(item),
+		// 	}
+		// })
 	});
 };
 
@@ -365,7 +378,7 @@ const confirmCloseTime = (e) => {
 // 选择地址
 const chooseLocation = () => {
 	uni.chooseLocation({
-		success: (res: any) => {
+		success: (res) => {
 			form.address = res.address || "";
 			form.latitude = res.latitude || "";
 			form.longitude = res.longitude || "";
@@ -845,11 +858,7 @@ const saveShopInfo = async () => {
 	color: #999;
 }
 
-.photo-tip {
-	font-size: 12px;
-	color: #999;
-	margin-top: 5px;
-}
+
 
 .save-button {
 	width: 100%;

@@ -25,7 +25,6 @@ export const useShopStore = defineStore(
 					}
 				}
 			}
-			console.log(res.data, 444);
 			setShopStatus(res.data);
 		};
 

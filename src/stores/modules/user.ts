@@ -25,14 +25,16 @@ export const useUserStore = defineStore(
 			buyWay.value = data;
 		};
 		const login = async (data = {}) => {
+			uni.showLoading({
+				title: "登录中...",
+			});
 			const res = await loginTo(data) as any;
 			res.perms = ['shop'];
 			let permObj = {}
 			for (const item of res.perms) {
 				permObj[item] = true
 			}
-			res.permObj = permObj
-			console.log(res, 444)
+			res.permObj = permObj;
 			const userInfo = { ...res, ...data };
 			setUserInfo(userInfo);
 		}

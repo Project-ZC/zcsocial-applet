@@ -98,15 +98,15 @@ const getFileURLArr = async (arr) => {
 		// }
 		let _url = "";
 		if (["pdf", "doc", "docx"].includes(fileSuffix)) {
-			_url = VITE_APP_FILE_URL + id;
+			_url =   id;
 		} else {
-			const res = await getFileStream(
-				{ fileId: id },
-				{ download: false, cancelToken: true, cancelTokenName: id }
-			);
-			if (res && res.status === 200) {
-				_url = getObjectURL(res.data);
-			}
+			// const res = await getFileStream(
+			// 	{ fileId: id },
+			// 	{ download: false, cancelToken: true, cancelTokenName: id }
+			// );
+			// if (res && res.status === 200) {
+			// 	_url = getObjectURL(res.data);
+			// }
 		}
 		file.url = _url;
 	}

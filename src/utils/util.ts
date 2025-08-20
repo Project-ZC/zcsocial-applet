@@ -1,3 +1,6 @@
+import { baseUrl } from '@/api/common/apiConfig';
+import { getDownloadUrl } from '@/api/common/upload';
+
 // 模拟分页API 下拉加载更多
 export const mockApiFetchList = (params) => {
     return new Promise((resolve) => {
@@ -21,6 +24,8 @@ export const mockApiFetchList = (params) => {
 };
 
 
+// ---------------------------- uni ----------------------------
+
 // 获取系统信息计算滚动高度
 export const getScrollHeight = (opts: any) => {
     return new Promise((resolve) => {
@@ -36,3 +41,63 @@ export const getScrollHeight = (opts: any) => {
         });
     })
 }
+
+export const toSign = () => {
+
+    // if (!token) {
+    //   uni.reLaunch({
+    //     url: '/pages/login/login'
+    //   })
+    // } else {
+    //   uni.navigateToMiniProgram({
+    //     appId: "wx36596fe8c4d2ea23",
+    //     path: "pages/mine/order/orderLong",
+    //   })
+    // }
+  
+  }
+  
+
+// 公共确认弹框
+export const showModal = (params, title="提示") => {
+uni.showModal({
+    title,
+    ...params,
+    success: (res) => {
+    if (res.confirm) {
+        params.onConfirm && params.onConfirm();
+    }
+    },
+    error: (err) => {
+    console.log(err);
+    },
+});
+}
+
+// 我们假设有一个文件路径 'filePath' 是你要上传的文件
+export function uploadFile(filePath, formData) {
+    return new Promise((resolve, reject) => {
+        uni.uploadFile({
+            url: `${baseUrl}/v1/file/upload`, // 你要上传的接口地址
+            filePath: filePath, // 文件的临时路径
+            name: 'file', // 服务器接收文件的字段名
+            formData,
+            // header: {
+            // 'Authorization': token,
+            // },
+            success: function (res) {
+            const { data } = JSON.parse(res.data); // 解析返还的数据
+            if (data) {
+                resolve({
+                url: data,
+                }); 
+            } else {
+                reject(new Error('没有找到返回的URL')); // 无法找到URL
+            }
+            },
+            fail: function (err) {
+            reject(new Error('上传失败: ' + err.errMsg)); // 上传失败
+            }
+      });
+    })
+  }

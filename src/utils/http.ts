@@ -83,9 +83,9 @@ interface Data<T> {
 
 export const http = <T>(options: UniApp.RequestOptions) => {
 	return new Promise<Data<T>>((resolve, reject) => {
-		uni.showLoading({
-			title: "",
-		});
+		// uni.showLoading({
+		// 	title: "",
+		// });
 		uni.request({
 			...options,
 			success(res) {
