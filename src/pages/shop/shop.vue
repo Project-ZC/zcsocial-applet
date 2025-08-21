@@ -75,11 +75,12 @@
 
 			<up-subsection
 				:list="state.list"
+				class="shop-subsection"
 				:current="state.currentTab"
 				@change="handleTabChange"
 			></up-subsection>
 
-			<view class="z-glass-card" v-if="state.currentTab === 0">
+			<view class="z-glass-card" v-show="state.currentTab === 0">
 				<up-cell-group v-for="main in state.cellList" :key="main.title">
 					<view class="z-cell-title">{{ main.title }}</view>
 					<up-cell
@@ -96,14 +97,16 @@
 				</up-cell-group>
 			</view>
 
-			<view class="z-glass-card" v-else-if="state.currentTab === 1">
+			<view class="z-glass-card" v-show="state.currentTab === 1">
 				<view class="order-content"></view>
-				<view class="order-footer">
-					<view class="order-count">
-						<text class="order-count-text">订单总数</text>
-						<text class="order-count-text">100</text>
-					</view>
-				</view>
+				<!-- 包含用户信息的订单卡片 -->
+				<OrderCard
+					v-for="order in state.sampleOrders"
+					:key="order.orderNumber"
+					:order-info="order"
+					@order-click="handleOrderClick"
+					@action-click="handleActionClick"
+				/>
 			</view>
 		</view>
 	</pageWrapper>
@@ -116,7 +119,9 @@ import { onShow, onPullDownRefresh } from "@dcloudio/uni-app";
 import pageWrapper from "@/components/page/index.vue";
 import BusinessStatus from "@/components/business-status/index.vue";
 import ShopSwitcher from "@/components/shop-switcher/index.vue";
+import OrderCard from "@/components/order-card/order-card.vue";
 import { useUserStore, useShopStore } from "@/stores";
+import { ActionType, OrderStatus } from "@/enums/order";
 import { getShopList, getShopConfigList } from "@/api/shopManage";
 
 const userStore = useUserStore();
@@ -168,22 +173,10 @@ const state = reactive({
 					showArrow: true,
 					img: "📱",
 				},
-				{
-					title: "订单卡片演示",
-					icon: "star-fill",
-					url: "/pages/orderDemo/orderDemo",
-					showArrow: true,
-				},
-				{
-					title: "奶茶点单",
-					icon: "star-fill",
-					url: "/pages/milkTeaOrder/milkTeaOrder",
-					showArrow: true,
-				},
 				// {
-				// 	title: "奶茶点单演示",
+				// 	title: "奶茶点单",
 				// 	icon: "star-fill",
-				// 	url: "/pages/milkTeaDemo/milkTeaDemo",
+				// 	url: "/pages/milkTeaOrder/milkTeaOrder",
 				// 	showArrow: true,
 				// },
 			],
@@ -229,11 +222,129 @@ const state = reactive({
 			],
 		},
 	],
+	// 示例订单数据
+	sampleOrders: [
+		{
+			orderNumber: "ORD20241201001",
+			status: OrderStatus.PENDING_ACCEPT,
+			productImage:
+				"https://via.placeholder.com/120x120/FF6B6B/FFFFFF?text=奶茶",
+			productName: "珍珠奶茶",
+			productSpec: "大杯 / 少糖 / 加珍珠",
+			price: 18.0,
+			quantity: 2,
+			totalAmount: 36.0,
+			createTime: Date.now() - 1000 * 60 * 30, // 30分钟前
+			userNickname: "小明",
+			userPhoneTail: "8888",
+			tableNumber: "A12",
+			actions: [
+				{
+					type: ActionType.ACCEPT,
+					text: "接单",
+				},
+				{
+					type: ActionType.CANCEL,
+					text: "拒绝",
+				},
+			],
+		},
+		{
+			orderNumber: "ORD20241201002",
+			status: OrderStatus.PREPARING,
+			productImage:
+				"https://via.placeholder.com/120x120/4ECDC4/FFFFFF?text=咖啡",
+			productName: "拿铁咖啡",
+			productSpec: "中杯 / 正常糖 / 加奶",
+			price: 25.0,
+			quantity: 1,
+			totalAmount: 25.0,
+			createTime: Date.now() - 1000 * 60 * 15, // 15分钟前
+			payTime: Date.now() - 1000 * 60 * 14, // 14分钟前
+			userNickname: "小红",
+			userPhoneTail: "6666",
+			tableNumber: "B08",
+			actions: [
+				{
+					type: ActionType.CONFIRM,
+					text: "完成制作",
+				},
+			],
+		},
+		{
+			orderNumber: "ORD20241201003",
+			status: OrderStatus.DELIVERING,
+			productImage:
+				"https://via.placeholder.com/120x120/45B7D1/FFFFFF?text=果汁",
+			productName: "鲜榨橙汁",
+			productSpec: "大杯 / 无糖 / 加冰",
+			price: 22.0,
+			quantity: 3,
+			totalAmount: 66.0,
+			createTime: Date.now() - 1000 * 60 * 45, // 45分钟前
+			payTime: Date.now() - 1000 * 60 * 44, // 44分钟前
+			deliveryTime: Date.now() - 1000 * 60 * 5, // 5分钟前
+			userNickname: "小李",
+			userPhoneTail: "9999",
+			tableNumber: "C15",
+			actions: [
+				{
+					type: ActionType.CONFIRM,
+					text: "确认送达",
+				},
+			],
+		},
+		{
+			orderNumber: "ORD20241201004",
+			status: OrderStatus.COMPLETED,
+			productImage: "https://via.placeholder.com/120x120/96CEB4/FFFFFF?text=茶",
+			productName: "柠檬茶",
+			productSpec: "中杯 / 微糖 / 加柠檬片",
+			price: 16.0,
+			quantity: 1,
+			totalAmount: 16.0,
+			createTime: Date.now() - 1000 * 60 * 120, // 2小时前
+			payTime: Date.now() - 1000 * 60 * 119, // 1小时59分钟前
+			deliveryTime: Date.now() - 1000 * 60 * 90, // 1小时30分钟前
+			userNickname: "小王",
+			userPhoneTail: "7777",
+			tableNumber: "D03",
+			actions: [
+				{
+					type: ActionType.RATE,
+					text: "评价",
+				},
+				{
+					type: ActionType.REORDER,
+					text: "再来一单",
+				},
+			],
+		},
+	],
 });
+
 let shopInfo = ref<any>({});
 
+// 处理订单点击
+const handleOrderClick = (orderInfo: OrderInfo) => {
+	uni.showToast({
+		title: `点击了订单：${orderInfo.orderNumber}`,
+		icon: "none",
+	});
+};
+
+// 处理操作按钮点击
+const handleActionClick = (action: ActionButton, orderInfo: OrderInfo) => {
+	uni.showToast({
+		title: `执行操作：${action.text}`,
+		icon: "none",
+	});
+
+	// 这里可以添加具体的业务逻辑
+	console.log("Action:", action.type, "Order:", orderInfo.orderNumber);
+};
+
 const handleTabChange = (index: number) => {
-	console.log(index, 1234);
 	state.currentTab = index;
 };
 
@@ -328,6 +439,10 @@ defineOptions({
 <style lang="scss" scoped>
 .shop {
 	padding: $up-box-pd;
+
+	:deep(.shop-subsection) {
+		margin-bottom: 20rpx;
+	}
 	.tags {
 		flex-wrap: wrap;
 		margin-top: 8rpx;
@@ -434,7 +549,7 @@ defineOptions({
 			);
 			border: 1px solid var(--primary-3);
 			border-radius: 16rpx;
-			padding: 10rpx 24rpx;
+			padding: 8rpx 24rpx;
 			min-width: 200rpx;
 			box-shadow: 0 4rpx 12rpx rgba(34, 114, 251, 0.1);
 			transition: all 0.3s ease;

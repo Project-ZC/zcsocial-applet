@@ -1,6 +1,6 @@
 import { createSSRApp } from "vue";
 import App from "./App.vue";
-import setupPlugins from '@/plugins';
+import setupPlugins from "@/plugins";
 
 export function createApp() {
 	const app = createSSRApp(App);

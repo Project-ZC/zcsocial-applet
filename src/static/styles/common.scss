@@ -110,12 +110,19 @@ page {
     justify-content: center;
     color: #fff;
 }
-
+// 单元格
 .u-cell{
     .u-cell__body{
         padding: 24rpx 30rpx!important;
     }
     .u-cell__title-text{
+        font-size: $up-font-base!important;
+    }
+}
+.u-subsection{
+    height: 72rpx!important;
+    background: #fff;
+    .u-subsection__item{
         font-size: $up-font-base!important;
     }
 }
