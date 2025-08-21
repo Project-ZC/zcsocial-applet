@@ -1,6 +1,13 @@
 <!-- 店铺 -->
 <template>
 	<pageWrapper :showTabbar="true">
+		<!-- 店铺切换组件 -->
+		<ShopSwitcher
+			ref="shopSwitcherRef"
+			v-if="state.shopList.length > 0"
+			:shops="state.shopList"
+			@shopChange="handleShopSelect"
+		/>
 		<view class="shop">
 			<!-- 店铺基本信息 -->
 			<view class="shop-info-card z-glass-card">
@@ -65,7 +72,14 @@
 					</view>
 				</view>
 			</view>
-			<view class="z-glass-card">
+
+			<up-subsection
+				:list="state.list"
+				:current="state.currentTab"
+				@change="handleTabChange"
+			></up-subsection>
+
+			<view class="z-glass-card" v-if="state.currentTab === 0">
 				<up-cell-group v-for="main in state.cellList" :key="main.title">
 					<view class="z-cell-title">{{ main.title }}</view>
 					<up-cell
@@ -81,14 +95,17 @@
 					</up-cell>
 				</up-cell-group>
 			</view>
+
+			<view class="z-glass-card" v-else-if="state.currentTab === 1">
+				<view class="order-content"></view>
+				<view class="order-footer">
+					<view class="order-count">
+						<text class="order-count-text">订单总数</text>
+						<text class="order-count-text">100</text>
+					</view>
+				</view>
+			</view>
 		</view>
-		<!-- 店铺切换组件 -->
-		<ShopSwitcher
-			ref="shopSwitcherRef"
-			v-if="state.shopList.length > 0"
-			:shops="state.shopList"
-			@shopChange="handleShopSelect"
-		/>
 	</pageWrapper>
 </template>
 
@@ -108,10 +125,12 @@ const shopStore = useShopStore();
 const shopSwitcherRef = ref<any>(null);
 
 const state = reactive({
+	currentTab: 0,
+	list: ["店铺系统", "订单"],
 	shopList: [] as any, // 店铺列表
 	cellList: [
 		{
-			title: "店铺详情",
+			title: "店铺系统",
 			children: [
 				{
 					title: "店铺详情",
@@ -161,12 +180,12 @@ const state = reactive({
 					url: "/pages/milkTeaOrder/milkTeaOrder",
 					showArrow: true,
 				},
-				{
-					title: "奶茶点单演示",
-					icon: "star-fill",
-					url: "/pages/milkTeaDemo/milkTeaDemo",
-					showArrow: true,
-				},
+				// {
+				// 	title: "奶茶点单演示",
+				// 	icon: "star-fill",
+				// 	url: "/pages/milkTeaDemo/milkTeaDemo",
+				// 	showArrow: true,
+				// },
 			],
 		},
 		{
@@ -212,6 +231,11 @@ const state = reactive({
 	],
 });
 let shopInfo = ref<any>({});
+
+const handleTabChange = (index: number) => {
+	console.log(index, 1234);
+	state.currentTab = index;
+};
 
 const openShopModal = () => {
 	shopSwitcherRef.value.openShopModal(shopInfo.value);

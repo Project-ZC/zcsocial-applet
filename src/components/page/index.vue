@@ -58,8 +58,11 @@ onMounted(() => {
 
 	paddingBottomValue.value = bottomSafeArea + "px"; // 设置底部安全区域的填充
 
-	const footerH = 50;
-	if (props.showTabbar || props.showFooter) {
+	if (props.showTabbar) {
+		const tabbarH = 50;
+		paddingBottomValue.value = bottomSafeArea + tabbarH + "px"; // 设置底部安全区域的填充
+	} else if (props.showFooter) {
+		const footerH = 80;
 		paddingBottomValue.value = bottomSafeArea + footerH + "px"; // 设置底部安全区域的填充
 	} else {
 		paddingBottomValue.value = bottomSafeArea + "px"; // 设置底部安全区域的填充

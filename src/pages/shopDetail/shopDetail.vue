@@ -12,18 +12,13 @@
 				>
 					<!-- 店铺LOGO -->
 					<up-form-item label="店铺LOGO" prop="logo">
-						<uploadFile :fileList="[form.logo]"></uploadFile>
-						<!-- <view class="logo-uploader" @click="uploadLogo">
-							<image
-								class="shop-logo"
-								:src="form.logo"
-								mode="aspectFill"
-								v-if="form.logo"
-							></image>
-							<view class="upload-placeholder" v-else>
-								<text class="add-icon">+</text>
-							</view>
-						</view> -->
+						<UploadFile
+							v-model:fileList="state.logoFileList"
+							acceept="image"
+							:maxCount="1"
+							@afterUpload="logoAfterUpload"
+						>
+						</UploadFile>
 					</up-form-item>
 					<!-- 店铺名称 -->
 					<up-form-item label="店铺名称" prop="name">
@@ -41,23 +36,26 @@
 						/>
 						<!-- <text class="textarea-counter">{{ form.description.length || 0 }}/200</text> -->
 					</up-form-item>
-
 					<!-- 营业时间 -->
 					<up-form-item label="营业时间" prop="openTime">
 						<view class="time-picker-row">
-							<up-input
-								class="time-picker"
-								v-model="form.openTime"
-								placeholder="请选择"
-								@focus="showOpenTimePicker = true"
-							/>
+							<view @click="showOpenTimePicker = true">
+								<up-input
+									class="time-picker"
+									v-model="form.openTime"
+									readonly
+									placeholder="请选择"
+								/>
+							</view>
 							<text class="time-separator">至</text>
-							<up-input
-								class="time-picker"
-								v-model="form.closeTime"
-								placeholder="请选择"
-								@focus="showCloseTimePicker = true"
-							/>
+							<view @click="showCloseTimePicker = true">
+								<up-input
+									class="time-picker"
+									readonly
+									v-model="form.closeTime"
+									placeholder="请选择"
+								/>
+							</view>
 						</view>
 					</up-form-item>
 
@@ -178,30 +176,18 @@
 					<!-- Homebar相册 -->
 					<up-form-item label="Homebar相册" prop="photo">
 						<view class="photo-container">
-							<!-- <view class="photo-list">
-								<view
-									class="photo-item"
-									v-for="(item, index) in form.photo"
-									:key="index"
-								>
-									<image :src="item" mode="aspectFill"></image>
-									<view class="delete-image" @click="deleteAlbumImage(index)"
-										>×</view
+							<UploadFile
+								v-model:fileList="state.photoFileList"
+								acceept="image"
+								:maxCount="9"
+								@afterUpload="handleImagesUpdate"
+							>
+								<template #tips>
+									<text class="photo-tip"
+										>最多上传9张照片，建议上传店铺环境、特色酒水等照片</text
 									>
-								</view>
-								<view
-									class="add-image"
-									@click="uploadAlbumImage"
-									v-if="form.photo?.length < 9"
-								>
-									<view class="add-icon">+</view>
-								</view>
-							</view> -->
-              <Upload :fileList="state.photoFileList" :uploadType="'image'" :maxCount="9" @update:images="handleImagesUpdate">
-                <template #tips>
-                  <text class="photo-tip">最多上传9张照片，建议上传店铺环境、特色酒水等照片</text>
-                </template>
-              </Upload>
+								</template>
+							</UploadFile>
 						</view>
 					</up-form-item>
 				</up-form>
@@ -234,8 +220,7 @@
 </template>
 
 <script setup lang="ts">
-import uploadFile from "@/components/uploadFile/index.vue";
-import Upload from "@/components/uploadFile/uploadFile.vue";
+import UploadFile from "@/components/uploadFile/index.vue";
 import { getDownloadUrl } from "@/api/common/upload";
 import { reactive, ref, nextTick, computed, watch } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
@@ -296,7 +281,13 @@ const state = reactive({
 	rules: {
 		name: [{ required: true, message: "请输入店铺名称", trigger: "blur" }],
 	},
-  photoFileList:[]
+	photoFileList: [
+		// {
+		// 	url: "http://192.168.1.100:8080/file/download/1724252800000",
+		// 	type: "image",
+		// },
+	],
+	logoFileList: [],
 });
 
 // 计算属性：可选的标签列表（排除已选择的）
@@ -316,8 +307,14 @@ const filteredTags = computed(() => {
 	);
 });
 
+const logoAfterUpload = (images) => {
+	console.log(images, 1234);
+	form.logo = images[0].url;
+};
+
 const handleImagesUpdate = (images) => {
-	form.photo = images;
+	console.log(images, 1234);
+	form.photo = images.map((item) => item.url);
 };
 
 const GtShopDetail = () => {
@@ -332,11 +329,11 @@ const GtShopDetail = () => {
 				form[key] = data[key] || "";
 			}
 		}
-		// state.photoFileList = form.photo.map(item => {
-		// 	return {
-		// 		url: getDownloadUrl(item),
-		// 	}
-		// })
+		state.photoFileList = form.photo.map((item) => {
+			return {
+				url: item,
+			};
+		});
 	});
 };
 
@@ -347,21 +344,21 @@ onLoad((options) => {
 });
 
 // // 安全返回
-// const safeNavigateBack = () => {
-//   uni.navigateBack();
-// };
+const safeNavigateBack = () => {
+	uni.navigateBack();
+};
 
 // 上传LOGO
-const uploadLogo = () => {
-	uni.chooseImage({
-		count: 1,
-		sizeType: ["original", "compressed"],
-		sourceType: ["photo", "camera"],
-		success: (res) => {
-			form.logo = res.tempFilePaths[0];
-		},
-	});
-};
+// const uploadLogo = () => {
+// 	uni.chooseImage({
+// 		count: 1,
+// 		sizeType: ["original", "compressed"],
+// 		sourceType: ["photo", "camera"],
+// 		success: (res) => {
+// 			form.logo = res.tempFilePaths[0];
+// 		},
+// 	});
+// };
 
 // 更改营业开始时间
 const confirmOpenTime = (e) => {
@@ -478,15 +475,6 @@ const uploadAlbumImage = () => {
 	});
 };
 
-// 删除相册图片
-const deleteAlbumImage = (index) => {
-	form.photo.splice(index, 1);
-};
-
-const showInputTag = () => {
-	showTagInput.value = true;
-};
-
 // 监听输入值变化，显示搜索建议
 watch(newTag, (newValue) => {
 	if (newValue.trim() && availableTags.value.length > 0) {
@@ -508,19 +496,14 @@ const saveShopInfo = async () => {
 			title: "保存成功",
 			icon: "success",
 		});
-	} catch (error) {
-		uni.showToast({
-			title: "保存失败: " + (error.message || "未知错误"),
-			icon: "none",
-		});
-		console.error("保存店铺信息失败:", error);
-	}
+		safeNavigateBack();
+	} catch (error) {}
 };
 </script>
 
 <style lang="scss" scoped>
 .shop-detail {
-	// padding: $up-box-pd;
+	padding: $up-box-pd;
 	// min-height: 100vh;
 	// padding-bottom: 60rpx;
 	// background-color: #f5f5f5;
@@ -698,7 +681,7 @@ const saveShopInfo = async () => {
 
 .location-picker {
 	height: 40px;
-	border: 1px solid #eee;
+	border: 1px solid var(--border-1);
 	border-radius: 4px;
 	display: flex;
 	align-items: center;
@@ -709,14 +692,14 @@ const saveShopInfo = async () => {
 }
 
 .placeholder-text {
-	color: #999;
+	color: var(--text-2);
 }
 
 .location-icon {
 	width: 8px;
 	height: 8px;
-	border-right: 2px solid #999;
-	border-bottom: 2px solid #999;
+	border-right: 2px solid var(--text-4);
+	border-bottom: 2px solid var(--text-4);
 	transform: rotate(-45deg);
 }
 
@@ -807,58 +790,10 @@ const saveShopInfo = async () => {
 	flex-direction: column;
 	gap: 10px;
 }
-
-.photo-list {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: 10px;
-}
-
-.photo-item {
-	width: 100%;
-	height: 100px;
-	border-radius: 8px;
-	overflow: hidden;
-	position: relative;
-}
-
-.photo-item image {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-}
-
-.delete-image {
-	position: absolute;
-	top: 5px;
-	right: 5px;
-	width: 20px;
-	height: 20px;
-	background-color: rgba(0, 0, 0, 0.6);
-	color: white;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	border-radius: 50%;
-	font-size: 12px;
-}
-
-.add-image {
-	width: 100%;
-	height: 100px;
-	border: 1px dashed #ccc;
-	border-radius: 8px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
 .add-icon {
 	font-size: 30px;
 	color: #999;
 }
-
-
 
 .save-button {
 	width: 100%;

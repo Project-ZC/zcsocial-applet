@@ -18,8 +18,8 @@
 $u-main-color: #303133;
 $u-content-color: var(--text-2);
 $u-tips-color: var(--text-3);
-$u-light-color: var(--text-4);
-$u-border-color: var(--border-1);
+$u-light-color: var(--text-4); // placeholder
+$u-border-color: var(--border-1); // 分割线/输入边框
 $u-bg-color: var(--bg-2);
 $u-disabled-color: var(--text-5);
 
@@ -124,4 +124,4 @@ $up-navbar-h: 44px;
 
 // 底部tab切换
 $up-tabbar-h: 50px;
-$up-footer-h: 50px;
+$up-footer-h: 80px;

@@ -15,7 +15,6 @@
 	height: $up-footer-h;
 	background-color: #ffffff;
 	display: flex;
-	// justify-content: space-around;
 	align-items: center;
 	border-top: 1px solid #eaeaea;
 	padding-bottom: constant(safe-area-inset-bottom);

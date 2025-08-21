@@ -394,19 +394,16 @@ onPullDownRefresh(async () => {
 	align-items: center;
 	padding: $up-box-pd;
 	margin-bottom: $up-box-mg;
-}
-
-.page-title {
-	font-size: 36rpx;
-	font-weight: bold;
-	color: #333;
-}
-
-.add-btn {
-	font-size: 28rpx;
-	border-radius: 40rpx;
-	border: none;
-	margin: 0;
+	:deep(.add-btn) {
+		// font-size: 28rpx;
+		margin: 0;
+		width: 200rpx;
+	}
+	.page-title {
+		font-size: 36rpx;
+		font-weight: bold;
+		color: #333;
+	}
 }
 
 /* 桌位列表样式 */
