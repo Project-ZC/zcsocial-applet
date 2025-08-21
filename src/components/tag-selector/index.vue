@@ -1,345 +1,319 @@
 <template>
-	<view class="tag-selector">
-		<!-- 已选标签展示 -->
-		<view class="selected-tags" v-if="selectedTags.length > 0">
-			<view class="tags-title">已选标签：</view>
-			<view class="tags-container">
-				<view
-					class="tag-item selected"
-					v-for="tag in selectedTags"
-					:key="tag.id"
-					@click="removeTag(tag)"
-				>
-					<text class="tag-text">{{ tag.name }}</text>
-					<up-icon name="close" size="12" color="#fff"></up-icon>
-				</view>
-			</view>
-		</view>
+  <view class="tag-selector">
+    <!-- 已选标签展示 -->
+    <view class="selected-tags" v-if="selectedTags.length > 0">
+      <!-- <view class="tags-title">已选标签：</view> -->
+      <view class="tags-container">
+        <view class="tag-item selected" v-for="tag in selectedTags" :key="tag.id" @click="removeTag(tag)">
+          <text class="tag-text">{{ tag.name }}</text>
+          <up-icon name="close" size="12" color="#fff"></up-icon>
+        </view>
+      </view>
+    </view>
 
-		<!-- 标签输入/选择区域 -->
-		<view class="tag-input-section">
-			<!-- 输入框 -->
-			<view class="tag-input-container">
-				<up-input
-					class="tag-input"
-					v-model="inputValue"
-					:focus="showInput"
-					@focus="handleInputFocus"
-					@blur="handleInputBlur"
-					@confirm="addCustomTag"
-					placeholder="输入标签名称或选择已有标签"
-					maxlength="10"
-				/>
-				<up-button
-					class="add-btn"
-					size="small"
-					type="primary"
-					@click="addCustomTag"
-					:disabled="!inputValue.trim()"
-				>
-					添加
-				</up-button>
-			</view>
+    <!-- 标签输入/选择区域 -->
+    <view class="tag-input-section">
+      <!-- 输入框 -->
+      <view class="tag-input-container">
+        <up-input
+          class="tag-input"
+          v-model="inputValue"
+          size="small"
+          :focus="showInput"
+          @focus="handleInputFocus"
+          @blur="handleInputBlur"
+          @confirm="addCustomTag"
+          placeholder="输入标签名称或选择已有标签"
+          maxlength="10"
+        />
+        <view class="add-btn">
+          <up-button type="primary" @click="addCustomTag" :disabled="!inputValue.trim()">添加</up-button>
+        </view>
+      </view>
 
-			<!-- 可选标签列表 -->
-			<view
-				class="available-tags"
-				v-if="showAvailableTags && availableTags.length > 0"
-			>
-				<view class="tags-title">可选标签：</view>
-				<view class="tags-container">
-					<view
-						class="tag-item available"
-						v-for="tag in availableTags"
-						:key="tag.id"
-						@click="selectTag(tag)"
-					>
-						<text class="tag-text">{{ tag.name }}</text>
-						<up-icon name="plus" size="12" color="var(--primary-6)"></up-icon>
-					</view>
-				</view>
-			</view>
+      <!-- 可选标签列表 -->
+      <view class="available-tags" v-if="showAvailableTags && availableTags.length > 0">
+        <view class="tags-title">可选标签：</view>
+        <view class="tags-container">
+          <view class="tag-item available" v-for="tag in availableTags" :key="tag.id" @click="selectTag(tag)">
+            <text class="tag-text">{{ tag.name }}</text>
+            <up-icon name="plus" size="12" color="var(--primary-6)"></up-icon>
+          </view>
+        </view>
+      </view>
 
-			<!-- 搜索建议 -->
-			<view
-				class="search-suggestions"
-				v-if="showSuggestions && filteredTags.length > 0"
-			>
-				<view class="suggestions-title">搜索建议：</view>
-				<view class="suggestions-list">
-					<view
-						class="suggestion-item"
-						v-for="tag in filteredTags"
-						:key="tag.id"
-						@click="selectTag(tag)"
-					>
-						<text class="suggestion-text">{{ tag.name }}</text>
-						<up-icon name="plus" size="12" color="var(--primary-6)"></up-icon>
-					</view>
-				</view>
-			</view>
-		</view>
-	</view>
+      <!-- 搜索建议 -->
+      <view class="search-suggestions" v-if="showSuggestions && filteredTags.length > 0">
+        <view class="suggestions-title">搜索建议：</view>
+        <view class="suggestions-list">
+          <view class="suggestion-item" v-for="tag in filteredTags" :key="tag.id" @click="selectTag(tag)">
+            <text class="suggestion-text">{{ tag.name }}</text>
+            <up-icon name="plus" size="12" color="var(--primary-6)"></up-icon>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
-import { getTagList } from "@/api/common/dict";
+import { ref, computed, watch } from 'vue';
+import { getTagList } from '@/api/common/dict';
 
 interface Tag {
-	id: string | number;
-	name: string;
-	[key: string]: any;
+  id: string | number;
+  name: string;
+  [key: string]: any;
 }
 
 interface Props {
-	tags?: Tag[]; // 可选标签列表
-	selectedTags?: Tag[]; // 已选标签
-	maxTags?: number; // 最大可选标签数
-	allowCustom?: boolean; // 是否允许自定义输入
+  tags?: Tag[]; // 可选标签列表
+  selectedTags?: Tag[]; // 已选标签
+  maxTags?: number; // 最大可选标签数
+  allowCustom?: boolean; // 是否允许自定义输入
 }
 
 const props = withDefaults(defineProps<Props>(), {
-	tags: () => [],
-	selectedTags: () => [],
-	maxTags: 10,
-	allowCustom: true,
+  tags: () => [],
+  selectedTags: () => [],
+  maxTags: 10,
+  allowCustom: true,
 });
 
 const emit = defineEmits<{
-	"update:selectedTags": [tags: Tag[]];
-	tagChange: [tags: Tag[]];
-	tagAdd: [tag: Tag];
-	tagRemove: [tag: Tag];
+  'update:selectedTags': [tags: Tag[]];
+  tagChange: [tags: Tag[]];
+  tagAdd: [tag: Tag];
+  tagRemove: [tag: Tag];
 }>();
 
 // 响应式数据
-const inputValue = ref("");
+const inputValue = ref('');
 const showInput = ref(false);
 const showAvailableTags = ref(false);
 const showSuggestions = ref(false);
 
 // 计算属性
 const availableTags = computed(() => {
-	const selectedIds = props.selectedTags.map((tag) => tag.id);
-	return props.tags.filter((tag) => !selectedIds.includes(tag.id));
+  const selectedIds = props.selectedTags.map(tag => tag.id);
+  return props.tags.filter(tag => !selectedIds.includes(tag.id));
 });
 
 const filteredTags = computed(() => {
-	if (!inputValue.value.trim()) return [];
-	const keyword = inputValue.value.toLowerCase();
-	return availableTags.value.filter((tag) =>
-		tag.name.toLowerCase().includes(keyword)
-	);
+  if (!inputValue.value.trim()) return [];
+  const keyword = inputValue.value.toLowerCase();
+  return availableTags.value.filter(tag => tag.name.toLowerCase().includes(keyword));
 });
 
 // 方法
 const handleInputFocus = () => {
-	showInput.value = true;
-	showAvailableTags.value = true;
-	showSuggestions.value = false;
+  showInput.value = true;
+  showAvailableTags.value = true;
+  showSuggestions.value = false;
 };
 
 const handleInputBlur = () => {
-	setTimeout(() => {
-		showInput.value = false;
-		showAvailableTags.value = false;
-		showSuggestions.value = false;
-	}, 200);
+  setTimeout(() => {
+    showInput.value = false;
+    showAvailableTags.value = false;
+    showSuggestions.value = false;
+  }, 200);
 };
 
 const selectTag = (tag: Tag) => {
-	if (props.selectedTags.length >= props.maxTags) {
-		uni.showToast({
-			title: `最多只能选择${props.maxTags}个标签`,
-			icon: "none",
-		});
-		return;
-	}
+  if (props.selectedTags.length >= props.maxTags) {
+    uni.showToast({
+      title: `最多只能选择${props.maxTags}个标签`,
+      icon: 'none',
+    });
+    return;
+  }
 
-	const newSelectedTags = [...props.selectedTags, tag];
-	emit("update:selectedTags", newSelectedTags);
-	emit("tagChange", newSelectedTags);
-	emit("tagAdd", tag);
+  const newSelectedTags = [...props.selectedTags, tag];
+  emit('update:selectedTags', newSelectedTags);
+  emit('tagChange', newSelectedTags);
+  emit('tagAdd', tag);
 
-	inputValue.value = "";
-	showSuggestions.value = false;
+  inputValue.value = '';
+  showSuggestions.value = false;
 };
 
 const addCustomTag = () => {
-	if (!props.allowCustom) {
-		uni.showToast({
-			title: "不允许自定义输入",
-			icon: "none",
-		});
-		return;
-	}
+  if (!props.allowCustom) {
+    uni.showToast({
+      title: '不允许自定义输入',
+      icon: 'none',
+    });
+    return;
+  }
 
-	const tagName = inputValue.value.trim();
-	if (!tagName) return;
+  const tagName = inputValue.value.trim();
+  if (!tagName) return;
 
-	if (props.selectedTags.length >= props.maxTags) {
-		uni.showToast({
-			title: `最多只能选择${props.maxTags}个标签`,
-			icon: "none",
-		});
-		return;
-	}
+  if (props.selectedTags.length >= props.maxTags) {
+    uni.showToast({
+      title: `最多只能选择${props.maxTags}个标签`,
+      icon: 'none',
+    });
+    return;
+  }
 
-	// 检查是否已存在相同名称的标签
-	const existingTag = props.selectedTags.find((tag) => tag.name === tagName);
-	if (existingTag) {
-		uni.showToast({
-			title: "标签已存在",
-			icon: "none",
-		});
-		return;
-	}
+  // 检查是否已存在相同名称的标签
+  const existingTag = props.selectedTags.find(tag => tag.name === tagName);
+  if (existingTag) {
+    uni.showToast({
+      title: '标签已存在',
+      icon: 'none',
+    });
+    return;
+  }
 
-	const newTag: Tag = {
-		id: `custom_${Date.now()}`,
-		name: tagName,
-		isCustom: true,
-	};
+  const newTag: Tag = {
+    id: `custom_${Date.now()}`,
+    name: tagName,
+    isCustom: true,
+  };
 
-	const newSelectedTags = [...props.selectedTags, newTag];
-	emit("update:selectedTags", newSelectedTags);
-	emit("tagChange", newSelectedTags);
-	emit("tagAdd", newTag);
+  const newSelectedTags = [...props.selectedTags, newTag];
+  emit('update:selectedTags', newSelectedTags);
+  emit('tagChange', newSelectedTags);
+  emit('tagAdd', newTag);
 
-	inputValue.value = "";
-	showSuggestions.value = false;
+  inputValue.value = '';
+  showSuggestions.value = false;
 };
 
 const removeTag = (tag: Tag) => {
-	const newSelectedTags = props.selectedTags.filter((t) => t.id !== tag.id);
-	emit("update:selectedTags", newSelectedTags);
-	emit("tagChange", newSelectedTags);
-	emit("tagRemove", tag);
+  const newSelectedTags = props.selectedTags.filter(t => t.id !== tag.id);
+  emit('update:selectedTags', newSelectedTags);
+  emit('tagChange', newSelectedTags);
+  emit('tagRemove', tag);
 };
 
 // 监听输入值变化，显示搜索建议
-watch(inputValue, (newValue) => {
-	if (newValue.trim() && availableTags.value.length > 0) {
-		showSuggestions.value = true;
-		showAvailableTags.value = false;
-	} else {
-		showSuggestions.value = false;
-		showAvailableTags.value = true;
-	}
+watch(inputValue, newValue => {
+  if (newValue.trim() && availableTags.value.length > 0) {
+    showSuggestions.value = true;
+    showAvailableTags.value = false;
+  } else {
+    showSuggestions.value = false;
+    showAvailableTags.value = true;
+  }
 });
 </script>
 
 <style lang="scss" scoped>
 .tag-selector {
-	.selected-tags {
-		margin-bottom: 20rpx;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  .selected-tags {
+    margin-bottom: 20rpx;
 
-		.tags-title {
-			font-size: 28rpx;
-			color: var(--text-2);
-			margin-bottom: 12rpx;
-			font-weight: 500;
-		}
+    .tags-title {
+      font-size: 28rpx;
+      color: var(--text-2);
+      margin-bottom: 12rpx;
+      font-weight: 500;
+    }
 
-		.tags-container {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 12rpx;
-		}
-	}
+    .tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12rpx;
+    }
+  }
 
-	.tag-input-section {
-		.tag-input-container {
-			display: flex;
-			align-items: center;
-			gap: 12rpx;
-			margin-bottom: 16rpx;
+  .tag-input-section {
+    width: 100%;
+    .tag-input-container {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12rpx;
 
-			.tag-input {
-				flex: 1;
-				background: var(--fill-2);
-				border-radius: 8rpx;
-				padding: 16rpx;
-				font-size: 28rpx;
-			}
+      .tag-input {
+        flex: 1;
+        // padding: 16rpx;
+        font-size: 28rpx;
+        height: 36rpx;
+      }
 
-			.add-btn {
-				flex-shrink: 0;
-				height: 64rpx;
-				padding: 0 24rpx;
-			}
-		}
-	}
+      :deep(.add-btn) {
+        flex-shrink: 0;
+        width: 100rpx;
+      }
+    }
+  }
 
-	.available-tags,
-	.search-suggestions {
-		margin-top: 16rpx;
+  .available-tags,
+  .search-suggestions {
+    margin-top: 16rpx;
 
-		.tags-title,
-		.suggestions-title {
-			font-size: 26rpx;
-			color: var(--text-3);
-			margin-bottom: 12rpx;
-		}
+    .tags-title,
+    .suggestions-title {
+      font-size: 26rpx;
+      color: var(--text-3);
+      margin-bottom: 12rpx;
+    }
 
-		.tags-container,
-		.suggestions-list {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 12rpx;
-		}
-	}
+    .tags-container,
+    .suggestions-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12rpx;
+    }
+  }
 
-	.tag-item,
-	.suggestion-item {
-		display: flex;
-		align-items: center;
-		gap: 8rpx;
-		padding: 12rpx 16rpx;
-		border-radius: 20rpx;
-		font-size: 24rpx;
-		cursor: pointer;
-		transition: all 0.3s ease;
+  .tag-item,
+  .suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: 8rpx;
+    padding: 12rpx 16rpx;
+    border-radius: 20rpx;
+    font-size: 24rpx;
+    cursor: pointer;
+    transition: all 0.3s ease;
 
-		&.selected {
-			background: var(--primary-6);
-			color: #fff;
+    &.selected {
+      background: var(--primary-6);
+      color: #fff;
 
-			&:active {
-				transform: scale(0.95);
-			}
-		}
+      &:active {
+        transform: scale(0.95);
+      }
+    }
 
-		&.available {
-			background: var(--primary-1);
-			color: var(--primary-6);
-			border: 1px solid var(--primary-3);
+    &.available {
+      background: var(--primary-1);
+      color: var(--primary-6);
+      border: 1px solid var(--primary-3);
 
-			&:active {
-				background: var(--primary-2);
-				transform: scale(0.95);
-			}
-		}
+      &:active {
+        background: var(--primary-2);
+        transform: scale(0.95);
+      }
+    }
 
-		.tag-text {
-			font-weight: 500;
-		}
-	}
+    .tag-text {
+      font-weight: 500;
+    }
+  }
 
-	.suggestion-item {
-		background: var(--fill-2);
-		color: var(--text-2);
-		border: 1px solid var(--border-1);
+  .suggestion-item {
+    background: var(--fill-2);
+    color: var(--text-2);
+    border: 1px solid var(--border-1);
 
-		&:active {
-			background: var(--fill-3);
-			transform: scale(0.95);
-		}
+    &:active {
+      background: var(--fill-3);
+      transform: scale(0.95);
+    }
 
-		.suggestion-text {
-			font-weight: 400;
-		}
-	}
+    .suggestion-text {
+      font-weight: 400;
+    }
+  }
 }
 </style>

@@ -1,136 +1,164 @@
 <template>
-  <view class="container">
-    <view class="edit-form">
-      <!-- 头像上传区域 -->
-      <view class="avatar-section z-glass-card">
-        <view class="avatar-container" @click="chooseAvatar">
-          <up-image class="avatar" :src="state.userInfo.avatar" mode="aspectFill"></up-image>
-          <view class="avatar-edit-mask">
-            <view class="icon-camera"></view>
-            <text class="edit-text">点击更换头像</text>
+  <pageWrapper showFooter>
+    <view class="container">
+      <view class="edit-form">
+        <!-- 头像上传区域 -->
+        <view class="avatar-section z-glass-card">
+          <view class="avatar-container">
+            <UploadFile
+              v-model:fileList="state.avatarFileList"
+              acceept="image"
+              :maxCount="1"
+              round
+              @afterUpload="handleAvatarUpdate"
+              customStyle
+            >
+              <template #default>
+                <up-avatar :src="'/static/images/default-avatar.png'" size="140rpx"></up-avatar>
+              </template>
+              <template #tips>
+                <text class="edit-text">点击更换头像</text>
+              </template>
+            </UploadFile>
           </view>
         </view>
-      </view>
-      
-      <!-- 基本信息表单 -->
-      <view class="form-card z-glass-card">
-        <view class="form-group">
-          <view class="form-item">
-            <text class="form-label">昵称</text>
-            <up-input class="form-input" v-model="state.userInfo.nickname" placeholder="请输入昵称" @input="inputNickname"></up-input>
-            <view class="form-icon">
-              <view class="icon-arrow-right"></view>
+
+        <!-- 基本信息表单 -->
+        <view class="form-card z-glass-card">
+          <view class="form-group">
+            <view class="form-item">
+              <text class="form-label">昵称</text>
+              <up-input
+                class="form-input"
+                v-model="state.userInfo.nickname"
+                placeholder="请输入昵称"
+                @input="inputNickname"
+              ></up-input>
+              <!-- <view class="form-icon">
+                <view class="icon-arrow-right"></view>
+              </view> -->
+            </view>
+            <view class="form-item" @click="showGenderPickerFn">
+              <text class="form-label">性别</text>
+              <view class="form-value">{{ state.genderText[state.userInfo.gender] || '请选择' }}</view>
+              <view class="form-icon">
+                <view class="icon-arrow-right"></view>
+              </view>
+            </view>
+            <view class="form-item" @click="showDatePicker">
+              <text class="form-label">生日</text>
+              <view class="form-value">{{ state.userInfo.birthday || '请选择' }}</view>
+              <view class="form-icon">
+                <view class="icon-arrow-right"></view>
+              </view>
             </view>
           </view>
-          <view class="form-item" @click="showGenderPicker">
-            <text class="form-label">性别</text>
-            <view class="form-value">{{ state.genderText[state.userInfo.gender] || '请选择' }}</view>
-            <view class="form-icon">
-              <view class="icon-arrow-right"></view>
-            </view>
+        </view>
+
+        <!-- 个人标签 -->
+        <view class="form-card z-glass-card">
+          <view class="form-header">
+            <text class="section-title">个人标签</text>
+            <text class="section-subtitle">选择能代表你的标签，最多可选5个</text>
           </view>
-          <view class="form-item" @click="showDatePicker">
-            <text class="form-label">生日</text>
-            <view class="form-value">{{ state.userInfo.birthday || '请选择' }}</view>
-            <view class="form-icon">
-              <view class="icon-arrow-right"></view>
-            </view>
-          </view>
-        </view>
-      </view>
-      
-      <!-- 个人标签 -->
-      <view class="form-card z-glass-card">
-        <view class="form-header">
-          <text class="section-title">个人标签</text>
-          <text class="section-subtitle">选择能代表你的标签，最多可选5个</text>
-        </view>
-        
-        <view class="tags-container">
-          <view 
-            class="tag-item" 
-            :class="{ 'active': state.userInfo.tags.includes(item) }" 
-            v-for="(item, index) in state.tagOptions" 
-            :key="index"
-            @click="toggleTag(item)">
-            {{ item }}
-          </view>
-        </view>
-      </view>
-      
-      <!-- 个人简介 -->
-      <view class="form-card z-glass-card">
-        <view class="form-header">
-          <text class="section-title">个人简介</text>
-          <text class="section-subtitle">介绍一下自己，让大家了解你</text>
-        </view>
-        
-        <view class="bio-container">
-          <up-textarea 
-            class="bio-textarea" 
-            v-model="state.userInfo.bio" 
-            placeholder="介绍一下自己，让大家了解你（最多200字）"
-            :maxlength="200"
-            @input="inputBio"
-            auto-height>
-          </up-textarea>
-          <text class="word-count">{{ state.userInfo.bio.length }}/200</text>
-        </view>
-      </view>
-      
-      <!-- 保存按钮 -->
-      <view class="bottom-button-area">
-        <up-button class="save-button" type="primary" @click="saveProfile">保存</up-button>
-      </view>
-      
-      <!-- 性别选择器 -->
-      <up-popup class="modal" v-model="state.showGenderPicker" mode="bottom">
-        <view class="picker-container">
-          <view class="picker-header">
-            <text class="picker-title">请选择性别</text>
-            <text class="picker-close" @click="closeGenderPicker">关闭</text>
-          </view>
-          <view class="picker-body">
-            <view 
-              class="picker-item" 
-              v-for="(item, index) in state.genderOptions" 
+
+          <view class="tags-container">
+            <view
+              class="tag-item"
+              :class="{ active: state.userInfo.tags.includes(item) }"
+              v-for="(item, index) in state.tagOptions"
               :key="index"
-              @click="selectGender(item.value)">
-              <text class="picker-item-text" :class="{ 'active': state.userInfo.gender === item.value }">{{ item.text }}</text>
-              <view class="icon-check" v-if="state.userInfo.gender === item.value"></view>
+              @click="toggleTag(item)"
+            >
+              {{ item }}
             </view>
           </view>
         </view>
-      </up-popup>
-      
-      <!-- 日期选择器 -->
-      <up-popup class="modal" v-model="state.showDatePicker" mode="bottom">
-        <view class="picker-container">
-          <view class="picker-header">
-            <text class="picker-title">请选择生日</text>
-            <text class="picker-close" @click="closeDatePicker">关闭</text>
+
+        <!-- 个人简介 -->
+        <view class="form-card z-glass-card">
+          <view class="form-header">
+            <text class="section-title">个人简介</text>
+            <text class="section-subtitle">介绍一下自己，让大家了解你</text>
           </view>
-          <up-datetime-picker 
-            class="date-picker" 
-            v-model="state.datePickerValue" 
-            mode="date"
-            @change="onDatePickerChange"
-          ></up-datetime-picker>
-          <view class="picker-footer">
-            <up-button class="picker-confirm" @click="confirmDatePicker">确认</up-button>
+
+          <view class="bio-container">
+            <up-textarea
+              class="bio-textarea"
+              v-model="state.userInfo.bio"
+              placeholder="介绍一下自己，让大家了解你（最多200字）"
+              :maxlength="200"
+              @input="inputBio"
+              auto-height
+            ></up-textarea>
+            <text class="word-count">{{ state.userInfo.bio.length }}/200</text>
           </view>
         </view>
-      </up-popup>
+      </view>
     </view>
-  </view>
+    <!-- 保存按钮 -->
+    <template #footer>
+      <view class="save-button">
+        <up-button class="" type="primary" shape="circle" @click="saveProfile">保存</up-button>
+      </view>
+    </template>
+
+    <!-- 性别选择器 -->
+    <up-popup class="modal" :show="state.showGenderPicker" mode="bottom">
+      <view class="picker-container">
+        <view class="picker-header">
+          <text class="picker-title">请选择性别</text>
+          <text class="picker-close" @click="closeGenderPicker">关闭</text>
+        </view>
+        <view class="picker-body">
+          <view
+            class="picker-item"
+            v-for="(item, index) in state.genderOptions"
+            :key="index"
+            @click="selectGender(item.value)"
+          >
+            <text class="picker-item-text" :class="{ active: state.userInfo.gender === item.value }">
+              {{ item.text }}
+            </text>
+            <view class="icon-check" v-if="state.userInfo.gender === item.value"></view>
+          </view>
+        </view>
+      </view>
+    </up-popup>
+
+    <!-- 日期选择器 -->
+    <up-datetime-picker
+      :show="state.showDatePicker"
+      v-model="state.datePickerValue"
+      mode="datetime"
+      @change="onDatePickerChange"
+      @confirm="confirmDatePicker"
+      @cancel="closeDatePicker"
+    ></up-datetime-picker>
+
+    <!-- <up-popup class="modal" :show="state.showDatePicker" mode="bottom">
+      <view class="picker-container">
+        <view class="picker-header">
+          <text class="picker-title">请选择生日</text>
+          <text class="picker-close" @click="closeDatePicker">关闭</text>
+        </view>
+        <view class="picker-footer">
+          <up-button type="primary" shape="circle" @click="confirmDatePicker">确认</up-button>
+        </view>
+      </view>
+    </up-popup> -->
+  </pageWrapper>
 </template>
 
 <script setup lang="ts">
+import pageWrapper from '@/components/page/index.vue';
 import { reactive, onMounted } from 'vue';
-import { onHide, onShow } from "@dcloudio/uni-app";
+import { onHide, onShow } from '@dcloudio/uni-app';
+import UploadFile from '@/components/upload-file/index.vue';
 
 // 定义状态
 const state = reactive({
+  avatarFileList: [],
   userInfo: {
     id: '10086',
     nickname: '微醺一刻',
@@ -138,36 +166,39 @@ const state = reactive({
     gender: 'male',
     bio: '生活不止眼前的苟且，还有诗和远方的田野',
     tags: ['调酒爱好者', '社交达人', '派对控'],
-    birthday: ''
+    birthday: '',
   },
   genderText: {
     male: '男',
-    female: '女'
+    female: '女',
   },
-  tagOptions: ['调酒爱好者', '社交达人', '派对控', '音乐迷', '电影爱好者', '旅行家', '美食家', '健身达人', '游戏玩家', '艺术爱好者'],
+  tagOptions: [
+    '调酒爱好者',
+    '社交达人',
+    '派对控',
+    '音乐迷',
+    '电影爱好者',
+    '旅行家',
+    '美食家',
+    '健身达人',
+    '游戏玩家',
+    '艺术爱好者',
+  ],
   showGenderPicker: false,
   showDatePicker: false,
   genderOptions: [
     { text: '男', value: 'male' },
-    { text: '女', value: 'female' }
+    { text: '女', value: 'female' },
   ],
   datePickerValue: new Date().getTime(),
   years: Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i),
   months: Array.from({ length: 12 }, (_, i) => i + 1),
-  days: Array.from({ length: 31 }, (_, i) => i + 1)
+  days: Array.from({ length: 31 }, (_, i) => i + 1),
 });
 
 // 生命周期钩子
 onMounted(() => {
   fetchUserInfo();
-});
-
-onShow(() => {
-  console.log("App Show");
-});
-
-onHide(() => {
-  console.log("App Hide");
 });
 
 // 方法
@@ -180,7 +211,6 @@ const fetchUserInfo = () => {
 const saveProfile = () => {
   // 保存用户资料
   console.log('保存用户资料:', state.userInfo);
-  
   uni.showToast({
     title: '保存成功',
     icon: 'success',
@@ -189,20 +219,19 @@ const saveProfile = () => {
       setTimeout(() => {
         uni.navigateBack();
       }, 2000);
-    }
+    },
   });
 };
 
-const chooseAvatar = () => {
-  // 选择头像逻辑
-  console.log('选择头像');
+const handleAvatarUpdate = (e: any) => {
+  console.log('handleAvatarUpdate', e);
 };
 
 const inputNickname = (e: any) => {
   state.userInfo.nickname = e.detail.value;
 };
 
-const showGenderPicker = () => {
+const showGenderPickerFn = () => {
   state.showGenderPicker = true;
 };
 
@@ -241,7 +270,7 @@ const toggleTag = (tag: string) => {
     } else {
       uni.showToast({
         title: '最多可选5个标签',
-        icon: 'none'
+        icon: 'none',
       });
     }
   } else {
@@ -254,28 +283,42 @@ const inputBio = (e: any) => {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+@import '@/uni.scss';
 .container {
-  padding: 20rpx;
-  background-color: #f5f5f5;
-  min-height: 100vh;
+  padding: $up-box-pd;
+}
+
+:deep(.u-upload__wrap__preview__image) {
+  border-radius: 50% !important;
+}
+.save-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0 $up-box-pd;
+  box-sizing: border-box;
 }
 
 /* 头像上传区域 */
 .avatar-section {
-  margin-bottom: 20rpx;
-  padding: 30rpx;
+  margin-bottom: $up-box-mg;
+  padding: 34rpx;
   display: flex;
   justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
-.avatar-container {
-  position: relative;
-  width: 160rpx;
-  height: 160rpx;
-  border-radius: 50%;
-  overflow: hidden;
-}
+// .avatar-container {
+//   position: relative;
+//   width: 160rpx;
+//   height: 160rpx;
+//   border-radius: 50%;
+//   overflow: hidden;
+// }
 
 .avatar {
   width: 100%;
@@ -304,13 +347,14 @@ const inputBio = (e: any) => {
 .icon-camera {
   width: 40rpx;
   height: 40rpx;
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M12 12c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7z"/></svg>') no-repeat center;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M12 12c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7z"/></svg>')
+    no-repeat center;
   background-size: contain;
   margin-bottom: 10rpx;
 }
 
 .edit-text {
-  color: #fff;
+  color: var(--text-4);
   font-size: 24rpx;
 }
 
@@ -406,7 +450,7 @@ const inputBio = (e: any) => {
 }
 
 .tag-item.active {
-  background: #007AFF;
+  background: #007aff;
   color: #fff;
 }
 
@@ -431,24 +475,6 @@ const inputBio = (e: any) => {
   bottom: 20rpx;
   font-size: 24rpx;
   color: #999;
-}
-
-/* 底部按钮 */
-.bottom-button-area {
-  padding: 30rpx;
-}
-
-.save-button {
-  width: 100%;
-  // height: 88rpx;
-  // line-height: 88rpx;
-  // text-align: center;
-  // background: linear-gradient(135deg, #007AFF, #0056b3);
-  // color: #fff;
-  // font-size: 32rpx;
-  // font-weight: bold;
-  // border-radius: 44rpx;
-  // border: none;
 }
 
 /* 选择器弹窗 */
@@ -525,13 +551,14 @@ const inputBio = (e: any) => {
 }
 
 .picker-item-text.active {
-  color: #007AFF;
+  color: #007aff;
 }
 
 .icon-check {
   width: 40rpx;
   height: 40rpx;
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23007AFF"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>') no-repeat center;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23007AFF"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>')
+    no-repeat center;
   background-size: contain;
 }
 
@@ -558,7 +585,7 @@ const inputBio = (e: any) => {
   height: 80rpx;
   line-height: 80rpx;
   text-align: center;
-  background: #007AFF;
+  background: #007aff;
   color: #fff;
   font-size: 32rpx;
   border-radius: 40rpx;

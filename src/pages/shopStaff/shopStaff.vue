@@ -55,7 +55,7 @@
 							</view>
 							<view class="staff-info">
 								<view class="staff-header">
-									<view class="staff-name">{{ item.userNickname }}</view>
+									<!-- <view class="staff-name">{{ item.userNickname }}</view> -->
 									<!-- <view class="staff-role" v-if="item.userRoleNames">{{ item.userRoleNames }}</view> -->
 									<view
 										class="staff-roleIds"
