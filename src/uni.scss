@@ -15,13 +15,15 @@
 // @import 'uview-plus/theme.scss';
 @import '@/static/styles/theme.scss';
 
-$u-main-color: #303133;
+// $u-main-color: #303133;
+$u-main-color: var(--text-1);
 $u-content-color: var(--text-2);
 $u-tips-color: var(--text-3);
 $u-light-color: var(--text-4); // placeholder
 $u-border-color: var(--border-1); // 分割线/输入边框
 $u-bg-color: var(--bg-2);
 $u-disabled-color: var(--text-5);
+$u-bg-1: var(--bg-1); // 背景色
 
 $u-primary: var(--primary-6);
 $u-primary-dark: var(--primary-5);
@@ -48,8 +50,7 @@ $u-info-dark: var(--info-5);
 $u-info-disabled: var(--info-4);
 $u-info-light: var(--info-3);
 
-// 背景色
-$u-bg-1: var(--bg-1);
+
 
 // scss混入，为了少写几行#ifndef
 @mixin flex($direction: row) {

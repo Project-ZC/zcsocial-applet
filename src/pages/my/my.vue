@@ -219,9 +219,7 @@ const handleLogout = () => {
 //   }
 // });
 
-defineOptions({
-  styleIsolation: 'shared',
-});
+
 </script>
 
 <style lang="scss" scoped>

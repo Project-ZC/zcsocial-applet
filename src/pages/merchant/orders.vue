@@ -220,10 +220,6 @@ const handleCancel = (orderInfo: any) => {
 		},
 	});
 };
-
-defineOptions({
-	styleIsolation: "shared",
-});
 </script>
 
 <style lang="scss" scoped>

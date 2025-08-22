@@ -46,6 +46,7 @@ const shopList = ref([
 		desc: "海伦司小酒馆111",
 		tags: ["标签1", "标签2"],
 		businessHours: "10:00-22:00",
+		status: "open",
 	},
 	{
 		title: "海伦司小酒馆",
@@ -55,6 +56,7 @@ const shopList = ref([
 		desc: "海伦司小酒馆",
 		tags: ["标签1", "标签2"],
 		businessHours: "10:00-22:00",
+		status: "closed",
 	},
 	{
 		title: "海伦司小酒馆",
@@ -64,6 +66,7 @@ const shopList = ref([
 		desc: "海伦司小酒馆",
 		tags: ["标签1", "标签2"],
 		businessHours: "10:00-22:00",
+		status: "close_manual",
 	},
 	{
 		title: "海伦司小酒馆",
@@ -73,6 +76,7 @@ const shopList = ref([
 		desc: "海伦司小酒馆",
 		tags: ["标签1", "标签2"],
 		businessHours: "10:00-22:00",
+		status: "closed",
 	},
 	{
 		title: "海伦司小酒馆",
@@ -82,6 +86,7 @@ const shopList = ref([
 		desc: "海伦司小酒馆",
 		tags: ["标签1", "标签2"],
 		businessHours: "10:00-22:00",
+		status: "closed",
 	},
 	{
 		title: "海伦司小酒馆",
@@ -91,6 +96,7 @@ const shopList = ref([
 		desc: "海伦司小酒馆",
 		tags: ["标签1", "标签2"],
 		businessHours: "10:00-22:00",
+		status: "open",
 	},
 	{
 		title: "海伦司小酒馆",
@@ -100,6 +106,7 @@ const shopList = ref([
 		desc: "海伦司小酒馆",
 		tags: ["标签1", "标签2"],
 		businessHours: "10:00-22:00",
+		status: "open",
 	},
 ]);
 const activityList = ref([
@@ -109,7 +116,7 @@ const activityList = ref([
 			"https://www.shuomingshu.cn/wp-content/uploads/images/2023/06/23/4b30c4d172cd4c709d170e8194cae245_ajwo1tt5eln.jpg",
 		startTime: "2025-06-12 10:00:00",
 		endTime: "2025-06-19 23:59:59",
-		status: "进行中",
+		status: "open",
 		businessName: "海伦司小酒馆",
 		tags: ["标签1", "标签2"],
 		businessHours: "10:00-22:00",
@@ -120,7 +127,7 @@ const activityList = ref([
 			"https://www.shuomingshu.cn/wp-content/uploads/images/2023/06/23/4b30c4d172cd4c709d170e8194cae245_ajwo1tt5eln.jpg",
 		startTime: "2025-06-12 10:00:00",
 		endTime: "2025-06-19 23:59:59",
-		status: "进行中",
+		status: "closed",
 		businessName: "海伦司小酒馆",
 		tags: ["标签1", "标签2"],
 		businessHours: "10:00-22:00",
@@ -131,7 +138,7 @@ const activityList = ref([
 			"https://www.shuomingshu.cn/wp-content/uploads/images/2023/06/23/4b30c4d172cd4c709d170e8194cae245_ajwo1tt5eln.jpg",
 		startTime: "2025-06-12 10:00:00",
 		endTime: "2025-06-19 23:59:59",
-		status: "进行中",
+		status: "open",
 		businessName: "海伦司小酒馆",
 		tags: ["标签1", "标签2"],
 		businessHours: "10:00-22:00",
@@ -142,7 +149,7 @@ const activityList = ref([
 			"https://www.shuomingshu.cn/wp-content/uploads/images/2023/06/23/4b30c4d172cd4c709d170e8194cae245_ajwo1tt5eln.jpg",
 		startTime: "2025-06-12 10:00:00",
 		endTime: "2025-06-19 23:59:59",
-		status: "进行中",
+		status: "open",
 		businessName: "海伦司小酒馆",
 		tags: ["标签1", "标签2"],
 		businessHours: "10:00-22:00",

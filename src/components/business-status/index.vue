@@ -1,9 +1,9 @@
 <template>
 	<view class="status-container">
-		<text class="status-dot" :class="state"></text>
+		<text class="status-dot" :class="props.state"></text>
 		<up-tag
 			plain
-			v-if="state == 'open'"
+			v-if="props.state == 'open'"
 			plainFill
 			size="mini"
 			type="success"
@@ -11,7 +11,7 @@
 		></up-tag>
 		<up-tag
 			plain
-			v-else-if="state == 'close'"
+			v-else-if="props.state == 'close'"
 			plainFill
 			size="mini"
 			type="error"
@@ -19,7 +19,7 @@
 		></up-tag>
 		<up-tag
 			plain
-			v-else-if="state == 'close_manual'"
+			v-else-if="props.state == 'close_manual'"
 			plainFill
 			type="warning"
 			size="mini"
@@ -64,11 +64,13 @@ const statusText = computed(() => {
 	margin-right: 8rpx;
 
 	&.open {
-		background-color: #52c41a;
+		background-color: var(--success-6);
 	}
-	&.close,
+	&.close {
+		background-color: var(--error-6);
+	}
 	&.close_manual {
-		background-color: #ff4d4f;
+		background-color: var(--warning-6);
 	}
 }
 </style>
