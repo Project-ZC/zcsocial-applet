@@ -4,7 +4,7 @@
       <!-- 用户信息区域 -->
       <view class="user-info-section z-glass-card">
         <view class="user-info-header">
-          <view class="user-avatar" @click="navigateTo('/pages/editProfile/editProfile')">
+          <view class="user-avatar" @click="navigateTo('/pages/my/editProfile/editProfile')">
             <!-- <up-image
 						:showLoading="true"
 						:src="userStore.userInfo?.avatar"
@@ -42,7 +42,7 @@
           </view>
         </view>
         <view class="edit-btn">
-          <up-button type="primary" shape="circle" @click="navigateTo('/pages/editProfile/editProfile')">
+          <up-button type="primary" shape="circle" @click="navigateTo('/pages/my/editProfile/editProfile')">
             编辑资料
           </up-button>
         </view>
@@ -91,14 +91,14 @@ const state = reactive({
         {
           title: '我的订单',
           wdIcon: 'my-order',
-          url: '/pages/orders/orders',
+          url: '/pages/my/orders/orders',
           showArrow: true,
           bgc: '#2196F3',
         },
         {
           title: '浏览历史',
           wdIcon: 'history',
-          url: '/pages/favorites/favorites',
+          url: '/pages/my/history/history',
           showArrow: true,
           bgc: '#FF9800',
         },
@@ -218,8 +218,6 @@ const handleLogout = () => {
 //     uni.stopPullDownRefresh();
 //   }
 // });
-
-
 </script>
 
 <style lang="scss" scoped>

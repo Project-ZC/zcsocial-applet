@@ -1,10 +1,33 @@
 {
 	"pages": [
 		{
+			"path": "pages/shop/shopMenu/shopMenu",
+			"style": {
+				"navigationBarTitleText": "点单管理",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
 			"path": "pages/shop/shop",
 			"style": {
 				"navigationBarTitleText": "店铺",
 				"enablePullDownRefresh": true
+			}
+		},
+		
+		
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "首页",
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/index/shopDetail/showDetail",
+			"style": {
+				"navigationBarTitleText": "店铺详情"
 			}
 		},
 		{
@@ -13,13 +36,10 @@
 				"navigationBarTitleText": "我的"
 			}
 		},
-
 		{
-			"path": "pages/index/index",
+			"path": "pages/my/history/history",
 			"style": {
-				"navigationBarTitleText": "首页",
-				"navigationStyle": "custom",
-				"enablePullDownRefresh": true
+				"navigationBarTitleText": "浏览历史"
 			}
 		},
 		{
@@ -36,73 +56,54 @@
 			}
 		},
 		{
-			"path": "pages/orders/orders",
+			"path": "pages/my/orders/orders",
 			"style": {
 				"navigationBarTitleText": "我的订单"
 			}
 		},
 		{
-			"path": "pages/merchant/ordering/ordering",
+			"path": "pages/shop/merchant/orders",
 			"style": {
-				"navigationBarTitleText": "我的订单"
+				"navigationBarTitleText": "店铺订单"
 			}
 		},
 		{
-			"path": "pages/merchant/orders",
-			"style": {
-				"navigationBarTitleText": "商家订单管理"
-			}
-		},
-		{
-			"path": "pages/verticalTabsDemo/verticalTabsDemo",
-			"style": {
-				"navigationBarTitleText": "纵向Tab演示",
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/shopDetail/shopDetail",
+			"path": "pages/shop/shopDetail/shopDetail",
 			"style": {
 				"navigationBarTitleText": "店铺详情"
 			}
 		},
+		
 		{
-			"path": "pages/shopMenu/shopMenu",
-			"style": {
-				"navigationBarTitleText": "酒单管理",
-				"enablePullDownRefresh": true
-			}
-		},
-		{
-			"path": "pages/shopStaff/shopStaff",
+			"path": "pages/shop/shopStaff/shopStaff",
 			"style": {
 				"navigationBarTitleText": "员工管理",
 				"enablePullDownRefresh": true
 			}
 		},
 		{
-			"path": "pages/tableManage/tableManage",
+			"path": "pages/shop/tableManage/tableManage",
 			"style": {
 				"navigationBarTitleText": "桌位管理",
 				"enablePullDownRefresh": true
 			}
 		},
 		{
-			"path": "pages/ticketSettings/ticketSettings",
+			"path": "pages/shop/ticketSettings/ticketSettings",
 			"style": {
 				"navigationBarTitleText": "门票设置",
 				"enablePullDownRefresh": true
 			}
 		},
 		{
-			"path": "pages/shopGames/shopGames",
+			"path": "pages/shop/shopGames/shopGames",
 			"style": {
 				"navigationBarTitleText": "店内游戏",
 				"enablePullDownRefresh": true
 			}
 		},
 		{
-			"path": "pages/editProfile/editProfile",
+			"path": "pages/my/editProfile/editProfile",
 			"style": {
 				"navigationBarTitleText": "编辑资料"
 			}

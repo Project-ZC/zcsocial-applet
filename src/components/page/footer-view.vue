@@ -1,8 +1,17 @@
 <template>
-  <view class="footer">
+  <view class="footer" :style="{ height: props.footerH + 'px' }">
     <slot></slot>
   </view>
 </template>
+
+<script setup lang="ts">
+const props = defineProps<{
+  footerH: {
+    type: Number;
+    default: 80;
+  };
+}>();
+</script>
 
 <style lang="scss" scoped>
 @import '@/uni.scss';
@@ -12,7 +21,6 @@
   left: 0;
   right: 0;
   width: 100%;
-  height: $up-footer-h;
   background-color: #ffffff;
   display: flex;
   align-items: center;

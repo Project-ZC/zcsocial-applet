@@ -38,6 +38,12 @@ function setupUI(app: App) {
 				// 光标颜色
 				cursorColor: "#3c9cff",
 			},
+			// 设置image组件的全局默认属性
+			image: {
+				// 设置默认的错误图片
+				errorIcon: "photo",
+				radius: 4
+			},
 			// 其他组件属性配置
 			// ......
 		},

@@ -5,11 +5,7 @@
         <!-- 标题 -->
         <view class="item-title unify-weight">{{ item.title }}</view>
 
-        <view
-          class="item-subclass unify-relative"
-          v-for="(goodsItem, goodsIndex) in item.goods_list"
-          :key="goodsIndex"
-        >
+        <view class="item-subclass unify-relative" v-for="(goodsItem, goodsIndex) in item.goods_list" :key="goodsIndex">
           <GoodsCard :data="goodsItem" />
         </view>
       </view>
@@ -22,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import GoodsCard from "@/components/ordering/goods-card.vue";
+import GoodsCard from './goodsCard.vue';
 
 // 定义接口
 interface GoodsItem {
