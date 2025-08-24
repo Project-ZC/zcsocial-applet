@@ -50,8 +50,6 @@ $u-info-dark: var(--info-5);
 $u-info-disabled: var(--info-4);
 $u-info-light: var(--info-3);
 
-
-
 // scss混入，为了少写几行#ifndef
 @mixin flex($direction: row) {
     /* #ifndef APP-NVUE */
