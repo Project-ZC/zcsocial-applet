@@ -33,10 +33,16 @@
 							</view>
 						</view>
 						<view class="table-actions">
-							<up-button type="primary" @click="openEditTableModal(table)"
+							<up-button
+								shape="circle"
+								type="primary"
+								@click="openEditTableModal(table)"
 								>编辑</up-button
 							>
-							<up-button type="error" @click="openDeleteTableModal(table)"
+							<up-button
+								shape="circle"
+								type="error"
+								@click="openDeleteTableModal(table)"
 								>删除</up-button
 							>
 						</view>

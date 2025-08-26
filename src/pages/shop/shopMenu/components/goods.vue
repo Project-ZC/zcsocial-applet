@@ -1,4 +1,13 @@
 <template>
+	<!-- <up-swipe-action>
+		<up-swipe-action-item :options="options1">
+			<view class="swipe-action up-border-top up-border-bottom">
+				<view class="swipe-action__content">
+					<text class="swipe-action__content__text">基础使用</text>
+				</view>
+			</view>
+		</up-swipe-action-item>
+	</up-swipe-action> -->
 	<!-- 商品明细card -->
 	<view class="goods-card">
 		<!-- <movable-area> -->
@@ -38,10 +47,15 @@
 </template>
 
 <script setup lang="ts">
+import { reactive } from "vue";
 const props = defineProps<{
 	goodsList: any[];
 }>();
-
+const options1 = reactive([
+	{
+		text: "删除",
+	},
+]);
 defineOptions({
 	options: {
 		styleIsolation: "shared",

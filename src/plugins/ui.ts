@@ -42,7 +42,10 @@ function setupUI(app: App) {
 			image: {
 				// 设置默认的错误图片
 				errorIcon: "photo",
-				radius: 4
+				radius: 4,
+			},
+			popup: {
+				round: 15,
 			},
 			// 其他组件属性配置
 			// ......

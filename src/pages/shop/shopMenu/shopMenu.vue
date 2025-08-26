@@ -1,5 +1,5 @@
 <template>
-	<pageWrapper>
+	<pageWrapper bottomSafeArea="0">
 		<view>
 			<vertical-tabs
 				v-model="state.activeTab"
@@ -10,9 +10,24 @@
 				height="calc(100vh)"
 				@longpress="handleTabLongpress"
 			>
+				<template #tabs>
+					<view class="main-tabs-bar">
+						<view
+							class="tab-item"
+							v-for="(tab, index) in state.mainTabs"
+							:key="index"
+							@click="handleMainTabClick(tab)"
+							:class="{
+								'tab-item--active': state.currentMainType === tab.type,
+							}"
+						>
+							<text>{{ tab.title }}</text>
+						</view>
+					</view>
+				</template>
 				<template #content>
 					<view class="content">
-						<view v-if="state.activeTab != 1" class="tab0-buttons">
+						<view class="tab0-buttons">
 							<up-button type="success" @click="openAddCategoryModal"
 								>添加细分类</up-button
 							>
@@ -20,19 +35,20 @@
 								>添加商品</up-button
 							>
 						</view>
-						<view v-if="state.activeTab >= 2">
-							<view class="category-management-section">
-								<view class="section-header">
-									<text class="section-title"
-										>{{ state.tabs[state.activeTab]?.title }}管理</text
-									>
-									<view class="man-action-btns">
-										<view class="edit-btn" @click="editCurrentCategory">
-											<up-icon name="edit-pen" size="36"></up-icon>
-										</view>
-										<view class="delete-btn" @click="deleteCurrentCategory">
-											<up-icon name="trash" size="36"></up-icon>
-										</view>
+						<view
+							class="category-management-section"
+							v-if="state.activeTab != ''"
+						>
+							<view class="section-header">
+								<text class="section-title"
+									>{{ state.tabs[state.activeTab]?.title }}管理</text
+								>
+								<view class="man-action-btns">
+									<view class="edit-btn" @click="editCurrentCategory">
+										<up-icon name="edit-pen" size="36"></up-icon>
+									</view>
+									<view class="delete-btn" @click="deleteCurrentCategory">
+										<up-icon name="trash" size="36"></up-icon>
 									</view>
 								</view>
 							</view>
@@ -645,6 +661,7 @@
 
 <script lang="ts" setup>
 import { reactive, ref, computed, onMounted } from "vue";
+import { onLoad } from "@dcloudio/uni-app";
 import VerticalTabs from "@/components/vertical-tabs/vertical-tabs.vue";
 import UploadFile from "@/components/upload-file/index.vue";
 import emptyData from "@/components/empty-data/index.vue";
@@ -665,7 +682,7 @@ const state = reactive({
 		{ id: 8, label: "项目 H" },
 	],
 	showCapacityGroups: true,
-	activeTab: 0,
+	activeTab: "" as any,
 	goodsList: [
 		{
 			id: "1",
@@ -689,6 +706,7 @@ const state = reactive({
 			image: "/static/images/default-avatar.png",
 		},
 	],
+	currentMainType: "all",
 	currentCategoryId: "",
 	// DIY酒料分类数据
 	diyTypes: [] as any[],
@@ -749,7 +767,7 @@ const state = reactive({
 			type: "cocktail",
 		},
 	],
-	tabs: [
+	mainTabs: [
 		{
 			title: "常规点单",
 			badge: "3",
@@ -760,19 +778,31 @@ const state = reactive({
 			badge: "",
 			type: "diy",
 		},
+	],
+	allTabs: [
 		{
 			title: "鸡尾酒",
 			badge: "",
 			type: "cocktail",
+			parentMain: "all",
 			sort: 2,
 		},
 		{
 			title: "伏特加",
 			badge: "",
 			type: "vodka",
+			parentMain: "all",
+			sort: 3,
+		},
+		{
+			title: "diy酒",
+			badge: "",
+			type: "diy",
+			parentMain: "diy",
 			sort: 3,
 		},
 	],
+	tabs: [],
 	// 颜色配置
 	activeColor: "#007aff",
 	inactiveColor: "#666666",
@@ -812,8 +842,8 @@ const state = reactive({
 		name: "",
 		image: "",
 		description: "",
-		price: "",
-		originalPrice: "",
+		price: 0,
+		originalPrice: 0,
 		sort: 0,
 		isRecommended: false,
 		isAvailable: true,
@@ -898,10 +928,10 @@ const state = reactive({
 	isEditingCapacityGroup: false,
 	tempCapacityGroup: {
 		id: "", // 容量id
-		capacity: "", // 新增：容量数字
+		capacity: 0, // 新增：容量数字
 		unit: "ml", // 新增：容量单位
 		name: "", // 容量名称
-		price: "", // 价格
+		price: 0, // 价格
 		isDefault: false, // 新增：是否为默认选中
 	},
 	// 容量单位选项
@@ -946,7 +976,7 @@ const state = reactive({
 	tempIngredientGroup: {
 		id: "",
 		name: "",
-		price: "",
+		price: 0,
 		isDefault: false,
 	},
 	ingredientGroupRules: {
@@ -980,6 +1010,14 @@ const ingredientGroupFormRef = ref();
 
 const handleTabLongpress = (index, tab) => {
 	console.log("longpress", index, tab);
+};
+
+const handleMainTabClick = (tab) => {
+	state.activeTab = "";
+	state.currentMainType = tab.type;
+	state.tabs = state.allTabs.filter(
+		(tab) => tab.parentMain === state.currentMainType
+	);
 };
 
 // 编辑商品
@@ -1018,17 +1056,22 @@ const downGoods = (item, index: number) => {
 
 // 根据状态筛选订单
 const filteredOrders = computed(() => {
-	if (state.activeTab === 0) {
+	if (state.activeTab === "") {
 		return state.orders;
 	}
 	return state.orders.filter(
 		(order) => order.type === state.tabs[state.activeTab].type
 	);
 });
-// 筛选tags数据中下表大于2的分类数据
+// 细分类列表：根据当前主类过滤
 const categories = computed(() => {
-	// 初始化数据，如果需要从接口获取数据，可以在这里调用
-	const temp = state.tabs.filter((_, index) => index >= 2);
+	const currentMain =
+		state.activeTab === ""
+			? state.tabs[state.activeTab]?.type
+			: (state.tabs[state.activeTab] as any)?.parentMain;
+	const temp = state.tabs.filter(
+		(tab: any, index) => index >= 2 && tab.parentMain === currentMain
+	);
 	if (temp.length > 0) {
 		state.tempDrink.categoryId = temp[0].type;
 		state.tempDrink.categoryName = temp[0].title;
@@ -1047,6 +1090,9 @@ const categoryActions = computed(() => {
 
 // 添加细分分类
 const openAddCategoryModal = () => {
+	// 重置并打开细分类新增
+	state.isEditingCategory = false;
+	state.tempCategory = { id: "", name: "", sort: 0 } as any;
 	state.showCategoryModal = true;
 };
 
@@ -1063,32 +1109,37 @@ const saveCategory = async () => {
 		// 表单验证
 		await categoryFormRef.value?.validate();
 
+		// 当前主类
+		const currentMain =
+			state.activeTab === ""
+				? state.tabs[state.activeTab]?.type
+				: (state.tabs[state.activeTab] as any)?.parentMain;
+
 		if (state.isEditingCategory) {
-			const index = state.categories.findIndex(
-				(cat) => cat.id === state.tempCategory.id
+			const idx = state.tabs.findIndex(
+				(tab: any) => tab.type === state.tempCategory.id
 			);
-			if (index !== -1) {
-				state.categories[index] = {
-					...state.tempCategory,
-					drinks: state.categories[index].drinks,
+			if (idx !== -1) {
+				state.tabs[idx] = {
+					...state.tabs[idx],
+					title: state.tempCategory.name,
+					sort: state.tempCategory.sort,
 				};
 			}
 		} else {
-			const newCategory = {
-				...state.tempCategory,
-				id: Date.now().toString(),
-				drinks: [],
+			const newType = `cat_${Date.now()}`;
+			const newCategoryTab: any = {
+				title: state.tempCategory.name,
+				badge: "",
+				type: newType,
+				sort: state.tempCategory.sort || 0,
+				parentMain: currentMain,
 			};
-			state.categories.push(newCategory as any);
-			if (state.categories.length === 1) {
-				state.currentCategoryId = newCategory.id;
-			}
+			state.tabs.push(newCategoryTab);
 		}
-
-		state.categories.sort((a, b) => a.sort - b.sort);
 		closeCategoryModal();
 		uni.showToast({
-			title: state.isEditingCategory ? "分类已更新" : "分类已添加",
+			title: state.isEditingCategory ? "细分类已更新" : "细分类已添加",
 			icon: "success",
 		});
 	} catch (error) {
@@ -1106,14 +1157,49 @@ const closeDrinkModal = () => {
 
 // 打开添加编辑酒水弹框
 const openAddDrinkModal = () => {
-	if (state.activeTab < 2) {
-		uni.showToast({
-			title: "请选择分类",
-			icon: "none",
-		});
+	console.log(state.activeTab, 1234);
+	// 仅细分类下可添加商品
+	if (state.activeTab == "") {
+		uni.showToast({ title: "请选择细分类", icon: "none" });
 		return;
 	}
-	state.showDrinkModal = true;
+	const currentTab: any = state.tabs[state.activeTab];
+	if (currentTab?.parentMain === "diy") {
+		state.showDiyIngredientModal = true;
+		state.isEditingDiyIngredient = false;
+		state.tempDiyIngredient = {
+			id: "",
+			name: "",
+			image: "",
+			description: "",
+			price: 0,
+			unit: "份",
+			sort: 0,
+			isRecommended: false,
+			isAvailable: true,
+			diyTypeId: currentTab.type,
+		} as any;
+	} else {
+		state.showDrinkModal = true;
+		state.isEditingDrink = false;
+		state.tempDrink = {
+			id: "",
+			name: "",
+			image: "",
+			description: "",
+			price: 0,
+			originalPrice: 0,
+			sort: 0,
+			isRecommended: false,
+			isAvailable: true,
+			enableOrdering: true,
+			categoryId: currentTab.type,
+			categoryName: currentTab.title,
+			maxOrderCount: 0,
+			capacityGroups: [],
+			ingredientGroups: [],
+		} as any;
+	}
 };
 // 保存酒水
 const saveDrink = async () => {
@@ -1135,27 +1221,17 @@ const saveDrink = async () => {
 
 // 删除分类
 const deleteCategory = () => {
-	if (state.currentCategoryId) {
+	// 仅当当前是细分类时可删除
+	if (state.activeTab !== "") {
+		const currentTab = state.tabs[state.activeTab];
 		uni.showModal({
 			title: "确认删除",
-			content: "确定要删除此分类吗？删除后无法恢复。",
+			content: `确定要删除分类"${currentTab.title}"吗？删除后无法恢复。`,
 			success: (res) => {
 				if (res.confirm) {
-					const index = state.categories.findIndex(
-						(cat) => cat.id === state.currentCategoryId
-					);
-					if (index !== -1) {
-						state.categories.splice(index, 1);
-						if (state.categories.length > 0) {
-							state.currentCategoryId = state.categories[0].id;
-						} else {
-							state.currentCategoryId = "";
-						}
-						uni.showToast({
-							title: "分类已删除",
-							icon: "success",
-						});
-					}
+					state.tabs.splice(state.activeTab, 1);
+					if (state.activeTab >= state.tabs.length) state.activeTab = "";
+					uni.showToast({ title: "分类已删除", icon: "success" });
 				}
 			},
 		});
@@ -1169,7 +1245,7 @@ const editCurrentCategory = () => {
 		state.isEditingCategory = true;
 		state.tempCategory.id = currentTab.type;
 		state.tempCategory.name = currentTab.title;
-		state.tempCategory.sort = currentTab.sort || 0;
+		state.tempCategory.sort = Number(currentTab.sort ?? 0);
 		state.showCategoryModal = true;
 	}
 };
@@ -1314,9 +1390,6 @@ const getSelectedCategoryName = () => {
 	);
 	return selectedCategory ? selectedCategory.title : "";
 };
-
-// 生命周期钩子
-onMounted(() => {});
 
 // 容量组管理相关函数
 const openAddCapacityGroupModal = (item, index) => {
@@ -1485,6 +1558,10 @@ const setDefaultIngredientGroup = (item, index: number) => {
 		icon: "success",
 	});
 };
+// 生命周期钩子
+onLoad(() => {
+	handleMainTabClick(state.mainTabs[0]);
+});
 
 defineOptions({
 	options: {
@@ -1494,6 +1571,28 @@ defineOptions({
 </script>
 
 <style lang="scss" scoped>
+.main-tabs-bar {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	justify-content: space-between;
+	.tab-item {
+		flex: 1;
+		text-align: center;
+		// font-size: $up-font-md;
+		font-weight: 600;
+		height: 100rpx;
+		line-height: 100rpx;
+		color: var(--text-2);
+		border-radius: 10rpx;
+		padding: 0 20rpx;
+		box-sizing: border-box;
+		&--active {
+			background-color: var(--primary-6);
+			color: #fff;
+		}
+	}
+}
 .category-management-section {
 	.section-header {
 		display: flex;
@@ -1536,12 +1635,7 @@ defineOptions({
 .capacity-groups-list {
 	position: relative;
 }
-.header-btn {
-	.u-button {
-		background-color: var(--info-6);
-		border-color: var(--info-6);
-	}
-}
+
 .del-icon-btn {
 	border-radius: 50%;
 	overflow: hidden;

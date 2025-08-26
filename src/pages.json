@@ -1,21 +1,20 @@
 {
 	"pages": [
 		{
-			"path": "pages/shop/shopMenu/shopMenu",
-			"style": {
-				"navigationBarTitleText": "点单管理",
-				"enablePullDownRefresh": true
-			}
-		},
-		{
 			"path": "pages/shop/shop",
 			"style": {
 				"navigationBarTitleText": "店铺",
 				"enablePullDownRefresh": true
 			}
 		},
-		
-		
+		{
+			"path": "pages/shop/shopMenu/shopMenu",
+			"style": {
+				"navigationBarTitleText": "点单管理",
+				"enablePullDownRefresh": true
+			}
+		},
+
 		{
 			"path": "pages/index/index",
 			"style": {
@@ -73,7 +72,7 @@
 				"navigationBarTitleText": "店铺详情"
 			}
 		},
-		
+
 		{
 			"path": "pages/shop/shopStaff/shopStaff",
 			"style": {

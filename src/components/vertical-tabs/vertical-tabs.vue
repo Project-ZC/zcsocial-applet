@@ -3,6 +3,7 @@
 		<view class="tabs-container">
 			<!-- 标签栏 -->
 			<view class="tabs-bar">
+				<slot name="tabs"></slot>
 				<view
 					v-for="(tab, index) in tabs"
 					:key="index"
@@ -40,9 +41,9 @@
 			</view>
 
 			<!-- 内容区域 -->
-			<view class="tabs-content">
+			<scroll-view scroll-y class="tabs-content">
 				<slot name="content"></slot>
-			</view>
+			</scroll-view>
 		</view>
 	</view>
 </template>
@@ -64,7 +65,7 @@ interface TabItem {
 // 定义组件属性
 interface Props {
 	tabs: TabItem[];
-	modelValue?: number;
+	modelValue?: number | string;
 	activeColor?: string;
 	inactiveColor?: string;
 	indicatorColor?: string;
@@ -75,14 +76,14 @@ interface Props {
 
 // 定义组件事件
 interface Emits {
-	(e: "update:modelValue", value: number): void;
+	(e: "update:modelValue", value: any): void;
 	(e: "change", value: { index: number; tab: TabItem }): void;
 	(e: "click", value: { index: number; tab: TabItem }): void;
 	(e: "longpress", value: { index: number; tab: TabItem }): void;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-	modelValue: 0,
+	modelValue: "",
 	activeColor: "#007aff",
 	inactiveColor: "#666666",
 	indicatorColor: "#007aff",
@@ -130,7 +131,7 @@ const handleTabLongpress = (index: number, tab: TabItem) => {
 		height: 100%;
 
 		.tabs-bar {
-			width: 100rpx;
+			width: 160rpx;
 			background-color: #f8f8f8;
 			border-right: 1rpx solid #e5e5e5;
 			overflow-y: auto;
