@@ -14,7 +14,7 @@
               customStyle
             >
               <template #default>
-                <up-avatar :src="'/static/images/default-avatar.png'" size="140rpx"></up-avatar>
+                <up-avatar :src="state.userInfo.avatar" size="140rpx"></up-avatar>
               </template>
               <template #tips>
                 <text class="edit-text">点击更换头像</text>
@@ -40,7 +40,9 @@
             </view>
             <view class="form-item" @click="showGenderPickerFn">
               <text class="form-label">性别</text>
-              <view class="form-value">{{ state.genderText[state.userInfo.gender] || '请选择' }}</view>
+              <view class="form-value">
+                {{ state.genderOptions.find(item => item.code === state.userInfo.gender)?.name || '请选择' }}
+              </view>
               <view class="form-icon">
                 <view class="icon-arrow-right"></view>
               </view>
@@ -70,15 +72,6 @@
               :maxTags="5"
               :allowCustom="true"
             />
-            <!-- <view
-              class="tag-item"
-              :class="{ active: state.userInfo.tags.includes(item) }"
-              v-for="(item, index) in state.tagOptions"
-              :key="index"
-              @click="toggleTag(item)"
-            >
-              {{ item }}
-            </view> -->
           </view>
         </view>
 
@@ -92,13 +85,13 @@
           <view class="bio-container">
             <up-textarea
               class="bio-textarea"
-              v-model="state.userInfo.bio"
+              v-model="state.userInfo.introduce"
               placeholder="介绍一下自己，让大家了解你（最多200字）"
               :maxlength="200"
-              @input="inputBio"
+              @input="inputIntro"
               auto-height
             ></up-textarea>
-            <text class="word-count">{{ state.userInfo.bio.length }}/200</text>
+            <text class="word-count">{{ state.userInfo.introduce.length }}/200</text>
           </view>
         </view>
       </view>
@@ -122,12 +115,12 @@
             class="picker-item"
             v-for="(item, index) in state.genderOptions"
             :key="index"
-            @click="selectGender(item.value)"
+            @click="selectGender(item.code)"
           >
-            <text class="picker-item-text" :class="{ active: state.userInfo.gender === item.value }">
-              {{ item.text }}
+            <text class="picker-item-text" :class="{ active: state.userInfo.gender === item.code }">
+              {{ item.name }}
             </text>
-            <view class="icon-check" v-if="state.userInfo.gender === item.value"></view>
+            <view class="icon-check" v-if="state.userInfo.gender === item.code"></view>
           </view>
         </view>
       </view>
@@ -160,25 +153,26 @@
 <script setup lang="ts">
 import pageWrapper from '@/components/page/index.vue';
 import { reactive, onMounted } from 'vue';
-import { onHide, onShow } from '@dcloudio/uni-app';
+import { onHide, onShow, onLoad } from '@dcloudio/uni-app';
 import UploadFile from '@/components/upload-file/index.vue';
 import TagSelector from '@/components/tag-selector/index.vue';
-import { getTagList } from '@/api/common/dict';
+import { getTagList, getGenderList } from '@/api/common/dict';
+import { modifyUser, getUserInfo } from '@/api/userManage';
+import { useUserStore } from '@/stores/modules/user';
+
+const userStore = useUserStore();
+
 // 定义状态
 const state = reactive({
   avatarFileList: [],
   userInfo: {
-    id: '10086',
-    nickname: '微醺一刻',
-    avatar: '/static/images/avatar.png',
-    gender: 'male',
-    bio: '生活不止眼前的苟且，还有诗和远方的田野',
-    tags: ['调酒爱好者', '社交达人', '派对控'],
+    // id: '',
+    nickname: '',
+    avatar: '',
+    gender: '',
+    tags: [],
+    introduce: '',
     birthday: '',
-  },
-  genderText: {
-    male: '男',
-    female: '女',
   },
   tags: [
     // '调酒爱好者',
@@ -194,51 +188,70 @@ const state = reactive({
   ],
   showGenderPicker: false,
   showDatePicker: false,
-  genderOptions: [
-    { text: '男', value: 'male' },
-    { text: '女', value: 'female' },
-  ],
   datePickerValue: new Date().getTime(),
   years: Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i),
   months: Array.from({ length: 12 }, (_, i) => i + 1),
   days: Array.from({ length: 31 }, (_, i) => i + 1),
-
-  tagList: [], // 可选列表从接口获取
-  selectTagList: [], // 已选列表，保存时给tags副值
+  genderOptions: [] as any,
+  tagList: [] as any, // 可选列表从接口获取
+  selectTagList: [] as any, // 已选列表，保存时给tags副值
 });
 
-// 生命周期钩子
-onMounted(() => {
-  GetTagList();
-  fetchUserInfo();
-});
-
+const GetUserInfo = (id: string) => {
+  getUserInfo().then(res => {
+    if (res.data) {
+      for (const key in res.data) {
+        if (state.userInfo[key]) {
+          state.userInfo[key] = res.data[key];
+        }
+      }
+      if (res.data.tags) {
+        state.selectTagList = res.data.tags.map((item, index) => {
+          return {
+            id: item.id,
+            name: item.name,
+          };
+        });
+      }
+    }
+  });
+};
 const GetTagList = () => {
   getTagList({ catalog: 'user' }).then(res => {
     state.tagList = res.data || [];
   });
 };
-
-// 方法
-const fetchUserInfo = () => {
-  // 实际项目中这里需要调用接口获取用户信息
-  console.log('获取用户信息');
-  // 使用模拟数据，实际情况下会从接口获取
+const GetGenderList = () => {
+  getGenderList({ catalog: 'user' }).then(res => {
+    state.genderOptions = res.data || [];
+  });
 };
 
-const saveProfile = () => {
+const saveProfile = async () => {
   // 保存用户资料
   console.log('保存用户资料:', state.userInfo);
-  uni.showToast({
-    title: '保存成功',
-    icon: 'success',
-    duration: 2000,
-    success: () => {
-      setTimeout(() => {
-        uni.navigateBack();
-      }, 2000);
-    },
-  });
+  try {
+    await modifyUser(state.userInfo);
+    userStore.setUserInfo({
+      ...userStore.userInfo,
+      avatar: state.userInfo.avatar,
+      nickname: state.userInfo.nickname,
+      introduce: state.userInfo.introduce,
+      tags: state.userInfo.tags,
+      gender: state.userInfo.gender,
+      birthday: state.userInfo.birthday,
+    });
+    uni.showToast({
+      title: '保存成功',
+      icon: 'success',
+      duration: 2000,
+      success: () => {
+        setTimeout(() => {
+          uni.navigateBack();
+        }, 2000);
+      },
+    });
+  } catch (error) {}
 };
 
 const handleAvatarUpdate = (e: any) => {
@@ -280,25 +293,25 @@ const confirmDatePicker = () => {
   closeDatePicker();
 };
 
-const toggleTag = (tag: string) => {
-  const index = state.userInfo.tags.indexOf(tag);
-  if (index === -1) {
-    if (state.userInfo.tags.length < 5) {
-      state.userInfo.tags.push(tag);
-    } else {
-      uni.showToast({
-        title: '最多可选5个标签',
-        icon: 'none',
-      });
-    }
-  } else {
-    state.userInfo.tags.splice(index, 1);
-  }
+const inputIntro = (e: any) => {
+  state.userInfo.introduce = e.detail.value;
 };
 
-const inputBio = (e: any) => {
-  state.userInfo.bio = e.detail.value;
-};
+// 生命周期钩子
+onLoad(options => {
+  state.userInfo = {
+    nickname: '',
+    avatar: '',
+    gender: '',
+    tags: [],
+    introduce: '',
+    birthday: '',
+  };
+  state.selectTagList = [];
+  GetUserInfo(options.id);
+  GetTagList();
+  GetGenderList();
+});
 </script>
 
 <style lang="scss" scoped>

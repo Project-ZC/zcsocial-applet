@@ -110,7 +110,7 @@ import TagSelector from '@/components/tag-selector/index.vue';
 import { getDownloadUrl } from '@/api/common/upload';
 import { reactive, ref, nextTick, computed, watch } from 'vue';
 import { onLoad } from '@dcloudio/uni-app';
-import { getShopDetail, getAllShopConfig, editShopConfig } from '@/api/shopManage';
+import { getShopDetail, getAllShopConfig, editShopConfig, getShopConfigList } from '@/api/shopManage';
 import { getTagList } from '@/api/common/dict';
 
 // 表单引用
@@ -194,11 +194,37 @@ const handleImagesUpdate = images => {
   form.photo = images.map(item => item.url);
 };
 
+// const GtShopDetail = () => {
+//   getAllShopConfig({
+//     shopId: form.shopId,
+//   }).then(res => {
+//     let data = res.data?.[0] || {};
+//     for (const key in form) {
+//       if (key == 'tags' || key == 'photo') {
+//         form[key] = data[key] || [];
+//       } else {
+//         form[key] = data[key] || '';
+//       }
+//     }
+//     state.selectTagList = form.tags.map((item, index) => {
+//       return {
+//         id: `custom_${Date.now()}`,
+//         name: item,
+//       };
+//     });
+//     state.photoFileList = form.photo.map(item => {
+//       return {
+//         url: item,
+//       };
+//     });
+//   });
+// };
+
 const GtShopDetail = () => {
-  getAllShopConfig({
+  getShopConfigList({
     shopId: form.shopId,
   }).then(res => {
-    let data = res.data?.[0] || {};
+    let data = res.data || {};
     for (const key in form) {
       if (key == 'tags' || key == 'photo') {
         form[key] = data[key] || [];

@@ -17,3 +17,12 @@ export const getTagList = (data: any) => {
 		data,
 	});
 };
+
+// 获取性别列表
+export const getGenderList = (data: any) => {
+	return http({
+		url: "/v1/dictionary/gender/query",
+		method: "POST",
+		data,
+	});
+};

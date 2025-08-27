@@ -80,6 +80,9 @@ import { useThemeStore } from '@/stores/modules/theme';
 import { useUserStore } from '@/stores/modules/user';
 import { ActionType } from '@/enums/order';
 import { computed, reactive } from 'vue';
+import { onPullDownRefresh } from '@dcloudio/uni-app';
+import { getUserInfo } from '@/api/userManage';
+import { onMounted } from 'vue';
 
 const userStore = useUserStore();
 
@@ -135,6 +138,23 @@ const state = reactive({
   ],
 });
 
+const GetUserInfo = (id: string) => {
+  getUserInfo().then(res => {
+    const userInfo = res.data as any;
+    if (userInfo) {
+      userStore.setUserInfo({
+        ...userStore.userInfo,
+        avatar: userInfo.avatar,
+        nickname: userInfo.nickname,
+        introduce: userInfo.introduce,
+        tags: userInfo.tags,
+        gender: userInfo.gender,
+        birthday: userInfo.birthday,
+      });
+    }
+  });
+};
+
 const itemClick = (item: any) => {
   if (item.url) {
     navigateTo(item.url);
@@ -162,7 +182,7 @@ const itemClick = (item: any) => {
 const navigateTo = (url: string) => {
   url &&
     uni.navigateTo({
-      url,
+      url: `${url}?id=${userStore.userInfo?.id}`,
     });
 };
 
@@ -211,13 +231,19 @@ const handleLogout = () => {
   });
 };
 
+onMounted(() => {
+  GetUserInfo(userStore.userInfo?.id);
+});
+
 // 下拉刷新监听
-// onPullDownRefresh(async () => {
-//   try {
-//   } finally {
-//     uni.stopPullDownRefresh();
-//   }
-// });
+onPullDownRefresh(async () => {
+  console.log('下拉刷新');
+  try {
+    await GetUserInfo(userStore.userInfo?.id);
+  } finally {
+    uni.stopPullDownRefresh();
+  }
+});
 </script>
 
 <style lang="scss" scoped>
