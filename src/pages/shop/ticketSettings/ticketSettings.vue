@@ -233,7 +233,7 @@
 
 					<view class="modal-footer">
 						<up-button
-							type="gray"
+							type="info"
 							class="modal-btn cancel-btn"
 							@click="closeTicketModal"
 							>取消</up-button
@@ -343,7 +343,7 @@
 					</view>
 					<view class="modal-footer">
 						<up-button
-							type="gray"
+							type="info"
 							class="modal-btn cancel-btn"
 							@click="closeDrinkModal"
 							>取消</up-button

@@ -104,10 +104,10 @@ onMounted(() => {
 	setupTabbar();
 	updateActiveByRoute();
 });
-onShow(() => {
-	setupTabbar();
-	updateActiveByRoute();
-});
+// onShow(() => {
+// 	setupTabbar();
+// 	updateActiveByRoute();
+// });
 
 const switchTab = (index: number, path: string) => {
 	currentTab.value = index;

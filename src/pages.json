@@ -14,7 +14,6 @@
 				"enablePullDownRefresh": true
 			}
 		},
-
 		{
 			"path": "pages/index/index",
 			"style": {
@@ -23,6 +22,7 @@
 				"enablePullDownRefresh": true
 			}
 		},
+
 		{
 			"path": "pages/index/shopDetail/showDetail",
 			"style": {
@@ -46,12 +46,6 @@
 			"style": {
 				"navigationBarTitleText": "消息",
 				"enablePullDownRefresh": true
-			}
-		},
-		{
-			"path": "pages/milkTeaOrder/milkTeaOrder",
-			"style": {
-				"navigationBarTitleText": "奶茶点单"
 			}
 		},
 		{
