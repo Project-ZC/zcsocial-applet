@@ -81,6 +81,19 @@ interface Data<T> {
 	data: T;
 }
 
+const showToast = async (title: string) => {
+		// 先延迟，确保loading完全消失
+		await new Promise(resolve => setTimeout(resolve, 500));
+		uni.hideLoading();
+		// 在延迟一小段时间后显示toast
+		await new Promise(resolve => setTimeout(resolve, 100));
+		uni.showToast({
+			icon: "none",
+			title: title,
+			mask: true,
+		});
+};
+
 export const http = <T>(options: UniApp.RequestOptions) => {
 	return new Promise<Data<T>>((resolve, reject) => {
 		uni.showLoading({
@@ -88,15 +101,13 @@ export const http = <T>(options: UniApp.RequestOptions) => {
 		});
 		uni.request({
 			...options,
-			success(res) {
+			success: async (res) => {
+				uni.hideLoading();
 				const val = res.data as Data<T>;
 				if (val.code == 0) {
 					resolve(val);
 				} else if (val.code == 1002) {
-					uni.showToast({
-						icon: "none",
-						title: val.message || "登录过期,请重新登录",
-					});
+					showToast(val.message || "登录过期,请重新登录");
 					uniCache.clear();
 					// 抛出特定错误，让上层应用逻辑处理登录过期
 					const authError = { ...val, isAuthError: true };
@@ -115,24 +126,13 @@ export const http = <T>(options: UniApp.RequestOptions) => {
 					addRequest(options);
 					reject(authError);
 				} else {
-					if (val.message) {
-						uni.showToast({
-							icon: "none",
-							title: val.message,
-						});
-					}
+					val.message && showToast(val.message);
 					reject(val);
 				}
 			},
 			fail(err) {
-				uni.showToast({
-					icon: "none",
-					title: "网路错误,换个网络试试",
-				});
+				showToast("网路错误,换个网络试试");
 				reject(err);
-			},
-			complete() {
-				uni.hideLoading();
 			},
 		});
 	});

@@ -1413,10 +1413,6 @@ onMounted(() => {
 	console.log("页面加载完成");
 });
 
-// 页面方法
-const navigateBack = () => {
-	uni.navigateBack();
-};
 
 const switchMenuType = (type: "regular" | "diy") => {
 	state.menuType = type;
