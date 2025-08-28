@@ -55,10 +55,10 @@
                   </view>
                 </view>
                 <view class="staff-intro">{{ item.userIntroduce }}</view>
-                <view class="staff-contact" v-if="item.userMobile || item.id">
+                <view class="staff-contact" v-if="item.userMobile || item.userId">
                   <text v-if="item.userMobile">电话: {{ item.userMobile }}</text>
-                  <text v-if="item.userMobile && item.id">|</text>
-                  <text v-if="item.id">玩点id: {{ item.id }}</text>
+                  <text v-if="item.userMobile && item.userId">|</text>
+                  <text v-if="item.userId">玩点id: {{ item.userId }}</text>
                 </view>
               </view>
               <view class="staff-actions">
@@ -174,7 +174,7 @@
 
             <view class="form-item">
               <view class="form-label">玩点id</view>
-              <up-input v-model="state.tempStaff.id" placeholder="请输入玩点id" border="surround" disabled />
+              <up-input v-model="state.tempStaff.userId" placeholder="请输入玩点id" border="surround" disabled />
             </view>
 
             <view class="form-item">
@@ -309,6 +309,7 @@ const state = reactive({
 
   tempStaff: {
     id: '',
+    userId: '',
     avatar: '',
     nickname: '',
     role: '',
@@ -427,6 +428,7 @@ const openEditModal = (staff: any) => {
     state.tempStaff[key] = staff[key];
   }
   state.tempStaff.avatar = staff.userAvatar;
+  state.tempStaff.userId = staff.userId;
   state.tempStaff.mobile = staff.userMobile;
   state.tempStaff.nickname = staff.userNickname;
   state.tempStaff.introduce = staff.userIntroduce;
@@ -450,6 +452,7 @@ const closeModal = () => {
   state.searchType = 'mobile';
   state.tempStaff = {
     id: '',
+    userId: '',
     avatar: '',
     nickname: '',
     role: '',
@@ -507,14 +510,13 @@ const saveStaff = async () => {
   try {
     let params = {
       roleIds: state.tempStaff.roleIds,
-      avatar: state.tempStaff.avatar,
     } as any;
     if (state.isEdit) {
       params.id = state.tempStaff.id;
       await editShopStaff(params);
     } else {
       params.shopId = state.shopId;
-      params.userId = state.tempStaff.id;
+      params.userId = state.tempStaff.userId;
       await addShopStaff(params);
     }
     uni.showToast({
@@ -588,7 +590,6 @@ const onSearch = async () => {
       // 确保权限字段是数组格式
       state.tempStaff.roleIds = Array.isArray(data.roleIds) ? data.roleIds : [];
     }
-    console.log(state.tempStaff, 1234);
   } catch (error) {
     console.log(error, 1234);
   }

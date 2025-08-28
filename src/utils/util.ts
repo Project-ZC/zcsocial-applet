@@ -107,5 +107,12 @@ export const previewImage = ({ urls, current = 0 }: { urls: string[]; current?: 
 	uni.previewImage({
 	  current,
 	  urls: urls,
+	  success: () => {},
+	  fail: (err) => {
+        uni.showToast({
+          title: '预览失败',
+          icon: 'none'
+        });
+      }
 	});
   };
