@@ -132,7 +132,6 @@ const deletePic = (event: any) => {
 const onPreview = (event: any) => {
   const { index } = event;
   const current = innerFileList.value[index];
-  console.log(current, 111);
   if (current && current.url) {
     // 获取所有图片的URL列表用于预览
     const urls = innerFileList.value.filter((item: any) => item.url).map((item: any) => item.url);
