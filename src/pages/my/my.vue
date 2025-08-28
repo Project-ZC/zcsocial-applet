@@ -4,7 +4,7 @@
       <!-- 用户信息区域 -->
       <view class="user-info-section z-glass-card">
         <view class="user-info-header">
-          <view class="user-avatar" @click="navigateTo('/pages/my/editProfile/editProfile')">
+          <view class="user-avatar">
             <!-- <up-image
 						:showLoading="true"
 						:src="userStore.userInfo?.avatar"
@@ -12,9 +12,11 @@
 						height="120rpx"
 					></up-image> -->
             <up-avatar
+              @click="previewImage({ urls: [getDownloadUrl(userStore.userInfo?.avatar)] })"
               :src="getDownloadUrl(userStore.userInfo?.avatar) || '/static/images/default-avatar.png'"
               size="140rpx"
             ></up-avatar>
+            <!-- <up-album :urls="[{ src2: getDownloadUrl(userStore.userInfo?.avatar) }]" keyName="src2"></up-album> -->
             <view class="avatar-upload-icon" v-if="!userStore.userInfo?.avatar">
               <up-icon name="camera" color="#fff" size="16"></up-icon>
             </view>
@@ -97,6 +99,7 @@ import { getUserInfo } from '@/api/userManage';
 import { onMounted } from 'vue';
 import { getDownloadUrl } from '@/api/common/upload';
 import { bindMobile } from '@/api/userManage';
+import { previewImage } from '@/utils/util';
 
 const userStore = useUserStore();
 

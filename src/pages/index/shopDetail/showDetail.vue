@@ -72,7 +72,7 @@
               class="album-item"
               v-for="(img, index) in state.shopInfo.albums"
               :key="index"
-              @click="previewImage(index)"
+              @click="previewImage({ urls: state.shopInfo.albums, current: index })"
             >
               <image :src="img" mode="aspectFill"></image>
             </view>
@@ -124,6 +124,7 @@
 
 <script lang="ts">
 import { reactive, onMounted } from 'vue';
+import { previewImage } from '@/utils/util';
 
 export default {
   options: {
@@ -297,14 +298,6 @@ export default {
             // state.shopInfo.albums = state.shopInfo.albums.concat(res.tempFilePaths)
           }, 1500);
         },
-      });
-    };
-
-    // 预览相册图片
-    const previewImage = (index: number) => {
-      uni.previewImage({
-        current: state.shopInfo.albums[index],
-        urls: state.shopInfo.albums,
       });
     };
 

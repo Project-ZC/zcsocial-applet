@@ -6,7 +6,7 @@ export interface RolePermission {
 }
 
 // 测试角色ID权限
-export const testRoleId = '';
+export const testRoleId = 10000000;
 
 // 角色权限配置
 export const ROLE_PERMISSIONS: RolePermission[] = [

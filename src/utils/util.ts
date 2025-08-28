@@ -101,3 +101,11 @@ export function uploadFile(filePath, formData?: any) {
 		});
 	});
 }
+
+// 公共预览图片
+export const previewImage = ({ urls, current = 0 }: { urls: string[]; current?: number }) => {
+	uni.previewImage({
+	  current,
+	  urls: urls,
+	});
+  };

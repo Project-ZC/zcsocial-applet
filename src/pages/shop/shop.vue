@@ -11,13 +11,14 @@
     <div class="shop">
       <!-- 店铺基本信息 -->
       <view class="shop-info-card z-glass-card" v-if="userStore.checkShopPermission()">
-        <view class="shop-header" @click="navigateTo('/pages/shop/shopDetail/shopDetail')">
+        <view class="shop-header">
           <up-image
             class="shop-logo"
             :src="getDownloadUrl(shopInfo.logo)"
             mode="aspectFill"
             width="140rpx"
             height="140rpx"
+            @click="previewImage({ urls: [getDownloadUrl(shopInfo.logo)] })"
           ></up-image>
           <view class="shop-basic-info">
             <text class="shop-name">{{ shopInfo.name }}</text>
@@ -113,6 +114,7 @@ import BusinessStatus from '@/components/business-status/index.vue';
 import ShopSwitcher from '@/components/shop-switcher/index.vue';
 import Order from './components/order.vue';
 import { getDownloadUrl } from '@/api/common/upload';
+import { previewImage } from '@/utils/util';
 import { useUserStore, useShopStore } from '@/stores';
 import { ActionType, OrderStatus } from '@/enums/order';
 import { getShopList, getShopConfigList, editShopConfig } from '@/api/shopManage';
