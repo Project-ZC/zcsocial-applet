@@ -139,8 +139,6 @@ const setScrollIntoViewId = ({ id = "", scrollTop = 0 }) => {
 };
 // 生命周期钩子
 onMounted(() => {
-	console.log(11111111111111);
-
 	const pages = getCurrentPages();
 	const current = pages[pages.length - 1];
 	// 修正：使用可选链操作符来避免属性不存在的错误

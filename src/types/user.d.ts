@@ -7,6 +7,10 @@ export type user = {
 	voucherNum: number;
 	token: string;
 	gender: number;
+	roleId?: number; // 角色ID
+	perms?: string[]; // 权限列表
+	permObj?: Record<string, boolean>; // 权限对象
+	roleName?: string; // 角色名称
 };
 //用户购物车类型声明
 export type UserCart = {

@@ -52,6 +52,7 @@ const statusText = computed(() => {
 </script>
 
 <style lang="scss" scoped>
+@import "@/uni.scss";
 .status-container {
 	display: flex;
 	align-items: center;
@@ -67,7 +68,7 @@ const statusText = computed(() => {
 		background-color: var(--success-6);
 	}
 	&.close {
-		background-color: var(--error-6);
+		background-color: var(--danger-6);
 	}
 	&.close_manual {
 		background-color: var(--warning-6);

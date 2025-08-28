@@ -1,7 +1,7 @@
 <template>
-	<view class="tabbar" v-if="tabList.length">
+	<view class="tabbar" v-if="setupTabbar.length">
 		<view
-			v-for="(item, index) in tabList"
+			v-for="(item, index) in setupTabbar"
 			:key="index"
 			class="tab-item"
 			:class="{ active: currentTab === index }"
@@ -38,30 +38,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { onShow } from "@dcloudio/uni-app";
 import { uniCache } from "@/utils/storage";
+import { useUserStore } from "@/stores";
 
-const tabList = ref<any[]>([]);
+const userStore = useUserStore();
+
+const tabList = ref<any>([]);
 
 const currentTab = ref<number>(0);
 
-const hasShopPermission = (user: any): boolean => {
-	if (!user) return false;
-	let permObj = user.userInfo?.permObj || {};
-	if (permObj["shop"]) return true;
-	return false;
-};
-
-const setupTabbar = () => {
-	const user = uniCache.getItem("user");
-	const canSeeShop = hasShopPermission(user);
+// 使用computed来响应式更新tabbar
+const setupTabbar = computed(() => {
+	const canSeeShop = userStore.checkShopPermission();
 	const allTabs = [
 		{
 			text: "首页",
 			path: "/pages/index/index",
 			// icon: "home-fill",
 			wdIcon: "home",
+			type: "home",
 			// icon: "/static/images/tabbar/home.png",
 			// iconActive: "/static/images/tabbar/home-active.png",
 		},
@@ -70,6 +67,7 @@ const setupTabbar = () => {
 			path: "/pages/message/message",
 			// icon: "chat-fill",
 			wdIcon: "message",
+			type: "message",
 			// icon: "/static/images/tabbar/message.png",
 			// iconActive: "/static/images/tabbar/message-active.png",
 		},
@@ -79,19 +77,27 @@ const setupTabbar = () => {
 			wdIcon: "shop",
 			// icon: "/static/images/tabbar/shop.png",
 			// iconActive: "/static/images/tabbar/shop-active.png",
-			// needPerm: "shop",
+			type: "shop",
 		} as any,
 		{
 			text: "我的",
 			path: "/pages/my/my",
 			// icon: "account-fill",
 			wdIcon: "my",
+			type: "my",
 			// icon: "/static/images/tabbar/my.png",
 			// iconActive: "/static/images/tabbar/my-active.png",
 		},
 	] as any;
-	tabList.value = allTabs.filter((tab: any) => !tab.needPerm || canSeeShop);
-};
+
+	return allTabs.filter((tab: any) => {
+		if (canSeeShop) {
+			return true; // 有店铺权限时显示所有tab
+		}
+		return tab.type !== "shop"; // 无店铺权限时隐藏shop tab
+	});
+});
+
 const updateActiveByRoute = () => {
 	const pages = getCurrentPages();
 	const current = pages[pages.length - 1] as any;
@@ -101,13 +107,16 @@ const updateActiveByRoute = () => {
 };
 
 onMounted(() => {
-	setupTabbar();
+	// 初始化tabbar
+	tabList.value = setupTabbar.value;
 	updateActiveByRoute();
 });
-// onShow(() => {
-// 	setupTabbar();
-// 	updateActiveByRoute();
-// });
+
+onShow(() => {
+	// 每次显示页面时重新计算tabbar
+	tabList.value = setupTabbar.value;
+	updateActiveByRoute();
+});
 
 const switchTab = (index: number, path: string) => {
 	currentTab.value = index;

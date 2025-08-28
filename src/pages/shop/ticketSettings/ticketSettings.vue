@@ -5,7 +5,10 @@
 			<view class="page-header z-glass-card">
 				<text class="page-title">门票设置</text>
 				<view class="header-actions">
-					<up-button shape="circle" class="add-btn" @click="openAddTicketModal"
+					<up-button
+						shape="circle"
+						class="add-btn main-btn"
+						@click="openAddTicketModal"
 						>新增门票</up-button
 					>
 				</view>
@@ -60,13 +63,13 @@
 					<view class="ticket-actions">
 						<up-button
 							shape="circle"
-							class="action-btn edit-btn"
+							class="action-btn edit-btn main-btn"
 							@click="openEditTicketModal(ticket.id)"
 							>编辑</up-button
 						>
 						<up-button
 							shape="circle"
-							class="action-btn toggle-btn"
+							class="action-btn toggle-btn main-btn"
 							:class="[ticket.status === 'active' ? 'deactivate' : 'activate']"
 							@click="toggleTicketStatus(ticket.id)"
 						>
@@ -74,7 +77,7 @@
 						</up-button>
 						<up-button
 							shape="circle"
-							class="action-btn delete-btn"
+							class="action-btn delete-btn main-btn"
 							@click="openDeleteTicketModal(ticket.id)"
 							>删除</up-button
 						>
@@ -183,7 +186,7 @@
 								<label class="form-label">畅饮酒水</label>
 								<up-button
 									shape="circle"
-									class="add-btn"
+									class="add-btn main-btn"
 									@click="openDrinkModal"
 									>编辑畅饮酒水</up-button
 								>
@@ -238,7 +241,9 @@
 							@click="closeTicketModal"
 							>取消</up-button
 						>
-						<up-button class="modal-btn confirm-btn" @click="saveTicket"
+						<up-button
+							class="modal-btn confirm-btn main-btn"
+							@click="saveTicket"
 							>保存</up-button
 						>
 					</view>
@@ -662,9 +667,9 @@ defineOptions({
 	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 	min-height: 100vh;
 
-	:deep(.u-button) {
+	:deep(.main-btn) {
 		border: none;
-		color: #fff;
+		color: #fff !important;
 	}
 }
 

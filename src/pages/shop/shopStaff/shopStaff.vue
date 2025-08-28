@@ -354,7 +354,7 @@ const state = reactive({
 	filteredStaffList: [],
 
 	searchType: "mobile",
-	searchKeyword: "1384906259",
+	searchKeyword: "",
 
 	showModal: false,
 	showQRCodeModal: false,
@@ -619,7 +619,6 @@ const onSearch = async () => {
 	}
 	try {
 		const res = await getAllUserList(params);
-		console.log(res, 555);
 		state.resultList = res.data || [];
 		if (state.resultList.length > 0) {
 			const data = state.resultList[0];
