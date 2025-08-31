@@ -36,20 +36,25 @@
           <view
             class="shop-item"
             v-for="shop in filteredShops"
-            :key="shop.id"
+            :key="shop.shopConfig.shopId"
             @click="selectShop(shop)"
-            :class="{ active: currentShop?.id === shop.id }"
+            :class="{ active: currentShop?.shopConfig.shopId === shop.shopConfig.shopId }"
           >
             <view class="shop-item-info">
-              <view class="shop-item-name">{{ shop.name }}</view>
+              <view class="shop-item-name">
+                {{ shop.shopConfig.name }}
+                <text v-if="currentShop?.shopConfig.shopId === shop.shopConfig.shopId" class="current-shop-tag">
+                  当前
+                </text>
+              </view>
               <view class="shop-item-details">
-                <text class="shop-address">{{ shop.address || '暂无地址' }}</text>
+                <text class="shop-address">{{ shop.shopConfig.address || '暂无地址' }}</text>
                 <view class="shop-status-item">
-                  <BusinessStatus :state="shop.status" />
+                  <BusinessStatus :state="shop.shopConfig.status" />
                 </view>
               </view>
             </view>
-            <view class="shop-item-arrow" v-if="currentShop?.id === shop.id">
+            <view class="shop-item-arrow" v-if="currentShop?.shopConfig.shopId === shop.shopConfig.shopId">
               <up-icon name="checkbox-mark" size="20" color="#007AFF"></up-icon>
             </view>
           </view>
@@ -64,10 +69,16 @@
 import { ref, computed } from 'vue';
 import { getShopConfigList } from '@/api/shopManage';
 interface Shop {
-  id: string;
-  name: string;
-  address?: string;
-  status: 'open' | 'close' | 'close_manual';
+  shopConfig: {
+    shopId: string;
+    name: string;
+    address?: string;
+    status: 'open' | 'close' | 'close_manual';
+    [key: string]: any;
+  };
+  userRole: {
+    [key: string]: any;
+  };
 }
 
 interface Props {
@@ -111,12 +122,11 @@ const currentShop = ref(null);
 const filteredShops = ref<Shop[]>([]);
 
 const handleSearch = () => {
-  console.log(searchKeyword.value);
   if (!searchKeyword.value) {
     filteredShops.value = props.shops;
   } else {
     filteredShops.value = props.shops.filter(shop =>
-      shop.name.toLowerCase().includes(searchKeyword.value.toLowerCase())
+      shop.shopConfig.name.toLowerCase().includes(searchKeyword.value.toLowerCase())
     );
   }
 };
@@ -218,11 +228,21 @@ defineExpose({
 
         .shop-item-name {
           font-size: 32rpx;
+          font-weight: 600;
           color: #333;
-          margin-bottom: 12rpx;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
+          margin-bottom: 8rpx;
+          display: flex;
+          align-items: center;
+          gap: 12rpx;
+
+          .current-shop-tag {
+            font-size: 20rpx;
+            color: #007aff;
+            background: rgba(0, 122, 255, 0.1);
+            padding: 4rpx 12rpx;
+            border-radius: 12rpx;
+            font-weight: normal;
+          }
         }
 
         .shop-item-details {

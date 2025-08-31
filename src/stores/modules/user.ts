@@ -18,6 +18,14 @@ export const useUserStore = defineStore(
 		//存储用户的信息
 		const userInfo = ref<user>({} as user);
 
+		const userRole = ref<any>({
+			perms: [],
+			permObj: {},
+			roleName: "",
+			roleId: 0,
+		});
+
+
 		//设置用户信息
 		const setUserInfo = (data: any) => {
 			userInfo.value = data;
@@ -42,12 +50,12 @@ export const useUserStore = defineStore(
 
 		// 检查是否有店铺权限
 		const checkShopPermission = () => {
-			return hasShopPermission(userInfo.value);
+			return hasShopPermission(userRole.value);
 		};
 
 		// 检查是否有特定权限
 		const checkPermission = (permission: string) => {
-			return hasPermission(userInfo.value, permission);
+			return hasPermission(userRole.value, permission);
 		};
 
 		const login = async (data = {}) => {
@@ -55,27 +63,35 @@ export const useUserStore = defineStore(
 				title: "登录中...",
 			});
 			const res = (await loginTo(data)) as any;
-			// 测试角色Id
-			if (testRoleId) {
-				res.roleId = testRoleId;
-			}
-			// 根据roleId生成权限
-			if (res.roleId) {
-				const { perms, permObj, roleName } = generateUserPermissions(
-					res.roleId
-				);
-				res.perms = perms;
-				res.permObj = permObj;
-				res.roleName = roleName;
-			} else {
-				// 如果没有roleId，设置为普通用户权限
-				res.perms = [];
-				res.permObj = {};
-				res.roleName = "用户";
-			}
-
 			const userInfo = { ...res, ...data };
 			setUserInfo(userInfo);
+		};
+
+		// 设置店铺权限，绑定的店铺角色
+		const setPerms = (res: any) => {
+			// 测试角色Id
+			const roleId =  res.roleId;
+			// 根据roleId生成权限
+			if (roleId) {
+				const { perms, permObj, roleName } = generateUserPermissions(
+					roleId
+				);
+				userRole.value = {
+					perms,
+					permObj,
+					roleName,
+					roleId,
+				};
+			} else {
+				// 如果没有roleId，设置为普通用户权限
+				userRole.value = {
+					perms: [],
+					permObj: {},
+					roleName: "用户",
+					roleId: 0,
+				};
+			}
+
 		};
 
 		return {
@@ -86,6 +102,8 @@ export const useUserStore = defineStore(
 			generateUserPermissions,
 			checkShopPermission,
 			checkPermission,
+			setPerms,
+			userRole
 		};
 	},
 	{

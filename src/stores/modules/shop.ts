@@ -1,13 +1,25 @@
 import type { user } from "@/types/user";
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { uniCache } from "@/utils/storage";
-import { getShopStatus } from "@/api/shopManage";
+import { getShopStatus, getShopConfigList } from "@/api/shopManage";
+
 
 export const useShopStore = defineStore(
 	"shop",
 	() => {
 		const shopStatus = ref<any>([]);
+		const myShopList = ref<any>([]);
+		const myShopListLen = ref<number>(0);
+	
+		const setMyShopList = (data: any) => {
+			myShopList.value = data;
+		};
+
+		const setMyShopListLen = (data: any) => {
+			myShopListLen.value = data;
+		};
+
 		//设置店铺状态
 		const setShopStatus = (data: any) => {
 			shopStatus.value = data;
@@ -34,11 +46,35 @@ export const useShopStore = defineStore(
 			)?.text;
 			return text;
 		};
+
+		// 缓存店铺列表 权限控制
+		const GetMyShopList = async (data = {}) => {
+			return new Promise(async (resolve, reject) => {
+				let params = {
+					...data,
+				};
+				try {
+					const res = (await getShopConfigList(params)) as any;
+					myShopListLen.value = res.data?.length || 0;
+					const shopLen = res.data?.length || 0;
+					setMyShopListLen(shopLen);
+					setMyShopList(res.data);
+					resolve(res);
+				} catch (error) {
+					reject(error);
+				}
+			})
+		};
 		return {
 			setShopStatus,
 			shopStatus,
 			GetShopStatus,
 			getShopStatusText,
+			GetMyShopList,
+			myShopListLen,
+			// myShopList,
+			setMyShopList,
+			setMyShopListLen,
 		};
 	},
 	{

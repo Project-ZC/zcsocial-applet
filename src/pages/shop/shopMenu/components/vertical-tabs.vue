@@ -46,6 +46,7 @@
           class="tabs-content"
           :scroll-into-view="scrollIntoViewId"
           @scroll="handleScroll"
+          v-if="tabs.length > 0"
         >
           <view v-for="(i, idx) in tabs" :key="i.id || idx" class="good-card content-item" :id="`sec-${idx}`">
             <view class="good-card-title">
@@ -59,7 +60,6 @@
                 </view>
               </view>
             </view>
-
             <view v-if="i.children?.length > 0" class="good-list">
               <template v-for="(child, index) in i.children" :key="child.id || index">
                 <view class="good-wrap">
@@ -71,8 +71,12 @@
                 </view>
               </template>
             </view>
+
+            <emptyData v-else text="当前细分类还没有酒水" subtext="请选择添加商品"></emptyData>
           </view>
         </scroll-view>
+
+        <emptyData v-else text="当前暂无细分类" subtext="请选择添加细分类"></emptyData>
       </view>
     </view>
   </view>
@@ -80,8 +84,6 @@
 
 <script setup lang="ts">
 import good from './good.vue';
-// @ts-nocheck
-/* eslint-disable */
 import { ref, watch, nextTick, onMounted, getCurrentInstance, toRefs } from 'vue';
 
 // 定义标签项接口

@@ -108,7 +108,7 @@
 <script lang="ts" setup>
 import { cloneDeep } from 'lodash-es';
 import { onMounted, reactive, ref, computed } from 'vue';
-import { onShow } from '@dcloudio/uni-app';
+import { onShow, onPullDownRefresh } from '@dcloudio/uni-app';
 import pageWrapper from '@/components/page/index.vue';
 import BusinessStatus from '@/components/business-status/index.vue';
 import ShopSwitcher from '@/components/shop-switcher/index.vue';
@@ -118,6 +118,8 @@ import { previewImage } from '@/utils/util';
 import { useUserStore, useShopStore } from '@/stores';
 import { ActionType, OrderStatus } from '@/enums/order';
 import { getShopList, getShopConfigList, editShopConfig } from '@/api/shopManage';
+import { testRoleId } from '@/consts/auth';
+import { uniCache } from '@/utils/storage';
 
 const userStore = useUserStore();
 const shopStore = useShopStore();
@@ -355,27 +357,63 @@ const handleTabChange = (index: number) => {
 };
 
 const openShopModal = () => {
-  console.log(shopInfo.value, 1234);
-  shopSwitcherRef.value.openShopModal(shopInfo.value);
+  console.log('当前店铺信息:', shopInfo.value);
+  // 传递完整的店铺对象，包含 shopConfig 和 userRole
+  const currentShopData = state.shopList.find(shop => shop.shopConfig?.shopId === shopInfo.value?.shopId);
+  shopSwitcherRef.value.openShopModal(currentShopData || {});
 };
 
 const GetShopConfigList = async () => {
   try {
     let params = {
       shopId: '',
-      //   pageNum: 1,
-      //   pageSize: 999,
+      // pageNum: 1,
+      // pageSize: 999,
       // id: userStore.userInfo?.id
     };
-    const res = await getShopConfigList(params);
-    if (res.data && Array.isArray(res.data) && res.data.length) {
-      shopInfo.value = cloneDeep(res.data[0]) || {};
+    const res = (await shopStore.GetMyShopList(params)) as any;
+    if (res.data?.length) {
+      // 获取上次缓存的店铺ID
+      const lastSelectedShopId = uniCache.getItem('lastSelectedShopId');
+      console.log('上次缓存的店铺ID:', lastSelectedShopId);
+
       // 将店铺数据添加到店铺列表中
       state.shopList = res.data || [];
-      // 设置当前店铺ID
-      if (state.shopList.length > 0 && !shopInfo.value.shopId) {
-        shopInfo.value.shopId = state.shopList[0].shopId;
+      console.log('店铺列表:', state.shopList);
+
+      // 优先选择上次缓存的店铺，如果没有缓存或店铺不存在，则选择第一个
+      let selectedShop = null;
+      if (lastSelectedShopId) {
+        selectedShop = res.data.find(shop => shop.shopConfig?.shopId === lastSelectedShopId);
+        if (selectedShop) {
+          console.log('找到上次选择的店铺:', selectedShop.shopConfig.name);
+        } else {
+          console.log('上次选择的店铺不存在，使用第一个店铺');
+          selectedShop = res.data[0];
+        }
+      } else {
+        console.log('没有缓存店铺，使用第一个店铺');
+        selectedShop = res.data[0];
       }
+
+      // 设置当前店铺信息
+      shopInfo.value = cloneDeep(selectedShop.shopConfig) || {};
+      console.log('当前店铺信息:', shopInfo.value);
+
+      // 设置当前店铺ID
+      if (state.shopList.length > 0 && !shopInfo.value?.shopId) {
+        shopInfo.value.shopId = selectedShop.shopConfig?.shopId || '';
+      }
+
+      // 设置用户权限
+      if (selectedShop.userRole) {
+        userStore.setPerms(selectedShop.userRole);
+        console.log('用户权限已更新:', selectedShop.userRole);
+      }
+    } else {
+      shopInfo.value = {};
+      state.shopList = [];
+      userStore.setPerms({});
     }
   } catch (error) {
     console.error('获取店铺配置失败:', error);
@@ -384,11 +422,26 @@ const GetShopConfigList = async () => {
 
 // 处理店铺选择
 const handleShopSelect = (shop: any) => {
-  console.log('切换到店铺:', shop.name);
-  // shopInfo.value.id = shopId;
-  // 根据店铺ID更新当前店铺信息
-  for (const key in shopInfo.value) {
-    shopInfo.value[key] = shop[key];
+  console.log('切换到店铺:', shop);
+  // 更新当前店铺信息
+  if (shop.shopConfig) {
+    for (const key in shopInfo.value) {
+      shopInfo.value[key] = shop.shopConfig[key];
+    }
+    // 更新用户权限
+    if (shop.userRole) {
+      if (testRoleId) {
+        shop.userRole.roleId = testRoleId;
+      }
+      userStore.setPerms(shop.userRole);
+    }
+
+    // 缓存当前选中的店铺ID
+    const currentShopId = shop.shopConfig.shopId;
+    if (currentShopId) {
+      uniCache.setItem('lastSelectedShopId', currentShopId);
+      console.log('已缓存店铺ID:', currentShopId);
+    }
   }
 };
 
@@ -436,16 +489,48 @@ const toggleShopStatus = async () => {
   }
 };
 
-onMounted(() => {
-  GetShopConfigList();
-});
-
-// 下拉刷新监听
+// 每次显示页面时都刷新数据
 onShow(async () => {
   try {
     await GetShopConfigList();
+
+    // 检查是否有店铺权限，如果没有则跳转到首页
+    if (!userStore.checkShopPermission()) {
+      console.log('用户无店铺权限，跳转到首页');
+      uni.switchTab({
+        url: '/pages/index/index',
+      });
+      return;
+    }
   } catch (error) {
-    console.error('刷新店铺配置失败:', error);
+    console.error('获取店铺配置失败:', error);
+    // 如果获取店铺配置失败，也跳转到首页
+    uni.switchTab({
+      url: '/pages/index/index',
+    });
+  }
+});
+
+onPullDownRefresh(async () => {
+  try {
+    await GetShopConfigList();
+
+    // 检查是否有店铺权限，如果没有则跳转到首页
+    if (!userStore.checkShopPermission()) {
+      console.log('用户无店铺权限，跳转到首页');
+      uni.switchTab({
+        url: '/pages/index/index',
+      });
+      return;
+    }
+  } catch (error) {
+    console.error('获取店铺配置失败:', error);
+    // 如果获取店铺配置失败，也跳转到首页
+    uni.switchTab({
+      url: '/pages/index/index',
+    });
+  } finally {
+    uni.stopPullDownRefresh();
   }
 });
 </script>

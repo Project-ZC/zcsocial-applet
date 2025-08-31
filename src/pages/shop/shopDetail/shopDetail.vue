@@ -222,7 +222,7 @@ const GtShopDetail = () => {
   getShopConfigList({
     shopId: form.shopId,
   }).then(res => {
-    let data = res.data?.[0] || {};
+    let data = res.data?.[0]?.shopConfig || {};
     for (const key in form) {
       if (key == 'tags' || key == 'photo') {
         form[key] = data[key] || [];

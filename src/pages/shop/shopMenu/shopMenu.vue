@@ -2,11 +2,6 @@
   <pageWrapper :safeArea="0">
     <view>
       <!-- DIY酒料空状态 -->
-      <!-- <emptyData v-else text="当前细分类还没有酒水" subtext="请选择添加商品">
-              <view class="empty-state-buttons">
-              </view>
-            </emptyData> -->
-
       <!-- <view class="empty-state" v-else-if="state.diyTypes.length === 0">
               <image src="/static/images/empty-category.png" mode="aspectFit"></image>
               <text>还没有创建DIY酒料分类</text>
@@ -23,6 +18,7 @@
         @longpress="handleTabLongpress"
         @editCurrentCategory="editCurrentCategory"
         @deleteCurrentCategory="deleteCurrentCategory"
+        @click="handleCategoryClick"
         :currentMainType="state.currentMainType"
       >
         <template #tabs>
@@ -84,6 +80,8 @@
         :tabs="state.tabs"
         :activeTab="state.activeTab"
         @close="closeCategoryModal"
+        :shopId="state.shopId"
+        @callback="GetCategoryList"
         :categoryFormData="state.categoryFormData"
       />
     </up-popup>
@@ -120,6 +118,7 @@
 
 <script lang="ts" setup>
 import { reactive, ref, computed, onMounted } from 'vue';
+import { onLoad } from '@dcloudio/uni-app';
 import VerticalTabs from './components/vertical-tabs.vue';
 import emptyData from '@/components/empty-data/index.vue';
 import { ActionType as OrderActionType, OrderStatus } from '@/enums/order';
@@ -128,8 +127,11 @@ import categoryContent from './components/categoryContent.vue';
 import productContent from './components/productContent.vue';
 import diyProductContent from './components/diyProductContent.vue';
 
+import { getProductCatalogAll, getProductList, deleteProductCatalog } from '@/api/product';
+
 // 商品列表数据
 const state = reactive({
+  shopId: '',
   diyPrice: '',
   list: [
     { id: 1, label: '项目 A' },
@@ -183,480 +185,8 @@ const state = reactive({
       type: 'diy',
     },
   ],
-  allTabs: [
-    {
-      title: '鸡尾酒',
-      badge: '',
-      type: 'cocktail',
-      parentMain: 'all',
-      sort: 2,
-      children: [
-        {
-          orderNumber: 'ORD20241201002',
-          status: OrderStatus.PENDING_ACCEPT,
-          image: '/static/images/logo.png',
-          name: '鸡尾酒',
-          description: '中杯',
-          price: 22.0,
-          quantity: 1,
-          totalAmount: 22.0,
-          createTime: new Date().getTime() - 2 * 60 * 60 * 1000,
-          userNickname: '李四',
-          userPhoneTail: '6666',
-          tableNumber: 'B08',
-          type: 'cocktail',
-        },
-        {
-          orderNumber: 'ORD20241201003',
-          status: OrderStatus.PREPARING,
-          image: '/static/images/logo.png',
-          name: '鸡尾酒',
-          description: '大杯',
-          price: 45.0,
-          quantity: 1,
-          totalAmount: 45.0,
-          createTime: new Date().getTime() - 3 * 60 * 60 * 1000,
-          userNickname: '王五',
-          userPhoneTail: '9999',
-          tableNumber: 'C15',
-          actions: [{ type: OrderActionType.CONFIRM, text: '完成制作' }],
-          type: 'cocktail',
-        },
-        {
-          orderNumber: 'ORD20241201003',
-          status: OrderStatus.PREPARING,
-          image: '/static/images/logo.png',
-          name: '鸡尾酒',
-          description: '大杯',
-          price: 45.0,
-          quantity: 1,
-          totalAmount: 45.0,
-          createTime: new Date().getTime() - 3 * 60 * 60 * 1000,
-          userNickname: '王五',
-          userPhoneTail: '9999',
-          tableNumber: 'C15',
-          actions: [{ type: OrderActionType.CONFIRM, text: '完成制作' }],
-          type: 'cocktail',
-        },
-        {
-          orderNumber: 'ORD20241201003',
-          status: OrderStatus.PREPARING,
-          image: '/static/images/logo.png',
-          name: '鸡尾酒',
-          description: '大杯',
-          price: 45.0,
-          quantity: 1,
-          totalAmount: 45.0,
-          createTime: new Date().getTime() - 3 * 60 * 60 * 1000,
-          userNickname: '王五',
-          userPhoneTail: '9999',
-          tableNumber: 'C15',
-          actions: [{ type: OrderActionType.CONFIRM, text: '完成制作' }],
-          type: 'cocktail',
-        },
-        {
-          orderNumber: 'ORD20241201003',
-          status: OrderStatus.PREPARING,
-          image: '/static/images/logo.png',
-          name: '鸡尾酒',
-          description: '大杯',
-          price: 45.0,
-          quantity: 1,
-          totalAmount: 45.0,
-          createTime: new Date().getTime() - 3 * 60 * 60 * 1000,
-          userNickname: '王五',
-          userPhoneTail: '9999',
-          tableNumber: 'C15',
-          actions: [{ type: OrderActionType.CONFIRM, text: '完成制作' }],
-          type: 'cocktail',
-        },
-        {
-          orderNumber: 'ORD20241201003',
-          status: OrderStatus.PREPARING,
-          image: '/static/images/logo.png',
-          name: '鸡尾酒',
-          description: '大杯',
-          price: 45.0,
-          quantity: 1,
-          totalAmount: 45.0,
-          createTime: new Date().getTime() - 3 * 60 * 60 * 1000,
-          userNickname: '王五',
-          userPhoneTail: '9999',
-          tableNumber: 'C15',
-          actions: [{ type: OrderActionType.CONFIRM, text: '完成制作' }],
-          type: 'cocktail',
-        },
-        {
-          orderNumber: 'ORD20241201003',
-          status: OrderStatus.PREPARING,
-          image: '/static/images/logo.png',
-          name: '鸡尾酒',
-          description: '大杯',
-          price: 45.0,
-          quantity: 1,
-          totalAmount: 45.0,
-          createTime: new Date().getTime() - 3 * 60 * 60 * 1000,
-          userNickname: '王五',
-          userPhoneTail: '9999',
-          tableNumber: 'C15',
-          actions: [{ type: OrderActionType.CONFIRM, text: '完成制作' }],
-          type: 'cocktail',
-        },
-        {
-          orderNumber: 'ORD20241201003',
-          status: OrderStatus.PREPARING,
-          image: '/static/images/logo.png',
-          name: '鸡尾酒',
-          description: '大杯',
-          price: 45.0,
-          quantity: 1,
-          totalAmount: 45.0,
-          createTime: new Date().getTime() - 3 * 60 * 60 * 1000,
-          userNickname: '王五',
-          userPhoneTail: '9999',
-          tableNumber: 'C15',
-          actions: [{ type: OrderActionType.CONFIRM, text: '完成制作' }],
-          type: 'cocktail',
-        },
-        {
-          orderNumber: 'ORD20241201003',
-          status: OrderStatus.PREPARING,
-          image: '/static/images/logo.png',
-          name: '鸡尾酒',
-          description: '大杯',
-          price: 45.0,
-          quantity: 1,
-          totalAmount: 45.0,
-          createTime: new Date().getTime() - 3 * 60 * 60 * 1000,
-          userNickname: '王五',
-          userPhoneTail: '9999',
-          tableNumber: 'C15',
-          actions: [{ type: OrderActionType.CONFIRM, text: '完成制作' }],
-          type: 'cocktail',
-        },
-        {
-          orderNumber: 'ORD20241201003',
-          status: OrderStatus.PREPARING,
-          image: '/static/images/logo.png',
-          name: '鸡尾酒',
-          description: '大杯',
-          price: 45.0,
-          quantity: 1,
-          totalAmount: 45.0,
-          createTime: new Date().getTime() - 3 * 60 * 60 * 1000,
-          userNickname: '王五',
-          userPhoneTail: '9999',
-          tableNumber: 'C15',
-          actions: [{ type: OrderActionType.CONFIRM, text: '完成制作' }],
-          type: 'cocktail',
-        },
-      ],
-    },
-    {
-      title: '伏特加',
-      badge: '',
-      type: 'vodka',
-      parentMain: 'all',
-      sort: 1,
-      children: [
-        {
-          orderNumber: 'ORD20241201001',
-          status: OrderStatus.PENDING_ACCEPT,
-          image: '/static/images/logo.png',
-          name: '伏特加',
-          description: '大杯 / 加冰球 / 加柠檬 / 加薄荷 / 50°酒精',
-          price: 28.0,
-          quantity: 1,
-          totalAmount: 28.0,
-          createTime: new Date().getTime() - 30 * 60 * 1000,
-          userNickname: '张三',
-          userPhoneTail: '8888',
-          tableNumber: 'A12',
-          type: 'vodka',
-        },
-        {
-          orderNumber: 'ORD20241201001',
-          status: OrderStatus.PENDING_ACCEPT,
-          image: '/static/images/logo.png',
-          name: '伏特加',
-          description: '大杯 / 加冰球 / 加柠檬 / 加薄荷 / 50°酒精',
-          price: 28.0,
-          quantity: 1,
-          totalAmount: 28.0,
-          createTime: new Date().getTime() - 30 * 60 * 1000,
-          userNickname: '张三',
-          userPhoneTail: '8888',
-          tableNumber: 'A12',
-          type: 'vodka',
-        },
-        {
-          orderNumber: 'ORD20241201001',
-          status: OrderStatus.PENDING_ACCEPT,
-          image: '/static/images/logo.png',
-          name: '伏特加',
-          description: '大杯 / 加冰球 / 加柠檬 / 加薄荷 / 50°酒精',
-          price: 28.0,
-          quantity: 1,
-          totalAmount: 28.0,
-          createTime: new Date().getTime() - 30 * 60 * 1000,
-          userNickname: '张三',
-          userPhoneTail: '8888',
-          tableNumber: 'A12',
-          type: 'vodka',
-        },
-        {
-          orderNumber: 'ORD20241201001',
-          status: OrderStatus.PENDING_ACCEPT,
-          image: '/static/images/logo.png',
-          name: '伏特加',
-          description: '大杯 / 加冰球 / 加柠檬 / 加薄荷 / 50°酒精',
-          price: 28.0,
-          quantity: 1,
-          totalAmount: 28.0,
-          createTime: new Date().getTime() - 30 * 60 * 1000,
-          userNickname: '张三',
-          userPhoneTail: '8888',
-          tableNumber: 'A12',
-          type: 'vodka',
-        },
-        {
-          orderNumber: 'ORD20241201001',
-          status: OrderStatus.PENDING_ACCEPT,
-          image: '/static/images/logo.png',
-          name: '伏特加',
-          description: '大杯 / 加冰球 / 加柠檬 / 加薄荷 / 50°酒精',
-          price: 28.0,
-          quantity: 1,
-          totalAmount: 28.0,
-          createTime: new Date().getTime() - 30 * 60 * 1000,
-          userNickname: '张三',
-          userPhoneTail: '8888',
-          tableNumber: 'A12',
-          type: 'vodka',
-        },
-        {
-          orderNumber: 'ORD20241201001',
-          status: OrderStatus.PENDING_ACCEPT,
-          image: '/static/images/logo.png',
-          name: '伏特加',
-          description: '大杯 / 加冰球 / 加柠檬 / 加薄荷 / 50°酒精',
-          price: 28.0,
-          quantity: 1,
-          totalAmount: 28.0,
-          createTime: new Date().getTime() - 30 * 60 * 1000,
-          userNickname: '张三',
-          userPhoneTail: '8888',
-          tableNumber: 'A12',
-          type: 'vodka',
-        },
-        {
-          orderNumber: 'ORD20241201001',
-          status: OrderStatus.PENDING_ACCEPT,
-          image: '/static/images/logo.png',
-          name: '伏特加',
-          description: '大杯 / 加冰球 / 加柠檬 / 加薄荷 / 50°酒精',
-          price: 28.0,
-          quantity: 1,
-          totalAmount: 28.0,
-          createTime: new Date().getTime() - 30 * 60 * 1000,
-          userNickname: '张三',
-          userPhoneTail: '8888',
-          tableNumber: 'A12',
-          type: 'vodka',
-        },
-        {
-          orderNumber: 'ORD20241201001',
-          status: OrderStatus.PENDING_ACCEPT,
-          image: '/static/images/logo.png',
-          name: '伏特加',
-          description: '大杯 / 加冰球 / 加柠檬 / 加薄荷 / 50°酒精',
-          price: 28.0,
-          quantity: 1,
-          totalAmount: 28.0,
-          createTime: new Date().getTime() - 30 * 60 * 1000,
-          userNickname: '张三',
-          userPhoneTail: '8888',
-          tableNumber: 'A12',
-          type: 'vodka',
-        },
-      ],
-    },
-    {
-      title: 'diy酒',
-      badge: '',
-      type: 'diy',
-      parentMain: 'diy',
-      sort: 3,
-      children: [
-        {
-          orderNumber: 'ORD20241201001',
-          status: OrderStatus.PENDING_ACCEPT,
-          image: '/static/images/logo.png',
-          name: 'diy酒品',
-          description: '大杯 / 加冰球 / 加柠檬 / 加薄荷 / 50°酒精',
-          price: 28.0,
-          quantity: 1,
-          totalAmount: 28.0,
-          createTime: new Date().getTime() - 30 * 60 * 1000,
-          userNickname: '张三',
-          userPhoneTail: '8888',
-          tableNumber: 'A12',
-          type: 'diy',
-        },
-        {
-          orderNumber: 'ORD20241201001',
-          status: OrderStatus.PENDING_ACCEPT,
-          image: '/static/images/logo.png',
-          name: 'diy酒品',
-          description: '大杯 / 加冰球 / 加柠檬 / 加薄荷 / 50°酒精',
-          price: 28.0,
-          quantity: 1,
-          totalAmount: 28.0,
-          createTime: new Date().getTime() - 30 * 60 * 1000,
-          userNickname: '张三',
-          userPhoneTail: '8888',
-          tableNumber: 'A12',
-          type: 'diy',
-        },
-        {
-          orderNumber: 'ORD20241201001',
-          status: OrderStatus.PENDING_ACCEPT,
-          image: '/static/images/logo.png',
-          name: 'diy酒品',
-          description: '大杯 / 加冰球 / 加柠檬 / 加薄荷 / 50°酒精',
-          price: 28.0,
-          quantity: 1,
-          totalAmount: 28.0,
-          createTime: new Date().getTime() - 30 * 60 * 1000,
-          userNickname: '张三',
-          userPhoneTail: '8888',
-          tableNumber: 'A12',
-          type: 'diy',
-        },
-        {
-          orderNumber: 'ORD20241201001',
-          status: OrderStatus.PENDING_ACCEPT,
-          image: '/static/images/logo.png',
-          name: 'diy酒品',
-          description: '大杯 / 加冰球 / 加柠檬 / 加薄荷 / 50°酒精',
-          price: 28.0,
-          quantity: 1,
-          totalAmount: 28.0,
-          createTime: new Date().getTime() - 30 * 60 * 1000,
-          userNickname: '张三',
-          userPhoneTail: '8888',
-          tableNumber: 'A12',
-          type: 'diy',
-        },
-        {
-          orderNumber: 'ORD20241201001',
-          status: OrderStatus.PENDING_ACCEPT,
-          image: '/static/images/logo.png',
-          name: 'diy酒品',
-          description: '大杯 / 加冰球 / 加柠檬 / 加薄荷 / 50°酒精',
-          price: 28.0,
-          quantity: 1,
-          totalAmount: 28.0,
-          createTime: new Date().getTime() - 30 * 60 * 1000,
-          userNickname: '张三',
-          userPhoneTail: '8888',
-          tableNumber: 'A12',
-          type: 'diy',
-        },
-        {
-          orderNumber: 'ORD20241201001',
-          status: OrderStatus.PENDING_ACCEPT,
-          image: '/static/images/logo.png',
-          name: 'diy酒品',
-          description: '大杯 / 加冰球 / 加柠檬 / 加薄荷 / 50°酒精',
-          price: 28.0,
-          quantity: 1,
-          totalAmount: 28.0,
-          createTime: new Date().getTime() - 30 * 60 * 1000,
-          userNickname: '张三',
-          userPhoneTail: '8888',
-          tableNumber: 'A12',
-          type: 'diy',
-        },
-        {
-          orderNumber: 'ORD20241201001',
-          status: OrderStatus.PENDING_ACCEPT,
-          image: '/static/images/logo.png',
-          name: 'diy酒品',
-          description: '大杯 / 加冰球 / 加柠檬 / 加薄荷 / 50°酒精',
-          price: 28.0,
-          quantity: 1,
-          totalAmount: 28.0,
-          createTime: new Date().getTime() - 30 * 60 * 1000,
-          userNickname: '张三',
-          userPhoneTail: '8888',
-          tableNumber: 'A12',
-          type: 'diy',
-        },
-        {
-          orderNumber: 'ORD20241201001',
-          status: OrderStatus.PENDING_ACCEPT,
-          image: '/static/images/logo.png',
-          name: 'diy酒品',
-          description: '大杯 / 加冰球 / 加柠檬 / 加薄荷 / 50°酒精',
-          price: 28.0,
-          quantity: 1,
-          totalAmount: 28.0,
-          createTime: new Date().getTime() - 30 * 60 * 1000,
-          userNickname: '张三',
-          userPhoneTail: '8888',
-          tableNumber: 'A12',
-          type: 'diy',
-        },
-        {
-          orderNumber: 'ORD20241201001',
-          status: OrderStatus.PENDING_ACCEPT,
-          image: '/static/images/logo.png',
-          name: 'diy酒品',
-          description: '大杯 / 加冰球 / 加柠檬 / 加薄荷 / 50°酒精',
-          price: 28.0,
-          quantity: 1,
-          totalAmount: 28.0,
-          createTime: new Date().getTime() - 30 * 60 * 1000,
-          userNickname: '张三',
-          userPhoneTail: '8888',
-          tableNumber: 'A12',
-          type: 'diy',
-        },
-        {
-          orderNumber: 'ORD20241201001',
-          status: OrderStatus.PENDING_ACCEPT,
-          image: '/static/images/logo.png',
-          name: 'diy酒品',
-          description: '大杯 / 加冰球 / 加柠檬 / 加薄荷 / 50°酒精',
-          price: 28.0,
-          quantity: 1,
-          totalAmount: 28.0,
-          createTime: new Date().getTime() - 30 * 60 * 1000,
-          userNickname: '张三',
-          userPhoneTail: '8888',
-          tableNumber: 'A12',
-          type: 'diy',
-        },
-        {
-          orderNumber: 'ORD20241201001',
-          status: OrderStatus.PENDING_ACCEPT,
-          image: '/static/images/logo.png',
-          name: 'diy酒品',
-          description: '大杯 / 加冰球 / 加柠檬 / 加薄荷 / 50°酒精',
-          price: 28.0,
-          quantity: 1,
-          totalAmount: 28.0,
-          createTime: new Date().getTime() - 30 * 60 * 1000,
-          userNickname: '张三',
-          userPhoneTail: '8888',
-          tableNumber: 'A12',
-          type: 'diy',
-        },
-      ],
-    },
-  ],
-  tabs: [],
+  // 移除硬编码的 allTabs，改为从接口获取
+  tabs: [] as any[],
   // 颜色配置
   activeColor: '#007aff',
   inactiveColor: '#666666',
@@ -671,19 +201,6 @@ const state = reactive({
   showDiyIngredientModal: false,
   isEditingDiyIngredient: false,
 
-  diyTypeRules: {
-    name: {
-      required: true,
-      message: '请输入分类名称',
-      trigger: ['blur', 'change'],
-    },
-    sort: {
-      required: true,
-      message: '请输入排序数字',
-      trigger: ['blur', 'change'],
-    },
-  },
-
   diyFormData: {} as any,
   productFormData: {} as any,
   categoryFormData: {} as any,
@@ -695,8 +212,26 @@ const handleTabLongpress = (index, tab) => {
 
 const handleMainTabClick = tab => {
   state.currentMainType = tab.type;
-  state.tabs = state.allTabs.filter(tab => tab.parentMain === state.currentMainType);
+
+  // 获取所有分类数据（包括已加载的商品数据）
+  const allTabs = state.tabs;
+
+  // 根据主类型过滤分类
+  // if (tab.type === 'diy') {
+  //   // DIY酒料类型，可以设置特殊的分类
+  //   state.tabs = allTabs.filter(tab => tab.parentMain === 'diy');
+  // } else {
+  //   // 常规点单类型，显示所有分类
+  //   state.tabs = allTabs.filter(tab => tab.parentMain === 'all' || !tab.parentMain);
+  // }
+
   state.activeTab = 0;
+
+  console.log(`切换到${tab.title}，当前显示 ${state.tabs.length} 个分类`);
+  // 显示每个分类的商品数量
+  state.tabs.forEach(tab => {
+    console.log(`分类 ${tab.title}: ${tab.children.length} 个商品`);
+  });
 };
 
 // 编辑商品
@@ -733,11 +268,151 @@ const downGoods = (item, index: number) => {
   console.log('下移商品:', item, index);
 };
 
+//  ------ 细分类-------
+const GetCategoryList = () => {
+  getProductCatalogAll({ shopId: state.shopId }).then(async res => {
+    console.log('细分类列表:', res.data);
+    // 转换接口返回的数据结构，适配 vertical-tabs 组件
+    if (res.data && Array.isArray(res.data)) {
+      state.tabs = res.data.map(item => ({
+        id: item.id,
+        title: item.name,
+        type: item.id.toString(), // 使用 id 作为 type
+        parentMain: item.parentMain || 'all', // 使用接口返回的 parentMain
+        sort: item.sort || 0,
+        status: item.status,
+        shopId: item.shopId,
+        createTime: item.createTime,
+        modifyTime: item.modifyTime,
+        children: [], // 商品列表，后续可以单独获取
+        hasLoaded: false, // 标记是否已加载过商品数据
+      }));
+
+      // 按 sort 字段排序
+      state.tabs.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+
+      console.log('转换后的tabs:', state.tabs);
+
+      // 一次性获取所有分类的商品数据
+      await getAllProductsForCategories();
+    } else {
+      state.tabs = [];
+    }
+  });
+};
+
+// 一次性获取所有分类的商品数据
+const getAllProductsForCategories = async () => {
+  try {
+    console.log('开始获取所有分类的商品数据...');
+
+    // 并行获取所有分类的商品数据
+    const productPromises = state.tabs.map(async tab => {
+      try {
+        const params = {
+          shopId: state.shopId,
+          catalogId: tab.id.toString(),
+        };
+
+        const res = await getProductList(params);
+        console.log(`分类 ${tab.title} 的商品数据:`, res.data);
+
+        if (res.data && Array.isArray(res.data)) {
+          // 转换商品数据格式
+          const products = res.data.map(item => ({
+            id: item.id || Math.random().toString(),
+            name: item.name,
+            description: item.description || '',
+            price: item.price || 0,
+            image: item.photo && item.photo.length > 0 ? item.photo[0] : '/static/images/default-avatar.png',
+            stage: item.stage, // 上下架状态
+            photo: item.photo || [], // 图片数组
+            shopId: item.shopId,
+          }));
+
+          // 更新分类的 children 数据
+          tab.children = products;
+          tab.hasLoaded = true;
+          console.log(`分类 ${tab.title} 的商品数据已更新，共 ${products.length} 个商品`);
+        } else {
+          tab.children = [];
+          tab.hasLoaded = true;
+          console.log(`分类 ${tab.title} 暂无商品数据`);
+        }
+      } catch (error) {
+        console.error(`获取分类 ${tab.title} 的商品数据失败:`, error);
+        tab.children = [];
+        tab.hasLoaded = true;
+      }
+    });
+
+    // 等待所有商品数据获取完成
+    await Promise.all(productPromises);
+
+    console.log('所有分类的商品数据获取完成');
+    console.log('最终的tabs数据:', state.tabs);
+  } catch (error) {
+    console.error('获取所有分类商品数据失败:', error);
+  }
+};
+
+// 获取分类下的商品列表
+const GetProductList = async (catalogId: string) => {
+  try {
+    const params = {
+      shopId: state.shopId,
+      catalogId: catalogId,
+    };
+
+    const res = await getProductList(params);
+    console.log('商品列表:', res.data);
+
+    if (res.data && Array.isArray(res.data)) {
+      // 转换商品数据格式
+      const products = res.data.map(item => ({
+        id: item.id || Math.random().toString(),
+        name: item.name,
+        description: item.description || '',
+        price: item.price || 0,
+        image: item.photo && item.photo.length > 0 ? item.photo[0] : '/static/images/default-avatar.png',
+        stage: item.stage, // 上下架状态
+        photo: item.photo || [], // 图片数组
+        shopId: item.shopId,
+      }));
+
+      // 找到对应的分类并更新 children
+      const targetTab = state.tabs.find(tab => tab.id.toString() === catalogId);
+      if (targetTab) {
+        targetTab.children = products;
+        targetTab.hasLoaded = true; // 标记为已加载
+        console.log(`分类 ${targetTab.title} 的商品数据已更新:`, products);
+      }
+    }
+  } catch (error) {}
+};
+
+// 处理分类点击事件
+const handleCategoryClick = (event: { index: number; tab: any }) => {
+  const { index, tab } = event;
+  console.log('点击分类:', tab);
+  // 所有数据已经预加载，这里可以添加其他逻辑
+  // 比如更新当前选中的分类、显示加载状态等
+  console.log(`分类 ${tab.title} 的商品数量: ${tab.children.length}`);
+};
+
 // 细分类列表：根据当前主类过滤
 const categories = computed(() => {
-  const currentMain =
-    state.activeTab === '' ? state.tabs[state.activeTab]?.type : (state.tabs[state.activeTab] as any)?.parentMain;
-  const temp = state.tabs.filter((tab: any, index) => tab.parentMain === currentMain);
+  // 根据当前主类型过滤分类
+  // const currentMain = state.currentMainType;
+  const temp = state.tabs.filter((tab: any) => {
+    // if (currentMain === 'diy') {
+    //   return tab.parentMain === 'diy';
+    // } else {
+    //   return tab.parentMain === 'all' || !tab.parentMain;
+    // }
+    return tab;
+  });
+
   if (temp.length > 0) {
     state.productFormData.categoryId = temp[0].type;
     state.productFormData.categoryName = temp[0].title;
@@ -812,12 +487,12 @@ const deleteCategory = () => {
 
 // 编辑当前分类
 const editCurrentCategory = () => {
-  console.log(1234);
+  console.log('编辑分类');
   const currentTab = state.tabs[state.activeTab];
-  console.log(currentTab);
+  console.log('当前分类:', currentTab);
   if (currentTab) {
     state.isEditingCategory = true;
-    state.categoryFormData.id = currentTab.type;
+    state.categoryFormData.id = currentTab.id;
     state.categoryFormData.name = currentTab.title;
     state.categoryFormData.sort = Number(currentTab.sort ?? 0);
     state.showCategoryModal = true;
@@ -831,18 +506,22 @@ const deleteCurrentCategory = () => {
     uni.showModal({
       title: '确认删除',
       content: `确定要删除分类"${currentTab.title}"吗？删除后无法恢复。`,
-      success: res => {
+      success: async res => {
         if (res.confirm) {
           // 从tabs中移除当前分类
-          state.tabs.splice(state.activeTab, 1);
-          // 如果删除的是最后一个分类，回到第一个
-          if (state.activeTab >= state.tabs.length) {
-            state.activeTab = 0;
-          }
-          uni.showToast({
-            title: '分类已删除',
-            icon: 'success',
-          });
+          // state.tabs.splice(state.activeTab, 1);
+          try {
+            await deleteProductCatalog({ id: currentTab.id });
+            // 如果删除的是最后一个分类，回到第一个
+            if (state.activeTab >= state.tabs.length) {
+              state.activeTab = 0;
+            }
+            GetCategoryList();
+            uni.showToast({
+              title: '分类已删除',
+              icon: 'success',
+            });
+          } catch (error) {}
         }
       },
     });
@@ -854,7 +533,12 @@ const closeDiyIngredientModal = () => {
 };
 
 // 生命周期钩子
-onMounted(() => {
+onLoad(options => {
+  console.log('shopMenu 初始化完成', options);
+  state.shopId = options.shopId;
+  // 先获取分类列表
+  GetCategoryList();
+  // 设置默认主类型为常规点单
   handleMainTabClick(state.mainTabs[0]);
 });
 

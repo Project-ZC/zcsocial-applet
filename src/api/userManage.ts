@@ -41,3 +41,11 @@ export const getUserInfo = () => {
 		method: "POST",
 	});
 };
+
+// 查询我在某个店铺下的用户角色IDS
+export const getUserRoleIds = () => {
+	return http({
+		url: "/v1/user/role/all/my/query",
+		method: "POST",
+	});
+};

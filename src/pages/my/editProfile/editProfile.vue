@@ -42,18 +42,22 @@
                 <view class="icon-arrow-right"></view>
               </view>
             </view>
-            <view class="form-item" @click="showDatePicker">
+            <!-- <view class="form-item" @click="showDatePicker">
               <text class="form-label">生日</text>
               <view class="form-value">{{ state.userInfo.birthday || '请选择' }}</view>
               <view class="form-icon">
                 <view class="icon-arrow-right"></view>
               </view>
+            </view> -->
+            <view class="form-item">
+              <text class="form-label">玩点ID</text>
+              <view class="form-value">{{ state.userInfo.id }}</view>
             </view>
           </view>
         </view>
 
         <!-- 个人标签 -->
-        <view class="form-card z-glass-card">
+        <!-- <view class="form-card z-glass-card">
           <view class="form-header">
             <text class="section-title">个人标签</text>
             <text class="section-subtitle">选择能代表你的标签，最多可选5个</text>
@@ -68,7 +72,7 @@
               :allowCustom="true"
             />
           </view>
-        </view>
+        </view> -->
 
         <!-- 个人简介 -->
         <view class="form-card z-glass-card">
@@ -161,7 +165,7 @@ const userStore = useUserStore();
 const state = reactive({
   avatarFileList: [],
   userInfo: {
-    // id: '',
+    id: '',
     nickname: '',
     avatar: '',
     gender: '',
@@ -203,14 +207,14 @@ const GetUserInfo = (id: string) => {
       if (res.data.avatar) {
         state.avatarFileList = [{ url: res.data.avatar }];
       }
-      if (res.data.tags) {
-        state.selectTagList = res.data.tags.map((item, index) => {
-          return {
-            id: item.id,
-            name: item.name,
-          };
-        });
-      }
+      // if (res.data.tags) {
+      //   state.selectTagList = res.data.tags.map((item, index) => {
+      //     return {
+      //       id: item.id,
+      //       name: item.name,
+      //     };
+      //   });
+      // }
     }
   });
 };
@@ -232,7 +236,6 @@ const saveProfile = async () => {
     if (state.avatarFileList.length > 0) {
       state.userInfo.avatar = state.avatarFileList[0].url;
     }
-    state.userInfo.tags = '';
     await modifyUser(state.userInfo);
     userStore.setUserInfo({
       ...userStore.userInfo,
@@ -293,6 +296,7 @@ const confirmDatePicker = () => {
 // 生命周期钩子
 onLoad(options => {
   state.userInfo = {
+    id: '',
     nickname: '',
     avatar: '',
     gender: '',

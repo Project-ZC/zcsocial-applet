@@ -1,10 +1,9 @@
 {
 	"pages": [
 		{
-			"path": "pages/index/index",
+			"path": "pages/shop/shop",
 			"style": {
-				"navigationBarTitleText": "首页",
-				"navigationStyle": "custom",
+				"navigationBarTitleText": "店铺",
 				"enablePullDownRefresh": true
 			}
 		},
@@ -16,15 +15,13 @@
 			}
 		},
 		{
-			"path": "pages/shop/shop",
+			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "店铺",
+				"navigationBarTitleText": "首页",
+				"navigationStyle": "custom",
 				"enablePullDownRefresh": true
 			}
 		},
-		
-		
-	
 		{
 			"path": "pages/index/shopDetail/showDetail",
 			"style": {
