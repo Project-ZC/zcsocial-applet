@@ -10,6 +10,7 @@
               acceept="image"
               :maxCount="1"
               round
+              ref="uploadRef"
               @afterUpload="handleAvatarUpdate"
               customStyle
             >
@@ -17,7 +18,7 @@
                 <up-avatar :src="getDownloadUrl(state.userInfo.avatar)" size="140rpx"></up-avatar>
               </template>
               <template #tips>
-                <text class="edit-text">点击更换头像</text>
+                <text class="edit-text" @click="triggerAvatarUpload">点击更换头像</text>
               </template>
             </UploadFile>
           </view>
@@ -150,7 +151,7 @@
 
 <script setup lang="ts">
 import pageWrapper from '@/components/page/index.vue';
-import { reactive, onMounted } from 'vue';
+import { reactive, onMounted, ref } from 'vue';
 import { onHide, onShow, onLoad } from '@dcloudio/uni-app';
 import UploadFile from '@/components/upload-file/index.vue';
 import TagSelector from '@/components/tag-selector/index.vue';
@@ -158,8 +159,8 @@ import { getTagList, getGenderList } from '@/api/common/dict';
 import { modifyUser, getUserInfo } from '@/api/userManage';
 import { useUserStore } from '@/stores/modules/user';
 import { getDownloadUrl } from '@/api/common/upload';
-
 const userStore = useUserStore();
+const uploadRef = ref<any>(null);
 
 // 定义状态
 const state = reactive({
@@ -261,6 +262,12 @@ const saveProfile = async () => {
 
 const handleAvatarUpdate = (e: any) => {
   state.userInfo.avatar = e[0]?.url || '';
+};
+
+// 触发头像重新上传的方法
+const triggerAvatarUpload = () => {
+  uploadRef.value.resetFileList();
+  uploadRef.value.triggerUpload();
 };
 
 const showGenderPickerFn = () => {
