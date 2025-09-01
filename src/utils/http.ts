@@ -14,6 +14,8 @@ let requestsQueue: Array<() => Promise<any>> = [];
 // 添加最大重试次数限制
 const MAX_AUTH_RETRY_COUNT = 3;
 let currentAuthRetryCount = 0;
+// 添加登录状态标记，防止重复登录
+let isLoggingIn = false;
 
 export function setOnAuthErrorCallback(
 	callback: (error: any) => Promise<void>
@@ -26,17 +28,18 @@ export function resetAuthRetryCount() {
 	currentAuthRetryCount = 0;
 }
 
+// 设置登录状态
+export function setLoggingInStatus(status: boolean) {
+	isLoggingIn = status;
+}
+
+// 获取登录状态
+export function getLoggingInStatus() {
+	return isLoggingIn;
+}
+
 // 通知登录成功并触发请求重发
 export function notifyLoginSuccess() {
-	// // 获取当前页面路径
-	// const pages = getCurrentPages();
-	// const currentPage = pages[pages.length - 1];
-	// const currentPath = "/" + currentPage.route;
-	// console.log("收到登录成功通知，刷新当前页面", currentPath);
-	// // 重新加载当前页面
-	// uni.redirectTo({
-	// 	url: currentPath,
-	// });
 	if (isRefreshing) {
 		console.log("收到登录成功通知，重新发送队列中的请求");
 		requestsQueue.forEach((request) =>
@@ -46,6 +49,8 @@ export function notifyLoginSuccess() {
 		isRefreshing = false;
 		// 重置重试计数器
 		resetAuthRetryCount();
+		// 重置登录状态
+		setLoggingInStatus(false);
 	} else {
 		console.log("收到登录成功通知，但当前不在刷新状态");
 	}
@@ -130,6 +135,8 @@ export const http = <T>(options: UniApp.RequestOptions) => {
 						// 清空请求队列
 						requestsQueue = [];
 						isRefreshing = false;
+						// 重置登录状态
+						setLoggingInStatus(false);
 						reject({ ...val, isAuthError: true, exceededRetryLimit: true });
 						return;
 					}
@@ -139,8 +146,15 @@ export const http = <T>(options: UniApp.RequestOptions) => {
 					console.log(
 						`登录过期，第 ${currentAuthRetryCount} 次重试，最大重试次数: ${MAX_AUTH_RETRY_COUNT}`
 					);
+					
+					// 检查是否正在登录中，避免重复登录
+					if (isLoggingIn) {
+						console.log("正在登录中，将请求加入队列等待");
+						addRequest(options).then(resolve).catch(reject);
+						return;
+					}
 
-					showToast(val.message || "登录过期,请重新登录");
+					// 清空缓存
 					uniCache.clear();
 
 					// 抛出特定错误，让上层应用逻辑处理登录过期
@@ -151,14 +165,20 @@ export const http = <T>(options: UniApp.RequestOptions) => {
 					};
 
 					if (onAuthErrorCallback) {
+						// 设置登录状态为true
+						setLoggingInStatus(true);
+						isRefreshing = true;
+						
 						onAuthErrorCallback(authError)
 							.then(() => {
-								isRefreshing = true;
-								notifyLoginSuccess();
-								resolve(val);
+								// 登录成功，重新发送当前请求
+								addRequest(options).then(resolve).catch(reject);
 							})
 							.catch((err) => {
-								reject(err);
+								// 登录失败，重置状态
+								setLoggingInStatus(false);
+								isRefreshing = false;
+								reject(err); 
 							});
 					} else {
 						// 如果没有设置回调函数，将当前请求加入队列等待重试

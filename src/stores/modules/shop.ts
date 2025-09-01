@@ -25,19 +25,21 @@ export const useShopStore = defineStore(
 			shopStatus.value = data;
 		};
 		const GetShopStatus = async (data = {}) => {
-			const res = (await getShopStatus(data)) as any;
-			if (res.data.length > 0) {
-				for (const item of res.data) {
-					if (item.code == "open") {
-						item.text = "营业中";
-					} else if (item.code == "close") {
-						item.text = "休息中";
-					} else if (item.code == "close_manual") {
-						item.text = "暂停营业(手动)";
+			try {
+				const res = (await getShopStatus(data)) as any;
+				if (res.data?.length > 0) {
+					for (const item of res.data) {
+						if (item.code == "open") {
+							item.text = "营业中";
+						} else if (item.code == "close") {
+							item.text = "休息中";
+						} else if (item.code == "close_manual") {
+							item.text = "暂停营业(手动)";
+						}
 					}
 				}
-			}
-			setShopStatus(res.data);
+				setShopStatus(res.data);
+			} catch (error) {}
 		};
 
 		const getShopStatusText = (state: string) => {
