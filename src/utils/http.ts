@@ -11,11 +11,19 @@ const baseURL = baseUrl;
 let onAuthErrorCallback: ((error: any) => Promise<void>) | null = null;
 let isRefreshing = false;
 let requestsQueue: Array<() => Promise<any>> = [];
+// 添加最大重试次数限制
+const MAX_AUTH_RETRY_COUNT = 3;
+let currentAuthRetryCount = 0;
 
 export function setOnAuthErrorCallback(
 	callback: (error: any) => Promise<void>
 ) {
 	onAuthErrorCallback = callback;
+}
+
+// 重置重试计数器
+export function resetAuthRetryCount() {
+	currentAuthRetryCount = 0;
 }
 
 // 通知登录成功并触发请求重发
@@ -36,17 +44,23 @@ export function notifyLoginSuccess() {
 		);
 		requestsQueue = [];
 		isRefreshing = false;
+		// 重置重试计数器
+		resetAuthRetryCount();
 	} else {
 		console.log("收到登录成功通知，但当前不在刷新状态");
 	}
 }
+
 // 请求队列处理
-const addRequest = (config) => {
+const addRequest = (config: UniApp.RequestOptions) => {
 	return new Promise((resolve) => {
 		requestsQueue.push(() => {
 			// 更新Token后重发请求
 			const user = uniCache.getItem("user");
-			config.header.Authorization = `Bearer ${user?.userInfo?.token}`;
+			if (user?.userInfo?.token) {
+				config.header = config.header || {};
+				config.header["X-App-Token"] = user.userInfo.token;
+			}
 			resolve(uni.request(config));
 		});
 	});
@@ -68,7 +82,7 @@ const httpInterceptor = {
 		// 添加token
 		const user = uniCache.getItem("user");
 		if (user?.userInfo?.token) {
-			args.header["X-App-Token"] = user?.userInfo?.token;
+			args.header["X-App-Token"] = user.userInfo.token;
 		}
 	},
 };
@@ -82,16 +96,16 @@ interface Data<T> {
 }
 
 const showToast = async (title: string) => {
-		// 先延迟，确保loading完全消失
-		await new Promise(resolve => setTimeout(resolve, 500));
-		uni.hideLoading();
-		// 在延迟一小段时间后显示toast
-		await new Promise(resolve => setTimeout(resolve, 100));
-		uni.showToast({
-			icon: "none",
-			title: title,
-			mask: true,
-		});
+	// 先延迟，确保loading完全消失
+	await new Promise((resolve) => setTimeout(resolve, 500));
+	uni.hideLoading();
+	// 在延迟一小段时间后显示toast
+	await new Promise((resolve) => setTimeout(resolve, 100));
+	uni.showToast({
+		icon: "none",
+		title: title,
+		mask: true,
+	});
 };
 
 export const http = <T>(options: UniApp.RequestOptions) => {
@@ -107,10 +121,35 @@ export const http = <T>(options: UniApp.RequestOptions) => {
 				if (val.code == 0) {
 					resolve(val);
 				} else if (val.code == 1002) {
+					// 检查是否超过最大重试次数
+					if (currentAuthRetryCount >= MAX_AUTH_RETRY_COUNT) {
+						showToast("登录过期次数过多，请重新登录");
+						uniCache.clear();
+						// 重置重试计数器
+						resetAuthRetryCount();
+						// 清空请求队列
+						requestsQueue = [];
+						isRefreshing = false;
+						reject({ ...val, isAuthError: true, exceededRetryLimit: true });
+						return;
+					}
+
+					// 增加重试计数
+					currentAuthRetryCount++;
+					console.log(
+						`登录过期，第 ${currentAuthRetryCount} 次重试，最大重试次数: ${MAX_AUTH_RETRY_COUNT}`
+					);
+
 					showToast(val.message || "登录过期,请重新登录");
 					uniCache.clear();
+
 					// 抛出特定错误，让上层应用逻辑处理登录过期
-					const authError = { ...val, isAuthError: true };
+					const authError = {
+						...val,
+						isAuthError: true,
+						retryCount: currentAuthRetryCount,
+					};
+
 					if (onAuthErrorCallback) {
 						onAuthErrorCallback(authError)
 							.then(() => {
@@ -121,10 +160,11 @@ export const http = <T>(options: UniApp.RequestOptions) => {
 							.catch((err) => {
 								reject(err);
 							});
+					} else {
+						// 如果没有设置回调函数，将当前请求加入队列等待重试
+						addRequest(options);
+						reject(authError);
 					}
-					// 将当前请求加入队列
-					addRequest(options);
-					reject(authError);
 				} else {
 					val.message && showToast(val.message);
 					reject(val);

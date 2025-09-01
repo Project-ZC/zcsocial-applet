@@ -62,7 +62,7 @@ const state = reactive({
 	tempIngredientGroup: {
 		id: "",
 		name: "",
-		price: 0,
+		price: "",
 		isDefault: false,
 	},
 	ingredientGroupRules: {
@@ -91,7 +91,7 @@ const resetForm = () => {
 	ingredientGroupFormRef.value?.resetFields();
 	setTimeout(() => {
 		ingredientGroupFormRef.value?.clearValidate();
-	}, 0);
+	}, 100);
 };
 
 const close = () => {
@@ -113,9 +113,8 @@ const save = async () => {
 		const payload = {
 			...state.tempIngredientGroup,
 			// 新增时若无 id 则生成一个
-			id: state.tempIngredientGroup.id || Date.now().toString(),
+			// id: state.tempIngredientGroup.id || Date.now().toString(),
 		};
-		console.log("payload", payload);
 		// 通过事件回传给父组件处理保存逻辑
 		emit("callback", {
 			mode: props.type === "edit" ? "edit" : "add",

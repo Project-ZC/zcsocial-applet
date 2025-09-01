@@ -12,9 +12,9 @@
 				labelPosition="top"
 				labelWidth="auto"
 			>
-				<up-form-item label="容量名称" prop="capacity">
+				<up-form-item label="容量名称" prop="size">
 					<up-input
-						v-model.number="state.tempCapacityGroup.capacity"
+						v-model="state.tempCapacityGroup.size"
 						placeholder="请输入容量数字"
 						type="number"
 						class="capacity-number-input"
@@ -31,7 +31,7 @@
 				</up-form-item>
 				<up-form-item label="容量价格 (元)" prop="price">
 					<up-input
-						v-model.number="state.tempCapacityGroup.price"
+						v-model="state.tempCapacityGroup.price"
 						placeholder="请输入价格"
 						type="number"
 					/>
@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, onUnmounted } from "vue";
 import { ref, reactive, defineEmits, defineProps } from "vue";
 
 const props = defineProps({
@@ -68,10 +68,10 @@ const capacityGroupFormRef = ref(null);
 const state = reactive({
 	tempCapacityGroup: {
 		id: "", // 容量id
-		capacity: 0, // 新增：容量数字
+		size: "", // 新增：容量数字
+		price: "", // 价格
 		unit: "ml", // 新增：容量单位
-		name: "", // 容量名称
-		price: 0, // 价格
+		// name: "", // 容量名称
 		isDefault: false, // 新增：是否为默认选中
 	},
 	// 容量单位选项
@@ -81,7 +81,7 @@ const state = reactive({
 		{ name: "克 (g)", id: "g" },
 	],
 	capacityGroupRules: {
-		capacity: {
+		size: {
 			required: true,
 			message: "请输入容量数字",
 			trigger: ["blur", "change"],
@@ -138,14 +138,14 @@ const save = async () => {
 		await validate();
 
 		// 组合容量名称：数字 + 单位
-		const capacityName = `${state.tempCapacityGroup.capacity}${state.tempCapacityGroup.unit}`;
+		// const capacityName = `${state.tempCapacityGroup.size}${state.tempCapacityGroup.unit}`;
 
 		// 生成回传数据
 		const payload = {
 			...state.tempCapacityGroup,
-			name: capacityName,
+			// name: capacityName,
 			// 新增时若无 id 则生成一个
-			id: state.tempCapacityGroup.id || Date.now().toString(),
+			// id: state.tempCapacityGroup.id || Date.now().toString(),
 		};
 
 		console.log("payload", payload);
@@ -175,5 +175,8 @@ onMounted(() => {
 		}
 	}
 	state.tempCapacityGroup.unit = "ml";
+});
+onUnmounted(() => {
+	resetForm();
 });
 </script>

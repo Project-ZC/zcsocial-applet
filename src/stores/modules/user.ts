@@ -4,9 +4,7 @@ import { ref } from "vue";
 import { loginTo } from "@/utils/login";
 import { uniCache } from "@/utils/storage";
 import {
-	getPermissionsByRoleId,
-	getRoleNameByRoleId,
-	generatePermObj,
+	generateUserPermissionsByRoleIds,
 	hasShopPermission,
 	hasPermission,
 	testRoleId,
@@ -25,7 +23,6 @@ export const useUserStore = defineStore(
 			roleId: 0,
 		});
 
-
 		//设置用户信息
 		const setUserInfo = (data: any) => {
 			userInfo.value = data;
@@ -33,19 +30,6 @@ export const useUserStore = defineStore(
 		//清理用户信息
 		const clearUserInfo = () => {
 			userInfo.value = {} as user;
-		};
-
-		// 根据角色ID生成权限
-		const generateUserPermissions = (roleId: number) => {
-			const perms = getPermissionsByRoleId(roleId);
-			const permObj = generatePermObj(perms);
-			const roleName = getRoleNameByRoleId(roleId);
-
-			return {
-				perms,
-				permObj,
-				roleName,
-			};
 		};
 
 		// 检查是否有店铺权限
@@ -69,29 +53,36 @@ export const useUserStore = defineStore(
 
 		// 设置店铺权限，绑定的店铺角色
 		const setPerms = (res: any) => {
-			// 测试角色Id
-			const roleId =  res.roleId;
-			// 根据roleId生成权限
-			if (roleId) {
-				const { perms, permObj, roleName } = generateUserPermissions(
-					roleId
-				);
+			// 支持新的roleList格式和旧的userRole格式
+			let roleIds: number[] = [];
+
+			if (Array.isArray(res.roleList) && res.roleList?.length > 0) {
+				// 新格式：roleList数组
+				roleIds = res.roleList.map((item: any) => item.roleId);
+			} else if (res.roleId) {
+				// 旧格式：单个roleId
+				roleIds = [res.roleId];
+			}
+
+			// 根据roleIds生成权限
+			if (roleIds.length > 0) {
+				const { perms, permObj, roleNames } =
+					generateUserPermissionsByRoleIds(roleIds);
 				userRole.value = {
 					perms,
 					permObj,
-					roleName,
-					roleId,
+					roleNames,
+					roleIds,
 				};
 			} else {
-				// 如果没有roleId，设置为普通用户权限
+				// 如果没有角色，设置为普通用户权限
 				userRole.value = {
 					perms: [],
 					permObj: {},
-					roleName: "用户",
-					roleId: 0,
+					roleNames: "用户",
+					roleIds: [],
 				};
 			}
-
 		};
 
 		return {
@@ -99,11 +90,10 @@ export const useUserStore = defineStore(
 			setUserInfo,
 			clearUserInfo,
 			login,
-			generateUserPermissions,
 			checkShopPermission,
 			checkPermission,
 			setPerms,
-			userRole
+			userRole,
 		};
 	},
 	{

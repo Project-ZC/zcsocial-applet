@@ -38,7 +38,7 @@
 					<up-form-item label="酒料名称" prop="name">
 						<up-input v-model="state.form.name" placeholder="请输入酒料名称" />
 					</up-form-item>
-					<up-form-item label="所属细分类" prop="categoryId">
+					<up-form-item label="所属细分类" prop="catalogId">
 						<view class="category-selector" @click="showCategorySelector">
 							<up-input
 								v-model="state.form.categoryName"
@@ -156,7 +156,7 @@ const state = reactive({
 		isRecommended: false,
 		isAvailable: true,
 		diyTypeId: "",
-		categoryId: "",
+		catalogId: "",
 		categoryName: "",
 	} as any,
 	rules: {
@@ -205,7 +205,7 @@ const showCategorySelector = () => {
 };
 
 const selectCategory = (category: any) => {
-	state.form.categoryId = category.value;
+	state.form.catalogId = category.value;
 	state.form.categoryName = category.name;
 	state.showCategorySelector = false;
 };

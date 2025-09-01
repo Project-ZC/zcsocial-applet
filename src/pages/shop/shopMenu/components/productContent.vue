@@ -7,7 +7,11 @@
 		<scroll-view scroll-y="true">
 			<view class="modal-body">
 				<view class="image-upload">
-					<UploadFile v-model="state.form.image" :max-count="1"></UploadFile>
+					<UploadFile
+						v-model:fileList="state.form.photoFileList"
+						:max-count="1"
+						@afterUpload="photoAfterUpload"
+					></UploadFile>
 				</view>
 
 				<up-form
@@ -21,7 +25,7 @@
 						<up-input v-model="state.form.name" placeholder="请输入商品名称" />
 					</up-form-item>
 
-					<up-form-item label="所属细分类" prop="categoryId">
+					<up-form-item label="所属细分类" prop="catalogId">
 						<view class="category-selector" @click="showCategorySelector">
 							<up-input
 								v-model="state.form.categoryName"
@@ -42,7 +46,7 @@
 						/>
 					</up-form-item>
 
-					<up-form-item label="容量组管理" prop="capacityGroups">
+					<up-form-item label="容量组管理" prop="productSkus">
 						<view class="capacity-groups-container">
 							<view class="capacity-groups-header header-btn">
 								<up-button
@@ -55,12 +59,11 @@
 							<view
 								class="capacity-groups-list"
 								v-if="
-									state.form.capacityGroups?.length > 0 &&
-									state.showCapacityGroups
+									state.form.productSkus?.length > 0 && state.showCapacityGroups
 								"
 							>
 								<drag-container
-									:list="state.form.capacityGroups"
+									:list="state.form.productSkus"
 									:controlsSize="{ height: 50 }"
 								>
 									<template #default="{ item, index }">
@@ -70,7 +73,9 @@
 										>
 											<view class="capacity-group-info">
 												<view class="capacity-main-info">
-													<text class="capacity-name">{{ item.name }}</text>
+													<text class="capacity-name">{{
+														item.size + item.unit
+													}}</text>
 													<text class="capacity-price">¥{{ item.price }}</text>
 												</view>
 												<view class="capacity-default-info">
@@ -107,7 +112,7 @@
 						</view>
 					</up-form-item>
 
-					<up-form-item label="规格组管理" prop="specGroups">
+					<up-form-item label="规格组管理" prop="productOptions">
 						<view class="spec-groups-container">
 							<view class="spec-groups-header header-btn">
 								<up-button
@@ -119,11 +124,11 @@
 							</view>
 							<view
 								class="spec-groups-list"
-								v-if="state.form.specGroups?.length > 0"
+								v-if="state.form.productOptions?.length > 0"
 							>
 								<view
 									class="spec-group-item"
-									v-for="(item, index) in state.form.specGroups"
+									v-for="(item, index) in state.form.productOptions"
 									:key="item.id || index"
 									@click.stop="openAddSpecGroupModal(item, index)"
 								>
@@ -153,7 +158,7 @@
 						</view>
 					</up-form-item>
 
-					<up-form-item label="添料组管理" prop="ingredientGroups">
+					<up-form-item label="添料组管理" prop="productIngredients">
 						<view class="ingredient-groups-container">
 							<view class="ingredient-groups-header header-btn">
 								<up-button
@@ -167,21 +172,25 @@
 										<view class="switch-item">
 											<text class="switch-label">是否必选</text>
 											<up-switch
-												v-model="state.form.ingredientRequired"
+												v-model="state.form.productIngredientConfig.required"
+												activeValue="0"
+												inactiveValue="1"
 											></up-switch>
 										</view>
 										<view class="switch-item">
 											<text class="switch-label">是否多选</text>
 											<up-switch
-												v-model="state.form.ingredientSingle"
+												v-model="state.form.productIngredientConfig.type"
+												activeValue="multi"
+												inactiveValue="single"
 											></up-switch>
 										</view>
 									</view>
 								</view>
 							</view>
-							<view v-if="state.form.ingredientGroups?.length > 0">
+							<view v-if="state.form.productIngredients?.length > 0">
 								<up-dragsort
-									:initialList="state.form.ingredientGroups"
+									:initialList="state.form.productIngredients"
 									direction="vertical"
 								>
 									<template #default="{ item, index }">
@@ -247,10 +256,22 @@
                 <up-switch v-model="state.form.isRecommended" active-color="#1989fa"></up-switch>
               </up-form-item> -->
 
-					<up-form-item label="上架状态" prop="isAvailable">
+					<up-form-item label="上架状态" prop="stage">
 						<up-switch
-							v-model="state.form.isAvailable"
-							active-color="#1989fa"
+							v-model="state.form.stage"
+							activeValue="up"
+							inactiveValue="down"
+						></up-switch>
+					</up-form-item>
+
+					<up-form-item
+						label="是否为群酒(该商品属性为本桌一起畅饮的酒)"
+						prop="tableFlag"
+					>
+						<up-switch
+							v-model="state.form.tableFlag"
+							activeValue="0"
+							inactiveValue="1"
 						></up-switch>
 					</up-form-item>
 
@@ -346,12 +367,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, defineEmits, defineProps, onMounted } from "vue";
+import {
+	ref,
+	reactive,
+	defineEmits,
+	defineProps,
+	onMounted,
+	onUnmounted,
+	nextTick,
+} from "vue";
 import UploadFile from "@/components/upload-file/index.vue";
 import DragContainer from "@/components/drag/index.vue";
 import capacityGroupContent from "./capacityGroupContent.vue";
 import ingredientGroupContent from "./ingredientGroupContent.vue";
 import specGroupContent from "./specGroupContent.vue";
+import { createProduct, modifyProduct } from "@/api/product";
+import { watch } from "vue";
 
 const props = defineProps({
 	title: {
@@ -382,11 +413,16 @@ const props = defineProps({
 		type: Array,
 		default: () => [],
 	},
+	shopId: {
+		type: String,
+		default: "",
+	},
 });
 // 表单引用
 const formRef = ref(null);
 
 const state = reactive({
+	photoFileList: [],
 	showIngredientGroupModal: false,
 	isEditingIngredientGroup: false,
 	showCapacityGroups: true,
@@ -395,26 +431,28 @@ const state = reactive({
 	isEditingCapacityGroup: false,
 	isEditingSpecGroup: false,
 	showSpecGroupModal: false,
-	specGroupFormData: {} as any,
 	form: {
+		shopId: "",
 		id: "",
 		name: "",
-		image: "",
+		photo: "",
 		description: "",
 		price: 0,
-		originalPrice: 0,
-		sort: 0,
-		isRecommended: false,
-		isAvailable: true,
-		enableOrdering: true,
-		categoryId: "",
+		// sort: 0,
+		// isRecommended: false,
+		// enableOrdering: true,
+		// maxOrderCount: 0,
+		stage: "up", // down: 下架, up: 上架
+		catalogId: "",
 		categoryName: "",
-		maxOrderCount: 0,
-		ingredientRequired: false,
-		ingredientSingle: false,
-		specGroups: [] as any[], // 新增规格组列表
-		capacityGroups: [] as any[], // 新增容量组列表
-		ingredientGroups: [] as any[], // 新增小料组列表
+		productIngredientConfig: {
+			type: "single", // single: 单选, multi: 多选
+			required: "1", // 0: 必选, 1: 可选
+		},
+		tableFlag: "1", // 0: 是群酒, 1: 否
+		productSkus: [] as any[], // 新增容量组列表
+		productOptions: [] as any[], // 新增规格组列表
+		productIngredients: [] as any[], // 新增小料组列表
 	} as any,
 	rules: {
 		name: {
@@ -422,49 +460,72 @@ const state = reactive({
 			message: "请输入商品名称",
 			trigger: ["blur", "change"],
 		},
-		price: {
-			required: true,
-			message: "请输入价格",
-			trigger: ["blur", "change"],
+		// price: {
+		// 	required: true,
+		// 	message: "请输入价格",
+		// 	trigger: ["blur", "change"],
+		// 	validator: (rule, value, callback) => {
+		// 		if (value <= 0) {
+		// 			callback(new Error("价格必须大于0"));
+		// 		} else {
+		// 			callback();
+		// 		}
+		// 	},
+		// },
+		// sort: {
+		// 	required: true,
+		// 	message: "请输入排序数字",
+		// 	trigger: ["blur", "change"],
+		// },
+		productSkus: {
 			validator: (rule, value, callback) => {
-				if (value <= 0) {
-					callback(new Error("价格必须大于0"));
+				if (!value || value.length === 0) {
+					callback(new Error("请添加容量组"));
 				} else {
 					callback();
 				}
 			},
-		},
-		sort: {
-			required: true,
-			message: "请输入排序数字",
 			trigger: ["blur", "change"],
 		},
-		categoryGroups: {
-			required: true,
-			message: "请选择容量组",
-			trigger: ["blur", "change"],
-		},
-		specGroups: {
-			required: true,
-			message: "请选择规格组",
-			trigger: ["blur", "change"],
-		},
+		// productOptions: {
+		// 	validator: (rule, value, callback) => {
+		// 		if (!value || value.length === 0) {
+		// 			callback(new Error("请添加规格组"));
+		// 		} else {
+		// 			callback();
+		// 		}
+		// 	},
+		// 	trigger: ["blur", "change"],
+		// },
 	},
 	capacityGroupFormData: {} as any,
+	specGroupFormData: {} as any,
 	ingredientGroupFormData: {} as any,
 });
-const emit = defineEmits(["close"]);
+
+const emit = defineEmits(["close", "callback"]);
 
 const resetForm = () => {
 	formRef.value?.resetFields();
+	state.form.productOptions = [];
+	state.form.productSkus = [];
+	state.form.productIngredients = [];
+	state.form.productIngredientConfig = {
+		type: "single",
+		required: "1",
+	};
 	setTimeout(() => {
 		formRef.value?.clearValidate();
-	}, 0);
+	}, 100);
 };
 
 const close = () => {
 	resetForm();
 	emit("close");
+};
+
+const photoAfterUpload = (fileList: any[]) => {
+	state.form.photo = fileList[0].url;
 };
 
 const validate = async () => {
@@ -473,9 +534,9 @@ const validate = async () => {
 
 const getSelectedCategoryName = () => {
 	const selectedCategory = props.categories.find(
-		(cat) => cat.type === state.form.categoryId
+		(cat) => cat.id === state.form.catalogId
 	);
-	return selectedCategory ? selectedCategory.title : "";
+	return selectedCategory ? selectedCategory.name : "";
 };
 
 const closeCapacityGroupModal = () => {
@@ -488,18 +549,19 @@ const showCategorySelector = () => {
 };
 
 const selectCategory = (category: any) => {
-	state.form.categoryId = category.value;
+	state.form.catalogId = category.value;
 	state.form.categoryName = category.name;
 	state.showCategorySelector = false;
 };
 
 const deleteCapacityGroup = (item, index: number) => {
+	console.log(item, index, 111);
 	uni.showModal({
 		title: "确认删除",
-		content: `确定要删除容量组"${item.name}"吗？`,
+		content: `确定要删除容量组"${item.size + item.unit}"吗？`,
 		success: (res) => {
 			if (res.confirm) {
-				state.form.capacityGroups.splice(index, 1);
+				state.form.productSkus.splice(index, 1);
 				uni.showToast({
 					title: "删除成功",
 					icon: "success",
@@ -510,10 +572,10 @@ const deleteCapacityGroup = (item, index: number) => {
 };
 
 const setDefaultCapacityGroup = (item, index: number) => {
-	state.form.capacityGroups.forEach((group) => {
+	state.form.productSkus.forEach((group) => {
 		group.isDefault = false;
 	});
-	state.form.capacityGroups[index].isDefault = true;
+	state.form.productSkus[index].isDefault = true;
 	uni.showToast({
 		title: "已设为默认容量组",
 		icon: "success",
@@ -521,7 +583,7 @@ const setDefaultCapacityGroup = (item, index: number) => {
 };
 
 const handleCapacityGroupCallback = ({ mode, data }) => {
-	if (state.form.capacityGroups.length === 0) {
+	if (state.form.productSkus.length === 0) {
 		data.isDefault = true;
 	}
 	state.showCapacityGroups = false;
@@ -529,11 +591,11 @@ const handleCapacityGroupCallback = ({ mode, data }) => {
 		state.showCapacityGroups = true;
 	}, 0);
 	if (mode === "edit") {
-		const i = state.form.capacityGroups.findIndex((g) => g.id === data.id);
-		if (i !== -1) state.form.capacityGroups[i] = data;
-		else state.form.capacityGroups.push(data);
+		const i = state.form.productSkus.findIndex((g) => g.id === data.id);
+		if (i !== -1) state.form.productSkus[i] = data;
+		else state.form.productSkus.push(data);
 	} else {
-		state.form.capacityGroups.push(data);
+		state.form.productSkus.push(data);
 	}
 };
 
@@ -558,15 +620,15 @@ const openAddIngredientGroupModal = (item, index) => {
 	state.showIngredientGroupModal = true;
 };
 const handleIngredientGroupCallback = ({ mode, data }) => {
-	if (state.form.ingredientGroups.length === 0) {
+	if (state.form.productIngredients.length === 0) {
 		data.isDefault = true;
 	}
 	if (mode === "edit") {
-		const i = state.form.ingredientGroups.findIndex((g) => g.id === data.id);
-		if (i !== -1) state.form.ingredientGroups[i] = data;
-		else state.form.ingredientGroups.push(data);
+		const i = state.form.productIngredients.findIndex((g) => g.id === data.id);
+		if (i !== -1) state.form.productIngredients[i] = data;
+		else state.form.productIngredients.push(data);
 	} else {
-		state.form.ingredientGroups.push(data);
+		state.form.productIngredients.push(data);
 	}
 };
 const closeIngredientGroupModal = () => {
@@ -580,7 +642,7 @@ const deleteIngredientGroup = (item, index: number) => {
 		content: `确定要删除小料"${item.name}"吗？`,
 		success: (res) => {
 			if (res.confirm) {
-				state.form.ingredientGroups.splice(index, 1);
+				state.form.productIngredients.splice(index, 1);
 				uni.showToast({
 					title: "删除成功",
 					icon: "success",
@@ -591,10 +653,10 @@ const deleteIngredientGroup = (item, index: number) => {
 };
 
 const setDefaultIngredientGroup = (item, index: number) => {
-	state.form.ingredientGroups.forEach((group) => {
+	state.form.productIngredients.forEach((group) => {
 		group.isDefault = false;
 	});
-	state.form.ingredientGroups[index].isDefault = true;
+	state.form.productIngredients[index].isDefault = true;
 	uni.showToast({
 		title: "已设为默认小料",
 		icon: "success",
@@ -607,7 +669,7 @@ const deleteSpecGroup = (item, index: number) => {
 		content: `确定要删除规格组"${item.name}"吗？`,
 		success: (res) => {
 			if (res.confirm) {
-				state.form.specGroups.splice(index, 1);
+				state.form.productOptions.splice(index, 1);
 				uni.showToast({
 					title: "删除成功",
 					icon: "success",
@@ -618,10 +680,10 @@ const deleteSpecGroup = (item, index: number) => {
 };
 
 const setDefaultSpecGroup = (item, index: number) => {
-	state.form.specGroups.forEach((group) => {
+	state.form.productOptions.forEach((group) => {
 		group.isDefault = false;
 	});
-	state.form.specGroups[index].isDefault = true;
+	state.form.productOptions[index].isDefault = true;
 	uni.showToast({
 		title: "已设为默认规格组",
 		icon: "success",
@@ -642,15 +704,15 @@ const closeSpecGroupModal = () => {
 };
 
 const handleSpecGroupCallback = ({ mode, data }) => {
-	if (state.form.specGroups.length === 0) {
+	if (state.form.productOptions.length === 0) {
 		data.isDefault = true;
 	}
 	if (mode === "edit") {
-		const i = state.form.specGroups.findIndex((g) => g.id === data.id);
-		if (i !== -1) state.form.specGroups[i] = data;
-		else state.form.specGroups.push(data);
+		const i = state.form.productOptions.findIndex((g) => g.id === data.id);
+		if (i !== -1) state.form.productOptions[i] = data;
+		else state.form.productOptions.push(data);
 	} else {
-		state.form.specGroups.push(data);
+		state.form.productOptions.push(data);
 	}
 };
 
@@ -659,26 +721,53 @@ const save = async () => {
 	try {
 		// 表单验证
 		await validate();
-
 		console.log("state.form", state.form);
-
-		close();
-		uni.showToast({
-			title: props.type === "edit" ? "酒水已更新" : "酒水已添加",
-			icon: "success",
-		});
+		try {
+			if (props.type === "edit") {
+				await modifyProduct(state.form);
+			} else {
+				await createProduct(state.form);
+			}
+			emit("callback", state.form.catalogId);
+			uni.showToast({
+				title: props.type === "edit" ? "商品已更新" : "商品已添加",
+				icon: "success",
+			});
+			close();
+		} catch (error) {}
 	} catch (error) {
 		console.log("表单验证失败:", error);
 	}
 };
-onMounted(() => {
-	if (props.productFormData) {
-		for (const key in state.form) {
-			if (props.productFormData[key]) {
-				state.form[key] = props.productFormData[key];
+
+watch(
+	() => props.productFormData,
+	(newVal) => {
+		state.form.shopId = props.shopId;
+		if (props.productFormData) {
+			for (const key in state.form) {
+				if (props.productFormData[key]) {
+					state.form[key] = props.productFormData[key];
+				}
 			}
 		}
-	}
+		if (props.type === "add") {
+			state.form.catalogId = props.tabs[props.activeTab].id;
+		}
+		console.log(state.form.catalogId, 111);
+		state.form.categoryName = getSelectedCategoryName();
+		// nextTick(() => {
+		// 	formRef.value?.setRules(state.rules);
+		// });
+	},
+	{ immediate: true, deep: true }
+);
+
+onMounted(() => {
+	// console.log(1234);
+	// nextTick(() => {
+	// 	formRef.value?.setRules(state.rules);
+	// });
 });
 
 defineOptions({

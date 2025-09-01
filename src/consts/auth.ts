@@ -6,7 +6,7 @@ export interface RolePermission {
 }
 
 // 测试角色ID权限
-export const testRoleId = '';
+export const testRoleId = "";
 
 // 角色权限配置
 export const ROLE_PERMISSIONS: RolePermission[] = [
@@ -82,10 +82,58 @@ export const getPermissionsByRoleId = (roleId: number): string[] => {
 	return role ? role.perms : [];
 };
 
+// 根据多个角色ID获取合并后的权限
+export const getPermissionsByRoleIds = (roleIds: number[]): string[] => {
+	const allPerms: string[] = [];
+	roleIds.forEach((roleId) => {
+		const perms = getPermissionsByRoleId(roleId);
+		allPerms.push(...perms);
+	});
+	// 去重
+	return [...new Set(allPerms)];
+};
+
 // 根据角色ID获取角色名称
 export const getRoleNameByRoleId = (roleId: number): string => {
 	const role = ROLE_PERMISSIONS.find((item) => item.roleId === roleId);
 	return role ? role.roleName : "用户";
+};
+
+// 根据多个角色ID获取合并后的角色名称
+export const getRoleNamesByRoleIds = (roleIds: number[]): string[] => {
+	const roleNames: string[] = [];
+	roleIds.forEach((roleId) => {
+		const roleName = getRoleNameByRoleId(roleId);
+		if (roleName !== "用户") {
+			roleNames.push(roleName);
+		}
+	});
+	return roleNames;
+};
+// 根据角色ID生成权限
+export const generateUserPermissions = (roleId: number) => {
+	const perms = getPermissionsByRoleId(roleId);
+	const permObj = generatePermObj(perms);
+	const roleName = getRoleNameByRoleId(roleId);
+
+	return {
+		perms,
+		permObj,
+		roleName,
+	};
+};
+// 根据多个角色ID生成合并后的权限
+export const generateUserPermissionsByRoleIds = (roleIds: number[]) => {
+	console.log(roleIds, 1234);
+	const perms = getPermissionsByRoleIds(roleIds);
+	const permObj = generatePermObj(perms);
+	const roleNames = getRoleNamesByRoleIds(roleIds);
+
+	return {
+		perms,
+		permObj,
+		roleNames: roleNames.join("、"),
+	};
 };
 
 // 生成权限对象
