@@ -58,19 +58,24 @@ export function notifyLoginSuccess() {
 
 // 请求队列处理
 const addRequest = (config: UniApp.RequestOptions) => {
-	return new Promise((resolve) => {
-		requestsQueue.push(() => {
-			// 更新Token后重发请求
-			const user = uniCache.getItem("user");
-			if (user?.userInfo?.token) {
-				config.header = config.header || {};
-				config.header["X-App-Token"] = user.userInfo.token;
-			}
-			resolve(uni.request(config));
+	return new Promise((outerResolve, outerReject) => {
+	  requestsQueue.push(() => {
+		// 更新Token后重发请求；返回真正的 Promise
+		const user = uniCache.getItem('user');
+		config.header = config.header || {};
+		if (user?.userInfo?.token) {
+		  config.header['X-App-Token'] = user.userInfo.token;
+		}
+		return new Promise((resolve, reject) => {
+		  uni.request({
+			...config,
+			success: (res) => { outerResolve(res); resolve(res); },
+			fail: (err) => { outerReject(err); reject(err); },
+		  });
 		});
+	  });
 	});
-};
-
+  };
 //添加拦截器
 const httpInterceptor = {
 	//发起请求前触发
@@ -127,8 +132,7 @@ export const http = <T>(options: UniApp.RequestOptions) => {
 					resolve(val);
 				} else if (val.code == 1002) {
 					console.log("登录过期，第  次重试，最大重试次数");
-					// 清空缓存
-					uniCache.clear();
+					
 					// 检查是否超过最大重试次数
 					if (currentAuthRetryCount >= MAX_AUTH_RETRY_COUNT) {
 						// showToast("登录过期次数过多，请重新登录");
@@ -155,7 +159,8 @@ export const http = <T>(options: UniApp.RequestOptions) => {
 						addRequest(options).then(resolve).catch(reject);
 						return;
 					}
-
+					// 清空缓存
+					uniCache.clear();
 					// 抛出特定错误，让上层应用逻辑处理登录过期
 					const authError = {
 						...val,
