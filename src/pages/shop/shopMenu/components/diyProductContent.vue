@@ -62,7 +62,7 @@
 								<up-input
 									v-model.number="state.form.price"
 									placeholder="请输入附加价格，0表示免费"
-									type="number"
+									type="digit"
 								/>
 							</up-form-item> -->
 

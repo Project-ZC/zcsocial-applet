@@ -41,11 +41,11 @@ export function getLoggingInStatus() {
 // 通知登录成功并触发请求重发
 export function notifyLoginSuccess() {
 	if (isRefreshing) {
-		console.log("收到登录成功通知，重新发送队列中的请求");
-		requestsQueue.forEach((request) =>
-			request().catch((err) => console.error("重新请求失败:", err))
-		);
-		requestsQueue = [];
+		// console.log("收到登录成功通知，重新发送队列中的请求");
+		// requestsQueue.forEach((request) =>
+		// 	request().catch((err) => console.error("重新请求失败:", err))
+		// );
+		// requestsQueue = [];
 		isRefreshing = false;
 		// 重置重试计数器
 		resetAuthRetryCount();
@@ -126,10 +126,12 @@ export const http = <T>(options: UniApp.RequestOptions) => {
 				if (val.code == 0) {
 					resolve(val);
 				} else if (val.code == 1002) {
+					console.log("登录过期，第  次重试，最大重试次数");
+					// 清空缓存
+					uniCache.clear();
 					// 检查是否超过最大重试次数
 					if (currentAuthRetryCount >= MAX_AUTH_RETRY_COUNT) {
-						showToast("登录过期次数过多，请重新登录");
-						uniCache.clear();
+						// showToast("登录过期次数过多，请重新登录");
 						// 重置重试计数器
 						resetAuthRetryCount();
 						// 清空请求队列
@@ -146,16 +148,13 @@ export const http = <T>(options: UniApp.RequestOptions) => {
 					console.log(
 						`登录过期，第 ${currentAuthRetryCount} 次重试，最大重试次数: ${MAX_AUTH_RETRY_COUNT}`
 					);
-					
+
 					// 检查是否正在登录中，避免重复登录
 					if (isLoggingIn) {
 						console.log("正在登录中，将请求加入队列等待");
 						addRequest(options).then(resolve).catch(reject);
 						return;
 					}
-
-					// 清空缓存
-					uniCache.clear();
 
 					// 抛出特定错误，让上层应用逻辑处理登录过期
 					const authError = {
@@ -168,7 +167,7 @@ export const http = <T>(options: UniApp.RequestOptions) => {
 						// 设置登录状态为true
 						setLoggingInStatus(true);
 						isRefreshing = true;
-						
+
 						onAuthErrorCallback(authError)
 							.then(() => {
 								// 登录成功，重新发送当前请求
@@ -178,7 +177,7 @@ export const http = <T>(options: UniApp.RequestOptions) => {
 								// 登录失败，重置状态
 								setLoggingInStatus(false);
 								isRefreshing = false;
-								reject(err); 
+								reject(err);
 							});
 					} else {
 						// 如果没有设置回调函数，将当前请求加入队列等待重试

@@ -10,10 +10,7 @@
 		/>
 		<div class="shop">
 			<!-- 店铺基本信息 -->
-			<view
-				class="shop-info-card z-glass-card"
-				v-if="userStore.checkShopPermission()"
-			>
+			<view class="shop-info-card z-glass-card">
 				<view class="shop-header">
 					<up-image
 						class="shop-logo"
@@ -25,7 +22,7 @@
 					></up-image>
 					<view class="shop-basic-info">
 						<text class="shop-name">{{ shopInfo.name }}</text>
-						<view class="shop-intro">
+						<view class="shop-intro ovflow2">
 							{{ shopInfo.address || "暂无地址" }}
 						</view>
 						<view class="shop-date"
@@ -78,13 +75,13 @@
 			</view>
 
 			<!-- 无权限提示 -->
-			<view v-else class="no-permission-card z-glass-card">
+			<!-- <view v-else class="no-permission-card z-glass-card">
 				<view class="no-permission-content">
 					<up-icon name="lock" size="60" color="#999"></up-icon>
 					<text class="no-permission-text">您暂无店铺管理权限</text>
 					<text class="no-permission-desc">请联系管理员开通相关权限</text>
 				</view>
-			</view>
+			</view> -->
 
 			<up-subsection
 				:list="state.list"
@@ -145,6 +142,7 @@ import {
 	getShopList,
 	getShopConfigList,
 	editShopConfig,
+	getShopDetail,
 } from "@/api/shopManage";
 import { testRoleId } from "@/consts/auth";
 import { uniCache } from "@/utils/storage";
@@ -414,11 +412,9 @@ const GetShopConfigList = async () => {
 		if (res.data?.length) {
 			// 获取上次缓存的店铺ID
 			const lastSelectedShopId = uniCache.getItem("lastSelectedShopId");
-			console.log("上次缓存的店铺ID:", lastSelectedShopId);
 
 			// 将店铺数据添加到店铺列表中
 			state.shopList = res.data || [];
-			console.log("店铺列表:", state.shopList);
 
 			// 优先选择上次缓存的店铺，如果没有缓存或店铺不存在，则选择第一个
 			let selectedShop = null;
@@ -427,19 +423,15 @@ const GetShopConfigList = async () => {
 					(shop) => shop.shopConfig?.shopId === lastSelectedShopId
 				);
 				if (selectedShop) {
-					console.log("找到上次选择的店铺:", selectedShop.shopConfig.name);
 				} else {
-					console.log("上次选择的店铺不存在，使用第一个店铺");
 					selectedShop = res.data[0];
 				}
 			} else {
-				console.log("没有缓存店铺，使用第一个店铺");
 				selectedShop = res.data[0];
 			}
 
 			// 设置当前店铺信息
 			shopInfo.value = cloneDeep(selectedShop.shopConfig) || {};
-			console.log("当前店铺信息:", shopInfo.value);
 
 			// 设置当前店铺ID
 			if (state.shopList.length > 0 && !shopInfo.value?.shopId) {
@@ -449,7 +441,6 @@ const GetShopConfigList = async () => {
 			// 设置用户权限
 			if (selectedShop.roleList && selectedShop.roleList.length > 0) {
 				userStore.setPerms({ roleList: selectedShop.roleList });
-				console.log("用户权限已更新:", selectedShop.roleList);
 			}
 		} else {
 			shopInfo.value = {};
@@ -584,9 +575,15 @@ onPullDownRefresh(async () => {
 		padding: $up-box-pd;
 		.shop-intro,
 		.shop-date {
-			color: $u-content-color;
+			color: var(--text-2);
 			font-size: $up-font-sm;
-			margin-top: 6rpx;
+		}
+
+		.shop-date {
+			margin-bottom: 10rpx;
+		}
+		.shop-intro {
+			margin: 8rpx 0;
 		}
 	}
 

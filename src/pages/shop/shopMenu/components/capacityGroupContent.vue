@@ -16,7 +16,7 @@
 					<up-input
 						v-model="state.tempCapacityGroup.size"
 						placeholder="请输入容量数字"
-						type="number"
+						type="digit"
 						class="capacity-number-input"
 					>
 						<template #suffix>
@@ -33,7 +33,7 @@
 					<up-input
 						v-model="state.tempCapacityGroup.price"
 						placeholder="请输入价格"
-						type="number"
+						type="digit"
 					/>
 				</up-form-item>
 			</up-form>
@@ -152,7 +152,7 @@ const save = async () => {
 
 		// 通过事件回传给父组件处理保存逻辑
 		emit("callback", {
-			mode: props.type === "edit" ? "edit" : "add",
+			mode: props.type,
 			data: payload,
 		});
 
@@ -167,14 +167,14 @@ const save = async () => {
 };
 
 onMounted(() => {
-	if (props.capacityGroupFormData) {
+	state.tempCapacityGroup.unit = "ml";
+	if (props.capacityGroupFormData && props.type === "edit") {
 		for (const key in state.tempCapacityGroup) {
 			if (props.capacityGroupFormData[key]) {
 				state.tempCapacityGroup[key] = props.capacityGroupFormData[key];
 			}
 		}
 	}
-	state.tempCapacityGroup.unit = "ml";
 });
 onUnmounted(() => {
 	resetForm();

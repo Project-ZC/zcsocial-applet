@@ -9,6 +9,12 @@
 			}
 		},
 		{
+			"path": "pages/index/order/order",
+			"style": {
+				"navigationBarTitleText": "店铺点单"
+			}
+		},
+		{
 			"path": "pages/shop/shop",
 			"style": {
 				"navigationBarTitleText": "店铺",
@@ -22,7 +28,7 @@
 				"enablePullDownRefresh": true
 			}
 		},
-		
+
 		{
 			"path": "pages/index/shopDetail/showDetail",
 			"style": {

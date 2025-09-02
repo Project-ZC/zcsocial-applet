@@ -8,13 +8,30 @@ page {
     -webkit-overflow-scrolling: touch;
 }
 
+// 超出几行超出部分省略号显示,默认2行
+@mixin textEllipsis($rows: 2) {
+    word-break: break-all;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: $rows; /* 这里是超出几行省略 */
+    overflow: hidden;
+}
+// 超出一行
+.ovflow1 {
+    @include textEllipsis(1);
+}
+
+// 超出两行
+.ovflow2 {
+    @include textEllipsis(2);
+}
+
 .z-modal {
     display: flex;
     flex-direction: column;
     height: 100%;
     // background-color: #fff;
-
-    
 
     .modal-header {
         padding: 0 20rpx;
@@ -158,3 +175,5 @@ page {
 // .u-upload__wrap__preview {
 //     margin: 0 !important;
 // }
+
+

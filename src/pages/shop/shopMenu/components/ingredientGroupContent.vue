@@ -22,7 +22,7 @@
 					<up-input
 						v-model.number="state.tempIngredientGroup.price"
 						placeholder="请输入小料金额"
-						type="number"
+						type="digit"
 					/>
 				</up-form-item>
 				<!-- <up-form-item label="是否默认" prop="isDefault">
@@ -132,7 +132,7 @@ const save = async () => {
 };
 
 onMounted(() => {
-	if (props.ingredientGroupFormData) {
+	if (props.ingredientGroupFormData && props.type === "edit") {
 		for (const key in state.tempIngredientGroup) {
 			if (props.ingredientGroupFormData[key]) {
 				state.tempIngredientGroup[key] = props.ingredientGroupFormData[key];

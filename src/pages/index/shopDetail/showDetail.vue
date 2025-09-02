@@ -7,10 +7,7 @@
 					<up-image
 						width="160rpx"
 						height="160rpx"
-						:src="
-							getDownloadUrl(state.shopInfo.logo) ||
-							'/static/images/default-avatar.png'
-						"
+						:src="getDownloadUrl(state.shopInfo.logo)"
 						@click="
 							previewImage({ urls: [getDownloadUrl(state.shopInfo.logo)] })
 						"
@@ -37,7 +34,7 @@
 					</view>
 					<view class="shop-location flex-row align-center">
 						<text class="location-icon">📍</text>
-						<text>{{ state.shopInfo.address }}</text>
+						<text class="ovflow2">{{ state.shopInfo.address }}</text>
 					</view>
 				</view>
 			</view>
@@ -91,13 +88,18 @@
 					<view class="album-container flex-row">
 						<view
 							class="album-item"
-							v-for="(img, index) in state.shopInfo.albums"
+							v-for="(img, index) in state.shopInfo.photo"
 							:key="index"
 							@click="
-								previewImage({ urls: state.shopInfo.albums, current: index })
+								previewImage({
+									urls: state.shopInfo.photo.map((item) =>
+										getDownloadUrl(item)
+									),
+									current: index,
+								})
 							"
 						>
-							<image :src="img" mode="aspectFill"></image>
+							<image :src="getDownloadUrl(img)" mode="aspectFill"></image>
 						</view>
 					</view>
 				</scroll-view>
@@ -117,7 +119,7 @@
 						>
 							<image
 								class="staff-avatar"
-								:src="staff.avatar"
+								:src="getDownloadUrl(staff.avatar)"
 								mode="aspectFill"
 							></image>
 							<text class="staff-name">{{ staff.name }}</text>
@@ -163,75 +165,53 @@
 </template>
 
 <script lang="ts" set>
+import { onLoad } from "@dcloudio/uni-app";
 import { reactive, onMounted } from "vue";
 import { previewImage } from "@/utils/util";
 import { getDownloadUrl } from "@/api/common/upload";
+import { getShopDetail } from "@/api/shopManage";
 
 export default {
 	options: {
 		styleIsolation: "shared",
 	},
 	setup() {
-		// 定义数据类型
-		interface Fee {
-			name: string;
-			value: string;
-		}
-
-		interface Staff {
-			avatar: string;
-			name: string;
-			role: string;
-		}
-
-		interface ShopInfo {
-			logo: string;
-			name: string;
-			ownerAvatar: string;
-			ownerName: string;
-			openTime: string;
-			closeTime: string;
-			address: string;
-			tags: string[];
-			fees: Fee[];
-			albums: string[];
-			staffs: Staff[];
-		}
-
-		interface State {
-			shopId: string;
-			isApplied: boolean;
-			isOwner: boolean;
-			shopInfo: ShopInfo;
-		}
-
 		// 统一状态管理
-		const state = reactive<State>({
+		const state = reactive({
 			shopId: "",
 			isApplied: false,
 			isOwner: false, // 是否是店长
 			shopInfo: {
-				logo: "/static/images/default-avatar.png",
-				name: "醉美酒吧",
-				ownerAvatar: "/static/images/default-avatar.png",
+				logo: "",
+				name: "",
+				openTime: "",
+				closeTime: "",
+				address: "",
+				phone: "",
+				tags: [],
+				photo: [],
+				state: "",
+				shopId: "",
+				provinceId: "",
+				cityId: "",
+				distinctId: "",
+				latitude: "",
+				longitude: "",
+				ownerAvatar: "",
 				ownerName: "张店长",
-				openTime: "18:00",
-				closeTime: "02:00",
-				address: "北京市朝阳区三里屯SOHO 3号楼2层",
-				tags: ["静吧", "精致", "鸡尾酒", "情调", "约会"],
 				fees: [
 					{ name: "入场费", value: "¥0" },
 					{ name: "最低消费", value: "¥100/人" },
 					{ name: "包厢", value: "¥1000起/间" },
 					{ name: "活动报名", value: "免费畅饮" },
 				],
-				albums: [
-					"/static/images/default-avatar.png",
-					"/static/images/default-avatar.png",
-					"/static/images/default-avatar.png",
-					"/static/images/default-avatar.png",
-					"/static/images/default-avatar.png",
-				],
+				// albums: [
+				// 	"/static/images/default-avatar.png",
+				// 	"/static/images/default-avatar.png",
+				// 	"/static/images/default-avatar.png",
+				// 	"/static/images/default-avatar.png",
+				// 	"/static/images/default-avatar.png",
+				// ],
 				staffs: [
 					{
 						avatar: "/static/images/default-avatar.png",
@@ -257,11 +237,17 @@ export default {
 			},
 		});
 
-		// 获取店铺详情
-		const fetchShopDetail = () => {
-			// 实际项目中这里需要调用接口获取店铺详情
-			console.log("获取店铺详情, ID:", state.shopId);
-			// 使用模拟数据
+		const GtShopDetail = () => {
+			getShopDetail({
+				id: state.shopId,
+			}).then((res) => {
+				let data = res.data?.config || {};
+				for (const key in state.shopInfo) {
+					if (data[key]) {
+						state.shopInfo[key] = data[key];
+					}
+				}
+			});
 		};
 
 		// 检查报名状态
@@ -281,7 +267,7 @@ export default {
 		// 前往店铺点单
 		const goToDrinkMenu = () => {
 			uni.navigateTo({
-				url: "/pages/zero/drink-menu?shopId=" + state.shopId,
+				url: "/pages/index/order/order?shopId=" + state.shopId,
 			});
 		};
 
@@ -351,19 +337,17 @@ export default {
 			checkIsOwner();
 		});
 
-		// uni-app页面生命周期钩子
-		const onLoad = (options: any) => {
+		onLoad((options) => {
 			// 获取店铺ID
-			if (options && options.id) {
-				state.shopId = options.id;
-				fetchShopDetail();
+			if (options && options.shopId) {
+				state.shopId = options.shopId;
+				GtShopDetail();
 			}
-		};
+		});
 
 		return {
 			state,
-			onLoad,
-			fetchShopDetail,
+			GtShopDetail,
 			checkApplyStatus,
 			checkIsOwner,
 			goToDrinkMenu,
@@ -493,7 +477,7 @@ export default {
 }
 
 .album-item {
-	width: 240rpx;
+	width: 200rpx;
 	height: 160rpx;
 	border-radius: 16rpx;
 	overflow: hidden;
