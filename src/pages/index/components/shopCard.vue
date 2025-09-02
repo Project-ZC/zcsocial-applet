@@ -74,12 +74,12 @@ defineOptions({
 	padding: 5rpx;
 	box-sizing: border-box;
 	.shop-card {
-		padding: 20rpx;
+		padding: $up-box-pd;
 		box-sizing: border-box;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin-bottom: 20rpx;
+		margin-bottom: $up-box-mg;
 		transition: all 0.3s ease;
 
 		&:active {

@@ -220,15 +220,16 @@ onPullDownRefresh(async () => {
 </script>
 
 <style lang="scss" scoped>
+@import "@/uni.scss";
 .content {
 	padding: $up-box-pd;
+	color: var(--text-1);
 	.scan-box {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 		box-sizing: border-box;
-		margin: 12px 0;
 		padding: $up-box-pd;
 		transition: all 0.3s ease;
 
@@ -240,14 +241,16 @@ onPullDownRefresh(async () => {
 			font-weight: bold;
 			margin-top: 16rpx;
 			font-size: 32rpx;
-			color: #333;
+			color: var(--text-1);
 		}
 	}
 	.title {
-		padding: 0 20rpx;
+		padding: 0;
 		box-sizing: border-box;
 		font-size: 34rpx;
 		font-weight: bold;
+		color: var(--text-1);
+		margin: $up-box-mg 0 6rpx;
 	}
 	.shop-list {
 		// padding: 20rpx;
