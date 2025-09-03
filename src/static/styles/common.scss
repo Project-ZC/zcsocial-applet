@@ -177,3 +177,31 @@ page {
 // }
 
 
+
+
+// 购物车选择效果
+/* 容量、加料、冰度、甜度等选项样式 */
+.z-cart-item {
+	.u-radio__icon-wrap,.u-checkbox__icon-wrap {
+		display: none!important;
+	}
+    .u-radio__label-wrap,.u-checkbox__label-wrap {
+        background: #ffffff;
+        padding: 6rpx 20rpx;
+        border-radius: 8rpx;
+        border: 2rpx solid #e0e0e0;
+        transition: all 0.3s;
+    }
+
+    &.z-cart-item--checked .u-radio__label-wrap,
+    &.z-cart-item--checked .u-checkbox__label-wrap {
+        background: var(--primary-6) !important;
+        border-color: var(--primary-6)!important;
+
+        text{
+            color: #fff!important;
+
+        }
+    }
+
+}
