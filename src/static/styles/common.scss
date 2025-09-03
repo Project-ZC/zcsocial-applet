@@ -73,10 +73,10 @@ page {
     }
 
     .modal-body {
-        padding: 20rpx;
+        padding: 20rpx 20rpx 40rpx; 
         // max-height: 800rpx;
         max-height: 70vh;
-        margin-bottom: 20rpx;
+        // margin-bottom: 20rpx;
         // background: var(--bg-1);
         // flex: 1;
         // overflow-y: auto; // 增加了 scroll-view会卡顿
