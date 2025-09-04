@@ -16,13 +16,13 @@
 
       <!-- 商品分类与列表 -->
       <vertical-tabs
+        v-if="state.isLoaded"
         v-model="state.activeTab"
         :tabs="state.tabs"
         :active-color="state.activeColor"
         :inactive-color="state.inactiveColor"
         :indicator-color="state.indicatorColor"
         height="calc(100vh - 200rpx)"
-        :activeTab="state.activeTab"
         @click="handleCategoryClick"
         @openAddToCart="openAddToCart"
         :isEdit="false"
@@ -60,7 +60,7 @@
         </view>
         <!-- <up-input v-model="cart.remark" placeholder="输入订单备注" clearable style="flex: 1" /> -->
         <up-button type="primary" shape="circle" :disabled="cart.items.length === 0" @click="checkout">
-          结算 ¥ {{ formatPrice(cart.totalPrice) }}
+          结算 ¥ {{ cart.totalPrice }}
         </up-button>
       </view>
     </template>
@@ -128,10 +128,10 @@
                 v-for="ing in state.currentProduct.productIngredients"
                 :key="ing.id"
                 :label="ing.name"
-                :name="ing.name"
+                :name="ing.id"
                 class="z-cart-item"
                 :class="{
-                  'z-cart-item--checked': form.ingredientsSelected.includes(ing.name),
+                  'z-cart-item--checked': form.ingredientsSelected.includes(ing.id),
                 }"
               />
             </up-checkbox-group>
@@ -142,7 +142,8 @@
 
       <view class="modal-footer" style="flex-direction: column; gap: 10rpx; height: 160rpx">
         <view class="sku-block row">
-          <text class="label">总价：¥{{ formatPrice(calculateTotalPrice()) }}</text>
+          <!-- <text class="label">总价：¥{{ formatPrice(calculateTotalPrice()) }}</text> -->
+          <text class="label">价格：¥{{ form.price }}</text>
           <up-number-box v-model="form.quantity" min="1" integer />
         </view>
         <up-button type="primary" shape="circle" class="submit-btn" @click="confirmAddToCart">加入购物车</up-button>
@@ -164,19 +165,20 @@
       <view v-if="cart.items.length === 0" class="cart-empty">购物车为空</view>
       <scroll-view v-else :scroll-y="true" style="max-height: 50vh">
         <view class="modal-body">
-          <view v-for="(ci, cidx) in cart.items" :key="ci.uid" class="cart-item">
+          <view v-for="(ci, cidx) in cart.items" :key="ci.id" class="cart-item">
             <up-image width="120rpx" height="120rpx" :src="getDownloadUrl(ci.photo)" />
             <view class="cart-item-main">
               <text class="name">{{ ci.name }}</text>
-              <text class="desc">
-                {{ ci.skuLabel }}
-                <span v-if="ci.optionsSummary">/ {{ ci.optionsSummary }}</span>
-                <span v-if="ci.ingredientsSummary">/ {{ ci.ingredientsSummary }}</span>
-              </text>
-              <text class="z-tips">{{ ci.optionsSummary }}</text>
+              <view class="desc">
+                <text class="z-tips">{{ ci.skuLabel }}</text>
+              </view>
+              <view class="desc">
+                <text class="z-tips" v-if="ci.optionsSummary">{{ ci.optionsSummary }}</text>
+                <text class="z-tips" v-if="ci.ingredientsSummary">/ {{ ci.ingredientsSummary }}</text>
+              </view>
               <view class="cart-item-bottom">
-                <text class="price">¥{{ formatPrice(ci.unitPrice) }}</text>
-
+                <!-- <text class="price">¥{{ formatPrice(ci.unitPrice) }}</text> -->
+                <text class="price">¥{{ ci.unitPrice }}</text>
                 <up-number-box v-model="ci.quantity" :min="0" integer @change="onCartItemQtyChange($event, ci, cidx)" />
                 <!-- <view class="quantity-controls">
 									<up-button
@@ -208,7 +210,7 @@
       <view class="modal-footer">
         <view class="footer-total">
           <view class="total-label">合计</view>
-          <view class="total-price">¥ {{ formatPrice(cart.totalPrice) }}</view>
+          <view class="total-price">¥ {{ cart.totalPrice }}</view>
         </view>
         <up-button type="primary" shape="circle" @click="checkout" :disabled="cart.items.length === 0">
           去结算
@@ -235,9 +237,10 @@ import VerticalTabs from '@/components/vertical-tabs/index.vue';
 import { getDownloadUrl } from '@/api/common/upload';
 import { getProductCatalogAll, getProductList } from '@/api/product';
 import { add, multiply, sum, calculateItemTotal, calculateCartTotal, formatPrice } from '@/utils/price';
-
+import { addCart, getCart, modifyCart, removeCart } from '@/api/cart';
 // 页面状态
 const state = reactive({
+  isLoaded: false,
   shopId: '',
   activeTab: 0 as any,
   currentMainType: 'all',
@@ -272,13 +275,14 @@ const cart = reactive({
   get totalCount() {
     return this.items.reduce((s, it) => s + Number(it.quantity || 0), 0);
   },
-  get totalPrice() {
-    // 使用 Decimal.js 进行精确计算
-    return this.items.reduce((sum: number, it) => {
-      const itemTotal = calculateItemTotal(it.unitPrice || 0, it.quantity || 1);
-      return sum + itemTotal;
-    }, 0);
-  },
+  totalPrice: 0 as any,
+  // get totalPrice() {
+  //   // 使用 Decimal.js 进行精确计算
+  //   return this.items.reduce((sum: number, it) => {
+  //     const itemTotal = calculateItemTotal(it.unitPrice || 0, it.quantity || 1);
+  //     return sum + itemTotal;
+  //   }, 0);
+  // },
 });
 
 // 表单
@@ -287,18 +291,39 @@ const form = reactive({
   optionsSelected: {} as Record<string, string>,
   ingredientsSelected: [] as string[],
   quantity: 1,
+  // 展示用：仅产品价格（不含加料/数量）
+  price: 0 as any,
 });
+
+// 防抖定时器
+let switchTimer: any = null;
 
 // 顶部主类切换
 const handleMainTabClick = (tab: any) => {
-  state.currentMainType = tab.type;
-  if (tab.type === 'diy') {
-    const allTabs = state.tabs as any[];
-    state.tabs = allTabs.filter(t => t.parentMain === 'diy');
-    state.activeTab = 0;
-  } else {
-    GetCategoryList();
+  // 清除之前的定时器
+  if (switchTimer) {
+    clearTimeout(switchTimer);
   }
+
+  state.currentMainType = tab.type;
+  state.activeTab = 0;
+
+  // 使用防抖避免快速切换
+  switchTimer = setTimeout(() => {
+    if (tab.type === 'diy') {
+      // 过滤显示 DIY 分类，保持引用不变
+      const diyTabs = state.tabs.filter(t => t.parentMain === 'diy');
+      if (diyTabs.length > 0) {
+        // 使用 splice 清空并添加新数据，保持数组引用
+        state.tabs.splice(0, state.tabs.length, ...diyTabs);
+      } else {
+        state.tabs.splice(0, state.tabs.length);
+      }
+    } else {
+      // 切换回常规点单，重新获取数据
+      GetCategoryList();
+    }
+  }, 100); // 100ms 防抖
 };
 
 // 点击分类
@@ -310,25 +335,29 @@ const handleCategoryClick = (event: { index: number; tab: any }) => {
 
 // 商品接口
 const GetCategoryList = () => {
+  state.isLoaded = false;
   getProductCatalogAll({ shopId: state.shopId }).then(async res => {
-    if (res.data && Array.isArray(res.data)) {
-      state.tabs = res.data.map((item: any) => ({
-        id: item.id,
-        name: item.name,
-        parentMain: item.parentMain || 'all',
-        sort: item.sort || 0,
-        status: item.status,
-        shopId: item.shopId,
-        createTime: item.createTime,
-        modifyTime: item.modifyTime,
-        children: [],
-        hasLoaded: false,
-      }));
-      state.tabs.sort((a: any, b: any) => (a.sort || 0) - (b.sort || 0));
-      await getAllProductsForCategories();
-    } else {
-      state.tabs = [];
-    }
+    const data = res.data || [];
+    const newTabs = data.map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      parentMain: item.parentMain || 'all',
+      sort: item.sort || 0,
+      status: item.status,
+      shopId: item.shopId,
+      createTime: item.createTime,
+      modifyTime: item.modifyTime,
+      children: [],
+      hasLoaded: false,
+    }));
+
+    // 按 sort 字段排序
+    newTabs.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+    // 使用 splice 保持数组引用，避免组件重新渲染
+    // state.tabs.splice(0, state.tabs.length, ...newTabs);
+    state.tabs = [...newTabs];
+
+    await getAllProductsForCategories();
   });
 };
 
@@ -336,23 +365,21 @@ const getAllProductsForCategories = async () => {
   try {
     await Promise.all(
       state.tabs.map(async (tab: any) => {
-        await GetProductList(tab.id);
+        await GetProductList(tab);
       })
     );
+    state.isLoaded = true;
   } catch (error) {}
 };
 
-const GetProductList = async (catalogId: string) => {
+const GetProductList = async (tab: any) => {
   try {
-    const params = { shopId: state.shopId, catalogId } as any;
+    const params = { shopId: state.shopId, catalogId: tab.id } as any;
     const res = await getProductList(params);
-    if (res.data && Array.isArray(res.data)) {
-      const products = res.data || [];
-      const targetTab = state.tabs.find((t: any) => t.id == catalogId);
-      if (targetTab) {
-        targetTab.children = products;
-        targetTab.hasLoaded = true;
-      }
+    const products = res?.data || [];
+    if (tab) {
+      tab.children = [...products];
+      tab.hasLoaded = true;
     }
   } catch (error) {}
 };
@@ -392,6 +419,14 @@ const openAddToCart = (item: any) => {
     console.log('openAddToCart - no SKU, selectedSkuId:', form.selectedSkuId);
   }
 
+  // 仅展示产品价格：优先选中SKU价格，否则商品基础价
+  try {
+    const sku = (item.productSkus || []).find((s: any) => s.id === form.selectedSkuId);
+    form.price = sku?.price ?? item.price ?? 0;
+  } catch (e) {
+    form.price = item?.price ?? 0;
+  }
+
   form.optionsSelected = {};
   if (item?.productOptions) {
     Object.keys(item.productOptions).forEach(key => {
@@ -405,10 +440,25 @@ const openAddToCart = (item: any) => {
 const closeAddToCart = () => {
   state.addToCartShow = false;
 };
-const onCartItemQtyChange = (qty: number, ci: any, cidx: number) => {
-  if (qty.value <= 0) {
-    cart.items.splice(cidx, 1);
-    return;
+
+// 购物车加减处理
+const onCartItemQtyChange = async (qty: number, ci: any, cidx: number) => {
+  // console.log(ci, 11);
+  // / 保存修改前的数量，用于回滚
+  const originalQty = ci.quantity;
+  // if (qty.value <= 0) {
+  //   cart.items.splice(cidx, 1);
+  //   return;
+  // }
+  try {
+    await modifyCart({
+      id: ci.id,
+      number: qty.value,
+    });
+    GetCart();
+  } catch (error) {
+    // 回滚数量到修改前的值
+    ci.quantity = originalQty;
   }
 };
 
@@ -427,7 +477,7 @@ const clearCart = () => {
   });
 };
 
-const confirmAddToCart = () => {
+const confirmAddToCart = async () => {
   if (!state.currentProduct) return;
 
   // 验证是否选择了SKU（如果商品有SKU的话）
@@ -438,79 +488,135 @@ const confirmAddToCart = () => {
 
   const product = state.currentProduct;
   const sku = (product.productSkus || []).find((s: any) => s.id === form.selectedSkuId);
-  const skuLabel = sku ? `${sku.size}${sku.unit}` : '默认规格';
-  const optionsSummary = Object.keys(form.optionsSelected || {})
-    .map(k => `${k}:${form.optionsSelected[k]}`)
-    .join('/');
-  const chosenIngredients = (product.productIngredients || []).filter((ing: any) =>
-    form.ingredientsSelected?.includes(ing.id)
-  );
-  const ingredientsSummary = chosenIngredients.map((x: any) => x.name).join('/');
+  // const skuLabel = sku ? `${sku.size}${sku.unit}` : '默认规格';
+  // const optionsSummary = Object.keys(form.optionsSelected || {})
+  //   .map(k => `${k}:${form.optionsSelected[k]}`)
+  //   .join('/');
+  // const chosenIngredients = (product.productIngredients || []).filter((ing: any) =>
+  //   form.ingredientsSelected?.includes(ing.id)
+  // );
+  // const ingredientsSummary = chosenIngredients.map((x: any) => x.name).join('/');
 
   // 检查购物车中是否已有相同配置的商品
-  const existingItemIndex = cart.items.findIndex(item => {
-    // 检查商品ID、SKU ID、选项和加料是否完全一致
-    if (item.productId !== product.id || item.skuId !== sku?.id) {
-      return false;
+  // const existingItemIndex = cart.items.findIndex(item => {
+  //   // 检查商品ID、SKU ID、选项和加料是否完全一致
+  //   if (item.productId !== product.id || item.skuId !== sku?.id) {
+  //     return false;
+  //   }
+
+  //   // 检查选项是否一致（使用JSON.stringify比较对象）
+  //   const itemOptionsStr = JSON.stringify(item.options || {});
+  //   const formOptionsStr = JSON.stringify(form.optionsSelected || {});
+  //   if (itemOptionsStr !== formOptionsStr) {
+  //     return false;
+  //   }
+
+  //   // 检查加料是否一致（比较排序后的ID数组）
+  //   const itemIngredientsIds = (item.ingredients || [])
+  //     .map((ing: any) => ing.id)
+  //     .sort()
+  //     .join(',');
+  //   const formIngredientsIds = form.ingredientsSelected
+  //     .map(id => Number(id))
+  //     .sort()
+  //     .join(',');
+
+  //   if (itemIngredientsIds !== formIngredientsIds) {
+  //     return false;
+  //   }
+
+  //   return true;
+  // });
+
+  // if (existingItemIndex !== -1) {
+  //   // 如果找到相同配置的商品，数量+1
+  //   cart.items[existingItemIndex].quantity += form.quantity;
+  //   state.addToCartShow = false;
+  //   uni.showToast({ title: '已更新购物车数量', icon: 'success' });
+  //   return;
+  // }
+
+  // 本地价格计算（展示）
+  // const extraPrice = chosenIngredients.reduce((sum: number, it: any) => sum + it.price, 0);
+  // const basePrice = sku?.price || product.price || 0;
+  // const unitPrice = calculateItemTotal(basePrice, 1) + extraPrice;
+
+  // 调用后端加入购物车
+  try {
+    // 将所选“冰度/甜度等”从名称映射为对应的选项ID
+    const selectedOptionIds: number[] = [];
+    if (product.productOptions && form.optionsSelected) {
+      Object.keys(form.optionsSelected).forEach(k => {
+        const selectedValue = form.optionsSelected[k];
+        const opts = (product.productOptions as any)[k] || [];
+        const hit = opts.find((o: any) => o.value === selectedValue);
+        if (hit && hit.id != null) selectedOptionIds.push(hit.id);
+      });
     }
+    console.log(form.ingredientsSelected, 24);
+    const payload = {
+      number: form.quantity,
+      productId: product.id,
+      productSkuId: sku?.id ?? null,
+      catalogId: product.catalogId ?? undefined,
+      stage: 'up',
+      shopId: state.shopId,
+      name: product.name,
+      productOptionIdList: selectedOptionIds,
+      productIngredientIdList: form.ingredientsSelected,
+      // tableNo: state.currentTableNo || undefined,
+    } as any;
 
-    // 检查选项是否一致（使用JSON.stringify比较对象）
-    const itemOptionsStr = JSON.stringify(item.options || {});
-    const formOptionsStr = JSON.stringify(form.optionsSelected || {});
-    if (itemOptionsStr !== formOptionsStr) {
-      return false;
-    }
+    await addCart(payload);
 
-    // 检查加料是否一致（比较排序后的ID数组）
-    const itemIngredientsIds = (item.ingredients || [])
-      .map((ing: any) => ing.id)
-      .sort()
-      .join(',');
-    const formIngredientsIds = form.ingredientsSelected
-      .map(id => Number(id))
-      .sort()
-      .join(',');
-
-    if (itemIngredientsIds !== formIngredientsIds) {
-      return false;
-    }
-
-    return true;
-  });
-
-  if (existingItemIndex !== -1) {
-    // 如果找到相同配置的商品，数量+1
-    cart.items[existingItemIndex].quantity += form.quantity;
+    // 同步到本地购物车（保持原展示）
+    // const cartItem = {
+    //   productId: product.id,
+    //   name: product.name,
+    //   photo: product.photo,
+    //   skuId: sku?.id,
+    //   skuLabel,
+    //   options: { ...form.optionsSelected },
+    //   optionsSummary,
+    //   ingredients: chosenIngredients.map((x: any) => ({ id: x.id, name: x.name, price: x.price })),
+    //   ingredientsSummary,
+    //   unitPrice,
+    //   quantity: form.quantity,
+    // };
+    // cart.items.push(cartItem);
+    await GetCart();
     state.addToCartShow = false;
-    uni.showToast({ title: '已更新购物车数量', icon: 'success' });
-    return;
+    uni.showToast({ title: '已加入购物车', icon: '' });
+  } catch (error: any) {
+    console.log(error, 555);
   }
+};
 
-  // 使用 Decimal.js 进行精确计算
-  const extraPrice = chosenIngredients.reduce((sum: number, it: any) => sum + it.price, 0);
-  const basePrice = sku?.price || product.price || 0;
-  const unitPrice = calculateItemTotal(basePrice, 1) + extraPrice;
-  const cartItem = {
-    uid: `${product.id}-${sku?.id || 'na'}-${Date.now()}`,
-    productId: product.id,
-    name: product.name,
-    photo: product.photo,
-    skuId: sku?.id,
-    skuLabel,
-    options: { ...form.optionsSelected },
-    optionsSummary,
-    ingredients: chosenIngredients.map((x: any) => ({
-      id: x.id,
-      name: x.name,
-      price: x.price,
-    })),
-    ingredientsSummary,
-    unitPrice,
-    quantity: form.quantity,
-  };
-  cart.items.push(cartItem);
-  state.addToCartShow = false;
-  uni.showToast({ title: '已加入购物车', icon: 'success' });
+// 查询购物车
+const GetCart = async () => {
+  let res = await getCart({ shopId: state.shopId });
+  // 根据接口数据刷新本地购物车
+  // 期望结构见注释：data.totalPrice, data.userCarts: [{ id, userId, shopId, productId, productName, productSkuId, productSkuName, productOptionIdList, productOptionNameList, productIngredientIdList, productIngredientNameList, number, price, ... }]
+  const carts = (res?.data?.userCarts || []) as any[];
+  cart.items = carts.map((it: any) => ({
+    id: it.id,
+    productId: it.productId,
+    name: it.productName,
+    photo: it.photo || it.productPhoto || '',
+    skuId: it.productSkuId,
+    skuLabel: it.productSkuName,
+    optionsSummary: Array.isArray(it.productOptionNameList) ? it.productOptionNameList.join('/') : '',
+    ingredients: Array.isArray(it.productIngredientIdList)
+      ? it.productIngredientIdList.map((id: number, idx: number) => ({
+          id,
+          name: (it.productIngredientNameList || [])[idx],
+        }))
+      : [],
+    ingredientsSummary: Array.isArray(it.productIngredientNameList) ? it.productIngredientNameList.join('/') : '',
+    unitPrice: it.price || 0,
+    quantity: it.number || 1,
+  }));
+  cart.totalPrice = res?.data?.totalPrice || 0;
 };
 
 // 结算
@@ -523,19 +629,19 @@ const checkout = () => {
     uni.showToast({ title: '购物车为空', icon: 'none' });
     return;
   }
-  console.log('下单参数', {
-    shopId: state.shopId,
-    tableNo: state.currentTableNo,
-    remark: cart.remark,
-    items: cart.items.map(x => ({
-      productId: x.productId,
-      skuId: x.skuId,
-      quantity: x.quantity,
-      options: x.options,
-      ingredients: x.ingredients,
-    })),
-    totalAmount: cart.totalPrice,
-  });
+  // console.log('下单参数', {
+  //   shopId: state.shopId,
+  //   tableNo: state.currentTableNo,
+  //   remark: cart.remark,
+  //   items: cart.items.map(x => ({
+  //     productId: x.productId,
+  //     skuId: x.skuId,
+  //     quantity: x.quantity,
+  //     options: x.options,
+  //     ingredients: x.ingredients,
+  //   })),
+  //   totalAmount: cart.totalPrice,
+  // });
   uni.showToast({ title: '下单成功（示例）', icon: 'success' });
   state.cartPopupShow = false;
   cart.items = [];
@@ -562,8 +668,10 @@ const calculateTotalPrice = () => {
 
 // 生命周期
 onLoad(options => {
-  state.shopId = options.shopId || '10000008';
+  // state.shopId = options.shopId || '10000008';
+  state.shopId = options.shopId;
   GetCategoryList();
+  GetCart();
 });
 
 defineOptions({
