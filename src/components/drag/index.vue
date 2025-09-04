@@ -1,36 +1,45 @@
 <template>
-	<view
+	<movable-area
 		class="drag-container"
 		v-if="state.controlsPositionArray.length !== 0"
 		:style="{
 			height:
-				state.controlsSize.height * state.controlsPositionArray.length +
-				state.margin.margin_y * 2 +
+				state.height * state.controlsPositionArray.length +
+				state.margin.margin_y * state.controlsPositionArray.length +
 				'px',
 		}"
 	>
-		<view
+		<movable-view
 			v-for="(item, index) in state.controlsArray"
 			:key="index"
 			class="drag-container-item"
+			:class="{
+				'drag-container-item--dragging':
+					state.isDragging && state.curretnControlsIndex === index,
+			}"
 			:style="{
+				padding: state.margin.margin_y + 'px' + ' 0',
 				transition:
 					state.curretnControlsIndex === index
 						? 'initial'
 						: `${state.animationDuration}s`,
 				'z-index': state.curretnControlsIndex === index ? 1 : 0,
-				height: state.controlsSize.height + 'px',
+				height: state.height + 'px',
 				top: state.controlsPositionArray[index].top + 'px',
-				left: state.controlsPositionArray[index].left + 'px',
+				left:
+					props.axis === 'y'
+						? 0 + 'px'
+						: state.controlsPositionArray[index].left + 'px',
 			}"
 			@touchstart="handleTouchstart($event, index)"
 			@touchmove="handleTouchmove"
 			@touchend="handleTouchend"
+			@longpress="handleLongpress($event, index)"
 		>
 			<!-- 自定义内容 -->
-			<slot :item="item" :index="index"></slot>
-		</view>
-	</view>
+			<slot :moveItem="item" :moveIndex="index"></slot>
+		</movable-view>
+	</movable-area>
 </template>
 
 <script setup lang="ts">
@@ -38,23 +47,28 @@ import { reactive, onMounted } from "vue";
 
 // 定义 props
 interface Props {
-	controlsSize?: {
-		height: number;
-	};
+	height: number;
 	list?: any[];
 	animationDuration?: number;
+	axis?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-	controlsSize: () => ({
-		height: 40,
-	}),
+	height: 40,
 	list: () => [],
-	animationDuration: 0.3,
+	animationDuration: 0.2,
+	axis: "y",
 });
+
+// 定义事件
+const emit = defineEmits<{
+	"update:list": [list: any[]];
+	"sort-change": [newList: any[], oldIndex: number, newIndex: number];
+}>();
 
 // 将所有数据放入 state 对象中管理
 const state = reactive({
+	isDragging: false, //是否可以开始拖动
 	// 控件列表
 	controlsArray: [] as any[],
 	// 每行最大存放的个数
@@ -80,7 +94,7 @@ const state = reactive({
 	// 系统信息
 	systemInfo: {} as any,
 	// 控件大小
-	controlsSize: props.controlsSize,
+	height: props.height,
 	// 动画时长
 	animationDuration: props.animationDuration,
 });
@@ -104,9 +118,7 @@ const initControlsPosition = () => {
 	for (let i = 0, j = 0; i < props.list.length; i++, j++) {
 		tempArray[i] = {
 			left: state.margin.margin_x,
-			top:
-				j * (state.controlsSize.height + state.margin.margin_y) +
-				state.margin.margin_y,
+			top: j * (state.height + state.margin.margin_y) + state.margin.margin_y,
 		};
 	}
 
@@ -117,6 +129,7 @@ const initControlsPosition = () => {
 };
 
 const handleTouchmove = (event: any) => {
+	if (!state.isDragging) return;
 	const { pageX, pageY } = event.touches[0];
 
 	// 获取移动的差
@@ -173,11 +186,16 @@ const handleTouchend = () => {
 	state.controlsPositionArray[state.curretnControlsIndex] =
 		state.recordInitControlsPoisitonList[state.curretnControlsIndex];
 	state.curretnControlsIndex = -1;
+	state.isDragging = false;
 };
 
 const _handleChangeControlsPosition = (type: number, index: number) => {
 	// 记录当前操控的控件数据
 	let tempControls = state.controlsArray[state.curretnControlsIndex];
+
+	// 记录原始索引，用于事件触发
+	const oldIndex = state.curretnControlsIndex;
+	const newIndex = index;
 
 	// 设置原来位置的数据
 	state.controlsArray[state.curretnControlsIndex] = state.controlsArray[index];
@@ -196,6 +214,14 @@ const _handleChangeControlsPosition = (type: number, index: number) => {
 	// 记录新位置的数据
 	state.recordControlsPositionItem =
 		state.recordInitControlsPoisitonList[state.curretnControlsIndex];
+
+	// 触发事件，通知父组件排序已改变
+	emit("update:list", [...state.controlsArray]);
+	emit("sort-change", [...state.controlsArray], oldIndex, newIndex);
+};
+
+const handleLongpress = (event: any, index: number) => {
+	state.isDragging = true;
 };
 
 defineOptions({
@@ -210,11 +236,16 @@ defineOptions({
 	position: relative;
 	width: 100%;
 	height: 100%;
+	box-sizing: border-box;
 
 	&-item {
 		width: 100%;
 		height: 100%;
 		position: absolute;
+		box-sizing: border-box;
+		&--dragging {
+			opacity: 0.5;
+		}
 	}
 }
 </style>

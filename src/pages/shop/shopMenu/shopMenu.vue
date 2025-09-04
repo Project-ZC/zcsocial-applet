@@ -1,12 +1,19 @@
 <template>
 	<pageWrapper :safeArea="0">
-		<view>
-			<!-- DIY酒料空状态 -->
-			<!-- <view class="empty-state" v-else-if="state.diyTypes.length === 0">
+		<!-- <drag v-model:list="state.list" :height="32">
+			<template #default="{ item, index }">
+				<view>
+					<text>{{ item.label }}</text>
+				</view>
+			</template>
+		</drag> -->
+		<!-- DIY酒料空状态 -->
+		<!-- <view class="empty-state" v-else-if="state.diyTypes.length === 0">
 			<image src="/static/images/empty-category.png" mode="aspectFit"></image>
 			<text>还没有创建DIY酒料分类</text>
 			<up-button class="add-category-btn" @click="openAddDiyTypeModal">创建酒料分类</up-button>
 		</view> -->
+		<view>
 			<vertical-tabs
 				v-model="state.activeTab"
 				:tabs="state.tabs"
@@ -22,7 +29,7 @@
 				@openAddCategoryModal="openAddCategoryModal"
 				@click="handleCategoryClick"
 				:currentMainType="state.currentMainType"
-				@swipeClick="deleteGoods"
+				@swipeClick="swipeClick"
 			>
 				<template #tabs>
 					<view class="main-tabs-bar">
@@ -78,16 +85,8 @@
 						</view>
 					</view>
 				</template>
-				<template #actions="{ item, index }">
-					<up-button
-						type="primary"
-						size="mini"
-						@click="editGoods(item, index)"
-						class="action-btn"
-						>编辑</up-button
-					>
-					<!-- <up-button type="error" size="mini" @click="deleteGoods(item, index)" class="action-btn">删除</up-button> -->
-					<up-button
+				<!-- <template #actions="{ item, index }"> -->
+				<!-- <up-button
 						type="success"
 						size="mini"
 						@click="upGoods(item, index)"
@@ -100,8 +99,8 @@
 						@click="downGoods(item, index)"
 						class="action-btn"
 						>下移</up-button
-					>
-				</template>
+					> -->
+				<!-- </template> -->
 			</vertical-tabs>
 		</view>
 
@@ -169,6 +168,7 @@ import VerticalTabs from "@/components/vertical-tabs/index.vue";
 import categoryContent from "./components/categoryContent.vue";
 import productContent from "./components/productContent.vue";
 import diyProductContent from "./components/diyProductContent.vue";
+import drag from "@/components/drag/index.vue";
 
 import {
 	getProductCatalogAll,
@@ -186,10 +186,6 @@ const state = reactive({
 		{ id: 2, label: "项目 B" },
 		{ id: 3, label: "项目 C" },
 		{ id: 4, label: "项目 D" },
-		{ id: 5, label: "项目 E" },
-		{ id: 6, label: "项目 F" },
-		{ id: 7, label: "项目 G" },
-		{ id: 8, label: "项目 H" },
 	],
 	activeTab: 0 as any,
 	currentMainType: "all",
@@ -230,6 +226,33 @@ const state = reactive({
 	productFormData: {} as any,
 	categoryFormData: {} as any,
 });
+
+// 处理排序变化
+const onSortChange = (newList, oldIndex, newIndex) => {
+	console.log("排序变化:", {
+		原位置: oldIndex,
+		新位置: newIndex,
+		新列表: newList,
+	});
+
+	uni.showToast({
+		title: "排序已更新",
+		icon: "success",
+	});
+};
+
+const swipeClick = (e: any, item: any, index: number) => {
+	switch (e.index) {
+		case 0:
+			editGoods(item, index);
+			break;
+		case 1:
+			deleteGoods(item, index);
+			break;
+		default:
+			break;
+	}
+};
 
 const handleTabLongpress = (index, tab) => {
 	console.log("longpress", index, tab);

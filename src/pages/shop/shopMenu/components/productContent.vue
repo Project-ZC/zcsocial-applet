@@ -64,32 +64,37 @@
 							>
 								<drag-container
 									:list="state.form.productSkus"
-									:controlsSize="{ height: 32 }"
+									:height="32"
+									@sort-change="handleCapacityGroupSortChange"
 								>
-									<template #default="{ item, index }">
+									<template #default="{ moveItem, moveIndex }">
 										<view
 											class="capacity-group-item"
-											@click.stop="openAddCapacityGroupModal(item, index)"
+											@click.stop="
+												openAddCapacityGroupModal(moveItem, moveIndex)
+											"
 										>
 											<view class="capacity-group-info">
 												<view class="capacity-main-info">
 													<text class="capacity-name">{{
-														item.size + item.unit
+														moveItem.size + moveItem.unit
 													}}</text>
-													<text class="capacity-price">¥{{ item.price }}</text>
+													<text class="capacity-price"
+														>¥{{ moveItem.price }}</text
+													>
 												</view>
 												<view class="capacity-default-info">
-													<text v-if="item.isDefault" class="default-badge"
+													<text v-if="moveItem.isDefault" class="default-badge"
 														>默认选中</text
 													>
 												</view>
 											</view>
 											<view class="capacity-group-actions" @click.stop>
 												<!-- <up-button
-                          v-if="!item.isDefault"
+                          v-if="!moveItem.isDefault"
                           type="success"
                           size="mini"
-                          @click.stop="setDefaultCapacityGroup(item, index)"
+                          @click.stop="setDefaultCapacityGroup(moveItem, index)"
                         >
                           设为默认
                         </up-button> -->
@@ -97,7 +102,7 @@
 													class="del-icon-btn"
 													type="error"
 													size="mini"
-													@click.stop="deleteCapacityGroup(item, index)"
+													@click.stop="deleteCapacityGroup(moveItem, index)"
 												>
 													删除
 												</up-button>
@@ -124,22 +129,22 @@
 							</view>
 							<drag-container
 								:list="state.form.productOptions"
-								:controlsSize="{ height: 32 }"
+								:height="32"
 								class="spec-groups-list"
 								v-if="
 									state.form.productOptions?.length > 0 && state.showSpecGroup
 								"
 							>
-								<template #default="{ item, index }">
+								<template #default="{ moveItem, moveIndex }">
 									<view
 										class="spec-group-item"
-										@click.stop="openAddSpecGroupModal(item, index)"
+										@click.stop="openAddSpecGroupModal(moveItem, moveIndex)"
 									>
 										<view class="spec-group-info">
 											<view class="spec-main-info">
 												<text class="spec-name">
-													{{ item.key }}({{
-														getDisplayValues(item.options || []).join("、")
+													{{ moveItem.key }}({{
+														getDisplayValues(moveItem.options || []).join("、")
 													}})
 												</text>
 											</view>
@@ -149,7 +154,7 @@
 												class="del-icon-btn"
 												type="error"
 												size="mini"
-												@click.stop="deleteSpecGroup(item, index)"
+												@click.stop="deleteSpecGroup(moveItem, index)"
 											>
 												删除
 											</up-button>
@@ -202,32 +207,36 @@
 							>
 								<drag-container
 									:list="state.form.productIngredients"
-									:controlsSize="{ height: 32 }"
+									:height="32"
 								>
-									<template #default="{ item, index }">
+									<template #default="{ moveItem, moveIndex }">
 										<view
 											class="ingredient-group-item"
-											@click.stop="openAddIngredientGroupModal(item, index)"
+											@click.stop="
+												openAddIngredientGroupModal(moveItem, moveIndex)
+											"
 										>
 											<view class="ingredient-group-info">
 												<view class="ingredient-main-info">
-													<text class="ingredient-name">{{ item.name }}</text>
+													<text class="ingredient-name">{{
+														moveItem.name
+													}}</text>
 													<text class="ingredient-price"
-														>¥{{ item.price }}</text
+														>¥{{ moveItem.price }}</text
 													>
 												</view>
 												<view class="ingredient-default-info">
-													<text v-if="item.isDefault" class="default-badge"
+													<text v-if="moveItem.isDefault" class="default-badge"
 														>默认选中</text
 													>
 												</view>
 											</view>
 											<view class="ingredient-group-actions" @click.stop>
 												<!-- <up-button
-                          v-if="!item.isDefault"
+                          v-if="!moveItem.isDefault"
                           type="success"
                           size="mini"
-                          @click.stop="setDefaultIngredientGroup(item, index)"
+                          @click.stop="setDefaultIngredientGroup(moveItem, moveIndex)"
                         >
                           设为默认
                         </up-button> -->
@@ -235,7 +244,9 @@
 													class="del-icon-btn"
 													type="error"
 													size="mini"
-													@click.stop="deleteIngredientGroup(item, index)"
+													@click.stop="
+														deleteIngredientGroup(moveItem, moveIndex)
+													"
 												>
 													删除
 												</up-button>
@@ -313,7 +324,7 @@
 			</view>
 		</scroll-view>
 		<view class="modal-footer">
-			<up-button @click="close">取消</up-button>
+			<up-button @click="cancelAndRestore">取消</up-button>
 			<up-button type="primary" @click="save">确定</up-button>
 		</view>
 	</view>
@@ -386,6 +397,7 @@ import {
 	onMounted,
 	onUnmounted,
 	nextTick,
+	watch,
 } from "vue";
 import UploadFile from "@/components/upload-file/index.vue";
 import DragContainer from "@/components/drag/index.vue";
@@ -393,8 +405,10 @@ import capacityGroupContent from "./capacityGroupContent.vue";
 import ingredientGroupContent from "./ingredientGroupContent.vue";
 import specGroupContent from "./specGroupContent.vue";
 import { createProduct, modifyProduct } from "@/api/product";
-import { watch } from "vue";
 import { getDisplayValues, formatValuesToOptions } from "@/utils/format-utils";
+
+// 简单深拷贝：用于保存与还原快照（对象内仅包含基本类型/数组/对象）
+const deepClone = (val: any) => JSON.parse(JSON.stringify(val));
 
 const props = defineProps({
 	title: {
@@ -445,6 +459,9 @@ const state = reactive({
 	isEditingCapacityGroup: false,
 	isEditingSpecGroup: false,
 	showSpecGroupModal: false,
+	// 原始快照：用于取消时还原
+	originalFormSnapshot: {} as any,
+	originalPhotoFileListSnapshot: [] as any[],
 	form: {
 		shopId: "",
 		id: "",
@@ -539,6 +556,31 @@ const close = () => {
 	emit("close");
 };
 
+// 取消并还原：将拖拽/编辑中的改动恢复到打开时的快照
+const cancelAndRestore = () => {
+	if (
+		state.originalFormSnapshot &&
+		Object.keys(state.originalFormSnapshot).length
+	) {
+		state.form = deepClone(state.originalFormSnapshot);
+		state.photoFileList = deepClone(state.originalPhotoFileListSnapshot || []);
+		// 触发拖拽容器等列表强制刷新
+		state.showCapacityGroups = false;
+		state.showIngredientGroups = false;
+		state.showSpecGroup = false;
+		setTimeout(() => {
+			state.showCapacityGroups = true;
+			state.showIngredientGroups = true;
+			state.showSpecGroup = true;
+		}, 0);
+	}
+	// 清理校验提示
+	setTimeout(() => {
+		formRef.value?.clearValidate();
+	}, 0);
+	emit("close");
+};
+
 const photoAfterUpload = (fileList: any[]) => {
 	state.form.photo = fileList[0].url;
 };
@@ -548,8 +590,9 @@ const validate = async () => {
 };
 
 const getSelectedCategoryName = () => {
-	const selectedCategory = props.categories.find(
-		(cat) => cat.id === state.form.catalogId
+	const categories = (props.categories || []) as any[];
+	const selectedCategory = categories.find(
+		(cat: any) => cat.id === state.form.catalogId
 	);
 	return selectedCategory ? selectedCategory.name : "";
 };
@@ -570,7 +613,6 @@ const selectCategory = (category: any) => {
 };
 
 const deleteCapacityGroup = (item, index: number) => {
-	console.log(item, index, 111);
 	uni.showModal({
 		title: "确认删除",
 		content: `确定要删除容量组"${item.size + item.unit}"吗？`,
@@ -612,6 +654,14 @@ const handleCapacityGroupCallback = ({ mode, data }) => {
 	} else {
 		state.form.productSkus.push(data);
 	}
+};
+
+const handleCapacityGroupSortChange = (newList, oldIndex, newIndex) => {
+	state.form.productSkus = newList;
+	for (let i = 0; i < state.form.productSkus.length; i++) {
+		state.form.productSkus[i].isDefault = false;
+	}
+	state.form.productSkus[0].isDefault = true;
 };
 
 // 容量组管理相关函数
@@ -775,9 +825,6 @@ watch(
 		if (props.productFormData.productOptions) {
 			let options = [];
 			for (const key in props.productFormData.productOptions) {
-				console.log(
-					formatValuesToOptions(props.productFormData.productOptions[key], true)
-				);
 				options.push({
 					key: key,
 					options: formatValuesToOptions(
@@ -795,6 +842,9 @@ watch(
 		if (state.form.photo) {
 			state.photoFileList = [{ url: state.form.photo }];
 		}
+		// 保存打开时的快照，用于取消时还原
+		state.originalFormSnapshot = deepClone(state.form);
+		state.originalPhotoFileListSnapshot = deepClone(state.photoFileList);
 		// if (props.productFormData.productIngredientConfig) {
 		//   state.form.productIngredientConfig.required = props.productFormData.productIngredientConfig.required;
 		//   state.form.productIngredientConfig.type = props.productFormData.productIngredientConfig.type;
