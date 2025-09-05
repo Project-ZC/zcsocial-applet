@@ -199,8 +199,7 @@
 							<up-input
 								v-model="state.tempStaff.nickname"
 								placeholder="请输入员工呢称"
-								border="surround"
-								disabled
+								:disabled="true"
 							/>
 						</view>
 						<!-- <view class="form-item">
@@ -217,7 +216,6 @@
 								v-model="state.tempStaff.mobile"
 								type="number"
 								placeholder="请输入手机号码"
-								border="surround"
 								disabled
 							/>
 						</view>
@@ -227,7 +225,6 @@
 							<up-input
 								v-model="state.tempStaff.userId"
 								placeholder="请输入玩点id"
-								border="surround"
 								disabled
 							/>
 						</view>
@@ -270,7 +267,6 @@
 								v-model="state.tempStaff.introduce"
 								placeholder="请输入员工简介"
 								auto-height
-								border="surround"
 								disabled
 							></up-textarea>
 						</view>
@@ -589,13 +585,13 @@ const saveStaff = async () => {
 			params.userId = state.tempStaff.userId;
 			await addShopStaff(params);
 		}
+		loadStaffList();
 		uni.showToast({
 			title: state.isEdit ? "编辑成功" : "添加成功",
 			icon: "success",
 		});
 		closeModal();
 		state.currentRole = "all";
-		loadStaffList();
 	} catch (error) {}
 };
 
@@ -729,6 +725,11 @@ onPullDownRefresh(async () => {
 	} finally {
 		uni.stopPullDownRefresh();
 	}
+});
+defineOptions({
+	options: {
+		styleIsolation: "shared",
+	},
 });
 </script>
 

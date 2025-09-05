@@ -463,7 +463,6 @@ const state = reactive({
 	originalFormSnapshot: {} as any,
 	originalPhotoFileListSnapshot: [] as any[],
 	form: {
-		shopId: "",
 		id: "",
 		name: "",
 		photo: "",
@@ -785,12 +784,11 @@ const save = async () => {
 	try {
 		// 表单验证
 		await validate();
-		console.log("state.form", state.form);
 		try {
 			if (props.type === "edit") {
-				await modifyProduct(state.form);
+				await modifyProduct({ ...state.form, shopId: props.shopId });
 			} else {
-				await createProduct(state.form);
+				await createProduct({ ...state.form, shopId: props.shopId });
 			}
 			emit("callback", state.form.catalogId);
 			uni.showToast({
@@ -807,7 +805,6 @@ const save = async () => {
 watch(
 	() => props.productFormData,
 	(newVal) => {
-		state.form.shopId = props.shopId;
 		if (props.productFormData) {
 			for (const key in state.form) {
 				if (props.productFormData[key]) {

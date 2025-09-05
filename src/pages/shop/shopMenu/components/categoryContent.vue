@@ -72,7 +72,6 @@ const formRef = ref(null);
 const state = reactive({
 	form: {
 		id: "",
-		shopId: "",
 		name: "",
 		sort: "",
 	},
@@ -118,7 +117,6 @@ const save = async () => {
 	try {
 		// 表单验证
 		await validate();
-		const { activeTab, tabs } = props;
 		// 当前主类
 		// const currentMain =
 		// 	activeTab === ""
@@ -147,9 +145,9 @@ const save = async () => {
 		// 	props.tabs.push(newCategoryTab);
 		// }
 		if (props.type === "edit") {
-			await modifyProductCatalog(state.form);
+			await modifyProductCatalog({ ...state.form, shopId: props.shopId });
 		} else {
-			await createProductCatalog(state.form);
+			await createProductCatalog({ ...state.form, shopId: props.shopId });
 		}
 		close();
 		uni.showToast({
@@ -176,7 +174,6 @@ watch(
 			if (props.type === "edit") {
 				state.form.id = props.categoryFormData.id;
 			}
-			state.form.shopId = props.shopId;
 		}
 	},
 	{ immediate: true, deep: true }

@@ -59,23 +59,29 @@ export function notifyLoginSuccess() {
 // 请求队列处理
 const addRequest = (config: UniApp.RequestOptions) => {
 	return new Promise((outerResolve, outerReject) => {
-	  requestsQueue.push(() => {
-		// 更新Token后重发请求；返回真正的 Promise
-		const user = uniCache.getItem('user');
-		config.header = config.header || {};
-		if (user?.userInfo?.token) {
-		  config.header['X-App-Token'] = user.userInfo.token;
-		}
-		return new Promise((resolve, reject) => {
-		  uni.request({
-			...config,
-			success: (res) => { outerResolve(res); resolve(res); },
-			fail: (err) => { outerReject(err); reject(err); },
-		  });
+		requestsQueue.push(() => {
+			// 更新Token后重发请求；返回真正的 Promise
+			const user = uniCache.getItem("user");
+			config.header = config.header || {};
+			if (user?.userInfo?.token) {
+				config.header["X-App-Token"] = user.userInfo.token;
+			}
+			return new Promise((resolve, reject) => {
+				uni.request({
+					...config,
+					success: (res) => {
+						outerResolve(res);
+						resolve(res);
+					},
+					fail: (err) => {
+						outerReject(err);
+						reject(err);
+					},
+				});
+			});
 		});
-	  });
 	});
-  };
+};
 //添加拦截器
 const httpInterceptor = {
 	//发起请求前触发
@@ -117,22 +123,20 @@ const showToast = async (title: string) => {
 		mask: true,
 	});
 };
-
 export const http = <T>(options: UniApp.RequestOptions) => {
-	return new Promise<Data<T>>((resolve, reject) => {
+	return new Promise<Data<T>>(async (resolve, reject) => {
 		uni.showLoading({
 			title: "",
 		});
 		uni.request({
 			...options,
 			success: async (res) => {
+				await new Promise((resolve) => setTimeout(resolve, 500));
 				uni.hideLoading();
 				const val = res.data as Data<T>;
 				if (val.code == 0) {
 					resolve(val);
 				} else if (val.code == 1002) {
-					console.log("登录过期，第  次重试，最大重试次数");
-					
 					// 检查是否超过最大重试次数
 					if (currentAuthRetryCount >= MAX_AUTH_RETRY_COUNT) {
 						// showToast("登录过期次数过多，请重新登录");
