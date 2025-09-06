@@ -5,7 +5,7 @@
       <template #right>
         <view class="header-right">
           <!-- <up-icon name="scan" size="22" @click="generateQRCode"></up-icon> -->
-          <up-icon name="plus" size="22" @click="openAddModal"></up-icon>
+          <up-icon name="plus" size="22" color="var(--text-1)" @click="openAddModal"></up-icon>
         </view>
       </template>
     </up-navbar>
@@ -56,7 +56,7 @@
   <up-popup :show="state.showAddModal" mode="center" @close="closeAddModal">
     <view class="z-modal z-modal-lg">
       <view class="modal-header">
-        <text>{{ state.isEdit ? '编辑游戏' : '添加游戏' }}</text>
+        <text class="modal-title">{{ state.isEdit ? '编辑游戏' : '添加游戏' }}</text>
         <view class="close-btn" @click="closeAddModal">
           <up-icon name="close" size="26"></up-icon>
         </view>
@@ -332,7 +332,6 @@ const uploadIcon = () => {
 .container {
   padding: 0 30rpx;
   min-height: 100vh;
-  background-color: #f7f8fa;
 }
 
 .header {
@@ -343,7 +342,6 @@ const uploadIcon = () => {
   padding: 0 10rpx;
   position: sticky;
   top: 0;
-  background-color: #f7f8fa;
   z-index: 10;
 }
 
@@ -379,7 +377,7 @@ const uploadIcon = () => {
 }
 .game-item {
   margin-bottom: 30rpx;
-  background-color: #fff;
+  background-color: var(--bg-2);
   border-radius: 16rpx;
   overflow: hidden;
   box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
@@ -396,7 +394,7 @@ const uploadIcon = () => {
   height: 120rpx;
   border-radius: 12rpx;
   flex-shrink: 0;
-  background-color: #f0f0f0;
+  background-color: var(--bg-2);
 }
 
 .game-details {
@@ -412,9 +410,9 @@ const uploadIcon = () => {
 
 .game-type {
   font-size: 26rpx;
-  color: #666;
+  color: var(--text-2);
   margin-bottom: 10rpx;
-  background-color: #f5f5f5;
+  background-color: var(--bg-2);
   display: inline-block;
   padding: 4rpx 12rpx;
   border-radius: 6rpx;
@@ -422,7 +420,7 @@ const uploadIcon = () => {
 
 .game-desc {
   font-size: 26rpx;
-  color: #666;
+  color: var(--text-2);
   margin-bottom: 10rpx;
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -434,7 +432,7 @@ const uploadIcon = () => {
 .game-meta {
   display: flex;
   font-size: 24rpx;
-  color: #999;
+  color: var(--text-3);
 }
 
 .player-count {
@@ -445,7 +443,7 @@ const uploadIcon = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1rpx solid #f0f0f0;
+  border-top: 1rpx solid var(--border-1);
   padding-top: 20rpx;
 }
 
@@ -460,7 +458,7 @@ const uploadIcon = () => {
 }
 
 .status.inactive text {
-  color: #999;
+  color: var(--text-3);
 }
 
 ::v-deep .action-btns {
@@ -477,13 +475,13 @@ const uploadIcon = () => {
 
   .edit-btn {
     .u-icon__icon {
-      color: $u-primary !important;
+      color: var(--primary-6) !important;
     }
   }
 
   .delete-btn {
     .u-icon__icon {
-      color: $u-error !important;
+      color: var(--danger-6) !important;
     }
   }
 }
@@ -505,7 +503,7 @@ const uploadIcon = () => {
 
 .empty-state text {
   font-size: 28rpx;
-  color: #999;
+  color: var(--text-3);
 }
 
 /* 弹窗样式 */
@@ -516,7 +514,7 @@ const uploadIcon = () => {
 .label {
   display: block;
   font-size: 28rpx;
-  color: #333;
+  color: var(--text-1);
   margin-bottom: 10rpx;
 }
 
@@ -556,7 +554,7 @@ up-input[type='textarea'] {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #999;
+  color: var(--text-3);
   font-size: 24rpx;
 }
 
@@ -569,31 +567,6 @@ up-input[type='textarea'] {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.modal-footer {
-  display: flex;
-  border-top: 1rpx solid #f0f0f0;
-}
-
-.modal-footer up-button {
-  flex: 1;
-  height: 90rpx;
-  line-height: 90rpx;
-  text-align: center;
-  font-size: 32rpx;
-  border-radius: 0;
-  margin: 0;
-}
-
-.cancel-btn {
-  background-color: #f7f7f7;
-  color: #333;
-}
-
-.save-btn {
-  background-color: #07c160;
-  color: #fff;
 }
 
 /* 确认弹窗 */
@@ -615,7 +588,7 @@ up-input[type='textarea'] {
 .confirm-content {
   padding: 40rpx 30rpx;
   font-size: 30rpx;
-  color: #333;
+  color: var(--text-1);
   text-align: center;
 }
 

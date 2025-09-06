@@ -15,7 +15,7 @@
         v-if="item.icon"
         :name="item.icon"
         class="tab-icon"
-        :color="currentTab === index ? '#007AFF' : '#666'"
+        :color="currentTab === index ? '#007AFF' : 'var(--text-2)'"
         size="26"
       ></up-icon>
 
@@ -24,7 +24,7 @@
 				custom-prefix="wd-icon"
 				:name="`wd-icon-${item.wdIcon}`"
 				class="tab-icon"
-				:color="currentTab === index ? '#007AFF' : '#666'"
+				:color="currentTab === index ? '#007AFF' : 'var(--text-2)'"
 				size="24"
 			></up-icon> -->
       <view v-else :class="`wd-icon wd-icon-${item.wdIcon}`" class="tab-icon"></view>
@@ -131,23 +131,23 @@ const switchTab = (index: number, path: string) => {
   right: 0;
   width: 100%;
   height: $up-tabbar-h;
-  background-color: #ffffff;
+  background-color: var(--bg-1);
   display: flex;
   justify-content: space-around;
   align-items: center;
-  border-top: 1px solid #eaeaea;
+  border-top: 1px solid var(--border-2);
   padding-bottom: constant(safe-area-inset-bottom);
   padding-bottom: env(safe-area-inset-bottom);
   z-index: 99;
 }
 .tab-text {
-  color: #666;
+  color: var(--text-2);
 }
 :deep(.tab-icon) {
   // width: 44rpx;
   // height: 44rpx;
   margin-bottom: 4rpx;
-  color: #666;
+  color: var(--text-2);
   font-size: 22px;
 }
 .tab-item {

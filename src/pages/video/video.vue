@@ -59,7 +59,7 @@ onLoad((options: any) => {
 .video-container {
   width: 100vw;
   height: 100vh;
-  background-color: #000;
+  background-color: var(--bg-1);
   display: flex;
   align-items: center;
   justify-content: center;

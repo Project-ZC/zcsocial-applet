@@ -2,11 +2,9 @@
   <pageWrapper>
     <view class="container">
       <!-- 页面标题 -->
-      <view class="page-header z-glass-card">
+      <view class="header z-glass-card">
         <text class="page-title">门票设置</text>
-        <view class="header-actions">
-          <up-button shape="circle" class="add-btn main-btn" @click="openAddTicketModal">新增门票</up-button>
-        </view>
+        <up-button class="add-btn" type="gradient1" @click="openAddTicketModal">新增门票</up-button>
       </view>
 
       <!-- 门票列表 -->
@@ -22,13 +20,13 @@
             <view class="ticket-price">
               <view class="price-display">
                 <text class="price-label">男性:</text>
-                <text class="price-symbol">¥</text>
-                <text class="price-value">{{ ticket.malePrice }}</text>
+                <text class="price-symbol z-price">¥</text>
+                <text class="price-value z-price">{{ ticket.malePrice }}</text>
               </view>
               <view class="price-display">
                 <text class="price-label">女性:</text>
-                <text class="price-symbol">¥</text>
-                <text class="price-value">{{ ticket.femalePrice }}</text>
+                <text class="price-symbol z-price">¥</text>
+                <text class="price-value z-price">{{ ticket.femalePrice }}</text>
               </view>
             </view>
           </view>
@@ -49,18 +47,32 @@
           </view>
 
           <view class="ticket-actions">
-            <up-button shape="circle" class="action-btn edit-btn main-btn" @click="openEditTicketModal(ticket.id)">
+            <up-button
+              shape="circle"
+              size="small"
+              type="primary"
+              class="action-btn main-btn"
+              @click="openEditTicketModal(ticket.id)"
+            >
               编辑
             </up-button>
             <up-button
               shape="circle"
-              class="action-btn toggle-btn main-btn"
+              size="small"
+              type="gradient2"
+              class="action-btn main-btn"
               :class="[ticket.status === 'active' ? 'deactivate' : 'activate']"
               @click="toggleTicketStatus(ticket.id)"
             >
               {{ ticket.status === 'active' ? '停用' : '启用' }}
             </up-button>
-            <up-button shape="circle" class="action-btn delete-btn main-btn" @click="openDeleteTicketModal(ticket.id)">
+            <up-button
+              shape="circle"
+              size="small"
+              type="error"
+              class="action-btn main-btn"
+              @click="openDeleteTicketModal(ticket.id)"
+            >
               删除
             </up-button>
           </view>
@@ -156,12 +168,14 @@
 
               <view class="form-group">
                 <label class="form-label">畅饮酒水</label>
-                <up-button shape="circle" class="add-btn main-btn" @click="openDrinkModal">编辑畅饮酒水</up-button>
+                <up-button shape="circle" type="gradient2" class="add-btn main-btn" @click="openDrinkModal">
+                  编辑畅饮酒水
+                </up-button>
                 <view
                   v-if="state.tempTicket.selectedDrinks && state.tempTicket.selectedDrinks.length"
                   style="margin-top: 16rpx"
                 >
-                  <text style="color: #666; font-size: 26rpx">
+                  <text style="color: var(--text-2); font-size: 26rpx">
                     已选：
                     <text v-for="(d, idx) in state.tempTicket.selectedDrinks" :key="d.drinkId">
                       {{ d.name }}×{{ d.quantity }}
@@ -193,8 +207,8 @@
           </scroll-view>
 
           <view class="modal-footer">
-            <up-button type="info" class="modal-btn cancel-btn" @click="closeTicketModal">取消</up-button>
-            <up-button class="modal-btn confirm-btn main-btn" @click="saveTicket">保存</up-button>
+            <up-button type="info" class="modal-btn" @click="closeTicketModal">取消</up-button>
+            <up-button type="gradient1" class="modal-btn main-btn" @click="saveTicket">保存</up-button>
           </view>
         </view>
       </up-popup>
@@ -215,16 +229,12 @@
                 <text class="drink-item__tag">自定义</text>
               </view>
               <view class="drink-item__actions">
-                <up-button class="qty-btn" @click="decreaseQty('DIY')">-</up-button>
-                <up-input
-                  class="qty-input"
-                  type="number"
-                  inputAlign="center"
+                <up-number-box
                   v-model="state.drinkQuantities.DIY"
-                  @change="onQtyInput('DIY', state.drinkQuantities.DIY)"
-                  placeholder="0"
-                ></up-input>
-                <up-button class="qty-btn" @click="increaseQty('DIY')">+</up-button>
+                  :min="0"
+                  integer
+                  @change="onCartItemQtyChange($event, state.drinkQuantities, 0)"
+                />
               </view>
             </view>
 
@@ -258,25 +268,19 @@
                   <text class="drink-item__tag">{{ drink.category }}</text>
                 </view>
                 <view class="drink-item__actions">
-                  <up-button class="qty-btn" @click="decreaseQty(drink.id)">-</up-button>
-                  <up-input
-                    class="qty-input"
-                    type="number"
-                    inputAlign="center"
-                    v-model="state.drinkQuantities[drink.id]"
-                    @change="onQtyInput(drink.id, state.drinkQuantities[drink.id])"
-                    placeholder="0"
-                  ></up-input>
-                  <up-button class="qty-btn" @click="increaseQty(drink.id)">+</up-button>
+                  <up-number-box
+                    v-model="drink.quantity"
+                    :min="0"
+                    integer
+                    @change="onCartItemQtyChange($event, drink)"
+                  />
                 </view>
-                <!-- 步进器 -->
-                <!-- <up-number-box v-model="value" @change="valChange"></up-number-box> -->
               </view>
             </scroll-view>
           </view>
           <view class="modal-footer">
-            <up-button type="info" class="modal-btn cancel-btn" @click="closeDrinkModal">取消</up-button>
-            <up-button class="modal-btn confirm-btn main-btn" @click="confirmDrinkSelection">确定</up-button>
+            <up-button type="info" class="modal-btn" @click="closeDrinkModal">取消</up-button>
+            <up-button type="gradient1" class="modal-btn main-btn" @click="confirmDrinkSelection">确定</up-button>
           </view>
         </view>
       </up-popup>
@@ -510,26 +514,23 @@ const openDrinkModal = () => {
   state.showDrinkModal = true;
 };
 
+const onCartItemQtyChange = (qty: number, ci: any, cidx: number) => {
+  // / 保存修改前的数量，用于回滚
+  const originalQty = ci.quantity;
+  // qty.value
+  try {
+  } catch (error) {
+    // 回滚数量到修改前的值
+    ci.quantity = originalQty;
+  }
+};
+
 const closeDrinkModal = () => {
   state.showDrinkModal = false;
 };
 
 const setActiveCategory = (cat: string) => {
   state.activeCategory = cat;
-};
-
-// 数量编辑工具方法（非负整数）
-const normalizeQty = (val: number) => (Number.isFinite(val) && val > 0 ? Math.floor(val) : 0);
-const increaseQty = (id: string) => {
-  const cur = state.drinkQuantities[id] || 0;
-  state.drinkQuantities[id] = normalizeQty(cur + 1);
-};
-const decreaseQty = (id: string) => {
-  const cur = state.drinkQuantities[id] || 0;
-  state.drinkQuantities[id] = normalizeQty(cur - 1);
-};
-const onQtyInput = (id: string, val: number) => {
-  state.drinkQuantities[id] = normalizeQty(val as unknown as number);
 };
 
 const confirmDrinkSelection = () => {
@@ -570,48 +571,43 @@ defineOptions({
 <style lang="scss" scoped>
 /* 容器样式 */
 .container {
-  padding: 20rpx;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
+  padding: $up-box-pd;
 
   :deep(.main-btn) {
     border: none;
-    color: #fff !important;
+    color: var(--text-1) !important;
   }
 }
 
 /* 玻璃卡片效果 */
-.z-glass-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20rpx;
-  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
-}
+// .z-glass-card {
+//   background: rgba(255, 255, 255, 0.1);
+//   backdrop-filter: blur(10px);
+//   border: 1px solid rgba(255, 255, 255, 0.2);
+//   border-radius: 20rpx;
+//   box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+// }
 
 /* 页面头部 */
-.page-header {
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 30rpx;
-  margin-bottom: 30rpx;
-}
-
-.page-title {
-  font-size: 48rpx;
-  font-weight: bold;
-  color: white;
-}
-
-.header-actions {
-  display: flex;
-  gap: 20rpx;
+  padding: $up-box-pd;
+  margin-bottom: $up-box-mg;
+  :deep(.add-btn) {
+    // font-size: 28rpx;
+    margin: 0;
+    width: 200rpx;
+  }
+  .page-title {
+    font-size: 36rpx;
+    font-weight: bold;
+    color: var(--text-1);
+  }
 }
 
 .add-btn {
-  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-  color: white;
   border: none;
   padding: 20rpx 30rpx;
   border-radius: 50rpx;
@@ -633,7 +629,7 @@ defineOptions({
 }
 
 .ticket-item {
-  padding: 30rpx;
+  padding: $up-box-pd;
   transition: all 0.3s ease;
 }
 
@@ -657,7 +653,7 @@ defineOptions({
 .ticket-name {
   font-size: 36rpx;
   font-weight: bold;
-  color: white;
+  color: var(--text-1);
 }
 
 .ticket-status {
@@ -687,26 +683,22 @@ defineOptions({
 
 .price-display {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 5rpx;
 }
 
 .price-label {
   font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-2);
   margin-right: 5rpx;
 }
 
 .price-symbol {
-  font-size: 28rpx;
-  color: #f39c12;
-  font-weight: bold;
+  font-size: 32rpx;
 }
 
 .price-value {
-  font-size: 48rpx;
-  color: #f39c12;
-  font-weight: bold;
+  font-size: 42rpx;
 }
 
 .ticket-details {
@@ -724,54 +716,34 @@ defineOptions({
 
 .detail-label {
   font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.8);
-  min-width: 140rpx;
+  color: var(--text-2);
 }
 
 .detail-value {
   font-size: 28rpx;
-  color: white;
+  color: var(--text-1);
   font-weight: 500;
 }
 
-.ticket-actions {
-  display: flex;
-  gap: 15rpx;
-}
-
 .action-btn {
-  flex: 1;
-  padding: 15rpx 20rpx;
-  border-radius: 25rpx;
-  font-size: 26rpx;
-  font-weight: bold;
   border: none;
   transition: all 0.3s ease;
 }
-
-.edit-btn {
-  background: linear-gradient(135deg, #3498db, #2980b9);
-  color: white;
-}
-
-.toggle-btn.activate {
-  background: linear-gradient(135deg, #2ecc71, #27ae60);
-  color: white;
-}
-
-.toggle-btn.deactivate {
-  background: linear-gradient(135deg, #e67e22, #d35400);
-  color: white;
-}
-
-.delete-btn {
-  background: linear-gradient(135deg, #e74c3c, #c0392b);
-  color: white;
-}
-
 .action-btn:active {
   transform: translateY(2rpx);
   opacity: 0.8;
+}
+.ticket-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16rpx;
+  margin: 0;
+  width: 100%;
+  :deep(.u-button) {
+    margin: 0;
+    width: 70rpx;
+  }
 }
 
 /* 空状态 */
@@ -792,37 +764,25 @@ defineOptions({
 
 .empty-text {
   font-size: 32rpx;
-  color: white;
+  color: var(--text-1);
   font-weight: bold;
   margin-bottom: 15rpx;
 }
 
 .empty-desc {
   font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-3);
 }
 
 .modal-header {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  // background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--btn-gradient-1);
 }
 
 .modal-title {
   font-size: 36rpx;
   font-weight: bold;
-  color: white;
-}
-
-.modal-close {
-  font-size: 48rpx;
-  color: white;
-  cursor: pointer;
-  width: 60rpx;
-  height: 60rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
+  color: var(--text-1);
 }
 
 .form-group {
@@ -832,7 +792,7 @@ defineOptions({
 .form-label {
   display: block;
   font-size: 28rpx;
-  color: #333;
+  color: var(--text-1);
   font-weight: bold;
   margin-bottom: 15rpx;
 }
@@ -845,28 +805,15 @@ defineOptions({
 
 .switch-group label {
   font-size: 28rpx;
-  color: #333;
+  color: var(--text-1);
   font-weight: bold;
 }
 
 .modal-btn {
   flex: 1;
-  padding: 20rpx;
-  border-radius: 10rpx;
-  font-size: 28rpx;
   font-weight: bold;
   border: none;
   transition: all 0.3s ease;
-}
-
-.cancel-btn {
-  background: #6c757d;
-  color: white;
-}
-
-.confirm-btn {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
 }
 
 .modal-btn:active {
@@ -889,7 +836,7 @@ defineOptions({
 
 .gender-label {
   font-size: 26rpx;
-  color: #333;
+  color: var(--text-1);
   font-weight: 500;
 }
 
@@ -906,34 +853,13 @@ defineOptions({
 
 .price-input-container .price-symbol {
   font-size: 28rpx;
-  color: #333;
+  color: var(--text-1);
   font-weight: bold;
   margin-right: 10rpx;
   position: absolute;
   left: 10rpx;
 }
 
-/* 畅饮酒水弹窗样式 */
-.drink-modal {
-  background: #fff;
-  border-top-left-radius: 20rpx;
-  border-top-right-radius: 20rpx;
-}
-.drink-modal__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24rpx 30rpx;
-  border-bottom: 1px solid #eee;
-}
-.drink-modal__title {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
-}
-.drink-modal__body {
-  padding: 20rpx 24rpx 0 24rpx;
-}
 .drink-diy {
   display: flex;
   justify-content: space-between;
@@ -961,13 +887,14 @@ defineOptions({
   padding: 10rpx 20rpx;
   margin-right: 12rpx;
   border-radius: 30rpx;
-  background: #f2f3f5;
-  color: #666;
+  background: var(--bg-1);
+  color: var(--text-2);
   font-size: 24rpx;
 }
 .drink-cat.active {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: #fff;
+  // background: var(--btn-gradient-1);
+  background: var(--primary-6);
+  color: var(--text-1);
 }
 .drink-list {
   max-height: 40vh;
@@ -989,31 +916,16 @@ defineOptions({
 }
 .drink-item__name {
   font-size: 28rpx;
-  color: #333;
+  color: var(--text-1);
   font-weight: 600;
 }
 .drink-item__tag {
   font-size: 22rpx;
-  color: #999;
+  color: var(--text-3);
 }
 .drink-item__actions {
   display: flex;
   align-items: center;
   gap: 12rpx;
-}
-:deep(.qty-btn) {
-  width: 40rpx !important;
-  height: 40rpx !important;
-  border-radius: 50%;
-  background: #f2f3f5;
-  color: #333 !important;
-  border: none;
-  font-size: 36rpx;
-}
-:deep(.qty-input) {
-  width: 50rpx !important;
-  height: 24rpx !important;
-  text-align: center;
-  background: #fff;
 }
 </style>

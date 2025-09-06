@@ -9,18 +9,20 @@
 			}
 		},
 		{
+			"path": "pages/shop/shop",
+			"style": {
+				"navigationBarTitleText": "店铺",
+				// "enablePullDownRefresh": true
+			}
+		},
+		
+		{
 			"path": "pages/index/order/order",
 			"style": {
 				"navigationBarTitleText": "店铺点单"
 			}
 		},
-		{
-			"path": "pages/shop/shop",
-			"style": {
-				"navigationBarTitleText": "店铺",
-				"enablePullDownRefresh": true
-			}
-		},
+	
 		{
 			"path": "pages/shop/shopMenu/shopMenu",
 			"style": {
@@ -109,10 +111,10 @@
 		}
 	],
 	"globalStyle": {
-		"navigationBarTextStyle": "black",
+		"navigationBarTextStyle": "white",
 		"navigationBarTitleText": "ZC Social",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8",
+		"navigationBarBackgroundColor": "#0E1331",
+		"backgroundColor": "#0E1331",
 		"usingComponents": {}
 	},
 	"tabBar": {

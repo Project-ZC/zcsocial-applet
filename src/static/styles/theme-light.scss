@@ -158,6 +158,14 @@ page {
     --chart-gray: rgb(201, 205, 212);
     /*  ：#c9cdd4 */
 
+    // 酒红色:
+    --burgundy: rgb(181, 58, 232);
+     // 渐变按钮背景通过专门的类来实现
+    --btn-gradient-1: linear-gradient(to right, var(--primary-6) 0%, var(--burgundy) 100%);
+    // --btn-gradient-1:linear-gradient(135deg, #667eea, #764ba2);
+    --btn-gradient-2: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    // 渐变背景
+    --bg-gradient-1: linear-gradient(180deg, var(--bg-1) 0%, #F5F5F5 100%);
     // 主色调
     // --theme-primary: var(--primary-6);
     // --theme-success: var(--success-6);

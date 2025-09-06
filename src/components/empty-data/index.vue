@@ -60,15 +60,20 @@ const props = withDefaults(
 .empty-data {
   padding: 40rpx;
   box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
 .subtext {
   font-size: $up-font-sm;
-  color: #999;
+  color: var(--text-3);
   margin-top: 10rpx;
   text-align: center;
 }
 
 :deep(.u-empty__text) {
   margin-top: 12rpx;
+  color: var(--text-2) !important;
 }
 </style>

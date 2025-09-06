@@ -1,5 +1,6 @@
 import { baseUrl } from "@/api/common/apiConfig";
 import { getDownloadUrl } from "@/api/common/upload";
+import dayjs from "dayjs";
 
 // 模拟分页API 下拉加载更多
 export const mockApiFetchList = (params) => {
@@ -116,3 +117,67 @@ export const previewImage = ({ urls, current = 0 }: { urls: string[]; current?: 
       }
 	});
   };
+
+
+//   shippingTimeList(0: 统一营业时间, 1-7 星期一~日)
+export const getShippingTimeList = (shippingTimeList: any[]) => {
+  return shippingTimeList.map(item => {
+    return {
+      ...item,
+      status: item.status == '1' ? '1' : '0',
+    };
+  });
+};
+
+// 获取当天是星期几
+export const getCurrentDay = () => {
+	const currentDay = dayjs().day(); // 0-6, 0是周日
+	const dayOfWeek = currentDay === 0 ? 7 : currentDay; // 转换为1-7格式，7是周日
+	return dayOfWeek;
+};
+
+// 获取当前营业时间
+export const getCurrentBusinessHours = (shippingTimeList: any[]) => {
+  if (!shippingTimeList || !Array.isArray(shippingTimeList) || shippingTimeList.length === 0) {
+    return '暂无营业时间';
+  }
+
+  // 使用dayjs获取当前是星期几 (1-7, 1是周一, 7是周日)
+  const dayOfWeek = getCurrentDay();
+
+  // 先查找当天的营业时间
+  const todayTime = shippingTimeList.find((time: any) => time.day === dayOfWeek.toString());
+  if (todayTime && todayTime.status === '1') {
+    return {
+		time: `${todayTime.openTime}-${todayTime.closeTime}`,
+		status: todayTime.status,
+		openTime: todayTime.openTime,
+		closeTime: todayTime.closeTime,
+	};
+  }
+
+  // 如果没有当天的营业时间，查找统一营业时间(day=0)
+  const unifiedTime = shippingTimeList.find((time: any) => time.day === '0');
+  if (unifiedTime && unifiedTime.status === '0') {
+	return{
+		time: `${unifiedTime.openTime}-${unifiedTime.closeTime}`,
+		status: unifiedTime.status,
+		openTime: unifiedTime.openTime,
+		closeTime: unifiedTime.closeTime,
+	};
+  }
+
+  // 如果都没有，返回第一个有效的营业时间
+  const firstValidTime = shippingTimeList.find((time: any) => time.status === '0');
+  if (firstValidTime) {
+    return {
+		time: `${firstValidTime.openTime}-${firstValidTime.closeTime}`,
+		status: firstValidTime.status,
+		openTime: firstValidTime.openTime,
+		closeTime: firstValidTime.closeTime,
+	};
+  }
+
+  return '暂无营业时间';
+};
+

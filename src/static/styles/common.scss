@@ -2,10 +2,26 @@
 
 /* 全局页面背景色 */
 page {
-    background-color: $u-bg-1;
+    // background-color: var(--bg-1);
+    background: var(--bg-gradient-1);
     font-size: $up-font-base;
     /* 优化滚动性能 */
     -webkit-overflow-scrolling: touch;
+    color: var(--text-1);
+    min-height: 100%;
+}
+
+/* 渐变背景类 - 用于需要渐变效果的页面 */
+.page-gradient-bg {
+    // background: var(--bg-gradient-1);
+}
+
+.navigation{
+    // background-color: var(--bg-2)!important;
+    background: var(--bg-1)!important;
+}
+.u-safe-bottom{
+    background-color: var(--bg-2);
 }
 
 // 超出几行超出部分省略号显示,默认2行
@@ -27,15 +43,21 @@ page {
     @include textEllipsis(2);
 }
 
+// 模态框
 .z-modal {
     display: flex;
     flex-direction: column;
     height: 100%;
-    // background-color: #fff;
+    background-color: var(--bg-2);
+    border-radius: 30rpx 30rpx 0 0;
+
+    &-no-round {
+        border-radius:0;
+    }
 
     .modal-header {
         padding: 0 20rpx;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid var(--border-2);
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -52,7 +74,7 @@ page {
     .modal-title {
         font-size: $up-font-lg;
         font-weight: bold;
-        color: #333;
+        color: var(--text-1);
     }
 
     &-no-round {
@@ -62,9 +84,12 @@ page {
     }
 
     .close-btn {
-        font-size: 50rpx;
-        color: #999;
+        font-size: 60rpx;
+        color: var(--text-1);
         cursor: pointer;
+        .u-icon__icon{
+            color: var(--text-1)!important;
+        }
     }
 
     .scroll-content {
@@ -84,7 +109,7 @@ page {
 
     .modal-footer {
         padding: 15rpx 20rpx;
-        border-top: 1px solid #eee;
+        border-top: 1px solid var(--border-1);
         display: flex;
         justify-content: space-between;
         gap: 40rpx;
@@ -97,20 +122,28 @@ page {
     width: 650rpx;
     max-height: 100vh;
 }
+.u-popup{
+    &__content{
+        background-color: var(--bg-2)!important;
+    }
+}
+
 
 /* 毛玻璃效果 */
 .z-glass-card {
-    background: rgba(255, 255, 255, 0.8);
+    background: var(--bg-2);
     backdrop-filter: blur(8rpx);
     border-radius: 14rpx;
     box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
 // 顶部导航栏
 .z-navbar {
     height: $up-navbar-h;
-
+    
     .u-navbar__content {
+        background-color: var(--bg-2)!important;
         height: $up-navbar-h !important;
     }
 
@@ -123,9 +156,9 @@ page {
 .z-cell-title {
     font-size: $up-font-md;
     font-weight: bold;
-    color: $u-main-color;
+    color: var(--text-1);
     padding: $up-box-pd;
-    border-bottom: 1rpx solid #f0f0f0;
+    border-bottom: 1px solid var(--border-1);
 }
 .z-cell-left-icon{
     font-size: 40rpx;
@@ -136,7 +169,7 @@ page {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
+    color: var(--text-1);
 }
 // 单元格
 .u-cell{
@@ -146,23 +179,31 @@ page {
     .u-cell__title-text{
         font-size: $up-font-base!important;
     }
+    // .u-line{
+    //     border-color: var(--border-1)!important;
+    // }
+}
+// .u-cell-group{
+//     .u-line{
+//         border-color: var(--border-1)!important;
+//     }
+// }
+.u-line{
+    border-color: var(--border-2)!important;
 }
 .u-subsection{
     height: 72rpx!important;
-    background: #fff;
+    background: var(--bg-2);
     .u-subsection__item{
         font-size: $up-font-base!important;
     }
-}
-
-.u-button {
-    &--info{
-        background-color: var(--info-6)!important;
-        border-color: var(--info-6)!important;
+    .u-subsection__item__text{
         color: var(--text-1)!important;
     }
+    &__bar{
+        background: var(--primary-6)!important;
+    }
 }
-
 
 .z-tips{
     color:var(--text-2);
@@ -186,11 +227,14 @@ page {
 		display: none!important;
 	}
     .u-radio__label-wrap,.u-checkbox__label-wrap {
-        background: #ffffff;
+        background: var(--bg-2);
         padding: 6rpx 20rpx;
         border-radius: 8rpx;
-        border: 2rpx solid #e0e0e0;
+        border: 2rpx solid var(--border-1);
         transition: all 0.3s;
+    }
+    text{
+        color: var(--text-2)!important;
     }
 
     &.z-cart-item--checked .u-radio__label-wrap,
@@ -199,9 +243,73 @@ page {
         border-color: var(--primary-6)!important;
 
         text{
-            color: #fff!important;
+            color: var(--text-1)!important;
 
         }
     }
 
 }
+
+// 商品价格
+.z-price {
+    font-size: 30rpx;
+    font-weight: 700;
+    color: #ff6b35;
+  }
+
+// 按钮
+.u-button{
+    // 用作取消按钮
+    &--info{
+        background-color: var(--info-6)!important;
+        border-color: var(--info-6)!important;
+        color: var(--text-6)!important;
+    }
+    // 酒红色
+    &--burgundy{
+        background-color: var(--burgundy)!important;
+        color: var(--text-1)!important;
+    }
+    // 蓝色-酒红色渐变
+    &--gradient1{
+        background: var(--btn-gradient-1)!important;
+        color: var(--text-1)!important;
+    }
+     // 橙色渐变按钮
+     &--gradient2{
+        background: var(--btn-gradient-2)!important;
+        color: var(--text-1)!important;
+    }
+}
+
+
+// 输入框
+.u-textarea,.u-input{
+    background-color: var(--bg-2)!important;
+    color: var(--text-2)!important;
+    border-color: var(--border-2)!important;
+}
+
+// 搜索框
+.u-search{
+    &__content{
+        background-color: var(--bg-1)!important;
+        border-color: var(--border-1)!important;
+
+    }
+    .u-search__content__input{
+        background-color: var(--bg-1)!important;
+        color: var(--text-1)!important;
+    }
+}
+
+// 日期框
+.u-picker{
+
+    
+    background-color: var(--bg-2)!important;
+    &__view__column{
+        background-color: var(--bg-2)!important;
+    }
+}
+

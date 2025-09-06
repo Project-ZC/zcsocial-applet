@@ -257,7 +257,7 @@ defineOptions({
     align-items: center;
     justify-content: center;
     font-size: 16px;
-    color: #999;
+    color: var(--text-3);
   }
   .selected-tags {
     margin-bottom: 10rpx;

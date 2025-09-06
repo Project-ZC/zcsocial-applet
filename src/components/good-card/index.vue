@@ -40,7 +40,7 @@
       <!-- 单规格商品显示 -->
       <view class="good-price" v-if="availableSkus?.length > 0">
         <text class="price-symbol">¥</text>
-        <text class="price-value">{{ availableSkus?.[0]?.price }}</text>
+        <text class="z-price">{{ availableSkus?.[0]?.price }}</text>
       </view>
     </view>
 
@@ -127,7 +127,6 @@ defineOptions({
   display: flex;
   align-items: center;
   padding: 0 24rpx;
-  background-color: var(--bg-1);
 }
 
 /* 第一列：商品图片 */
@@ -143,16 +142,16 @@ defineOptions({
 }
 
 .good-name {
-  font-size: 32rpx;
+  font-size: $up-font-md;
   font-weight: 600;
-  color: #333;
+  color: var(--text-1);
   margin-bottom: 8rpx;
   line-height: 1.4;
 }
 
 .good-desc {
   font-size: 26rpx;
-  color: #666;
+  color: var(--text-2);
   margin-bottom: 16rpx;
   line-height: 1.4;
   display: -webkit-box;
@@ -204,12 +203,6 @@ defineOptions({
   font-size: 24rpx;
   color: #ff6b35;
   margin-right: 4rpx;
-}
-
-.price-value {
-  font-size: 30rpx;
-  font-weight: 700;
-  color: #ff6b35;
 }
 
 /* 第三列：操作按钮 */

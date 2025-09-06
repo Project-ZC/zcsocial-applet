@@ -17,32 +17,27 @@
 
 ```vue
 <template>
-	<drag-component
-		:list="items"
-		:controlsSize="{ height: 80 }"
-		@sort-change="onSortChange"
-		@update:list="onListUpdate"
-	>
-		<template #default="{ item, index }">
-			<view class="custom-item">
-				<text>{{ item.name }}</text>
-			</view>
-		</template>
-	</drag-component>
+  <drag-component :list="items" :controlsSize="{ height: 80 }" @sort-change="onSortChange" @update:list="onListUpdate">
+    <template #default="{ item, index }">
+      <view class="custom-item">
+        <text>{{ item.name }}</text>
+      </view>
+    </template>
+  </drag-component>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import dragComponent from "@/components/drag/index.vue";
+import { ref } from 'vue';
+import dragComponent from '@/components/drag/index.vue';
 
-const items = ref([{ name: "项目 1" }, { name: "项目 2" }, { name: "项目 3" }]);
+const items = ref([{ name: '项目 1' }, { name: '项目 2' }, { name: '项目 3' }]);
 
 const onSortChange = (newList, oldIndex, newIndex) => {
-	console.log("排序变化:", { newList, oldIndex, newIndex });
+  console.log('排序变化:', { newList, oldIndex, newIndex });
 };
 
-const onListUpdate = (newList) => {
-	items.value = newList;
+const onListUpdate = newList => {
+  items.value = newList;
 };
 </script>
 ```
@@ -100,11 +95,11 @@ const onListUpdate = (newList) => {
 
 ```scss
 .drag-container {
-	// 容器样式
-	&-item {
-		// 项目样式
-		// 可以自定义背景、边框、阴影等
-	}
+  // 容器样式
+  &-item {
+    // 项目样式
+    // 可以自定义背景、边框、阴影等
+  }
 }
 ```
 
@@ -112,104 +107,104 @@ const onListUpdate = (newList) => {
 
 ```vue
 <template>
-	<view class="page">
-		<drag-component
-			:list="items"
-			:controlsSize="{ height: 100 }"
-			:animationDuration="0.5"
-			@sort-change="onSortChange"
-			@update:list="onListUpdate"
-		>
-			<template #default="{ item, index }">
-				<view class="drag-item">
-					<view class="item-index">{{ index + 1 }}</view>
-					<view class="item-content">
-						<text class="item-name">{{ item.name }}</text>
-						<text class="item-desc">{{ item.description }}</text>
-					</view>
-				</view>
-			</template>
-		</drag-component>
-	</view>
+  <view class="page">
+    <drag-component
+      :list="items"
+      :controlsSize="{ height: 100 }"
+      :animationDuration="0.5"
+      @sort-change="onSortChange"
+      @update:list="onListUpdate"
+    >
+      <template #default="{ item, index }">
+        <view class="drag-item">
+          <view class="item-index">{{ index + 1 }}</view>
+          <view class="item-content">
+            <text class="item-name">{{ item.name }}</text>
+            <text class="item-desc">{{ item.description }}</text>
+          </view>
+        </view>
+      </template>
+    </drag-component>
+  </view>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import dragComponent from "@/components/drag/index.vue";
+import { ref } from 'vue';
+import dragComponent from '@/components/drag/index.vue';
 
 const items = ref([
-	{ name: "项目 A", description: "这是项目 A" },
-	{ name: "项目 B", description: "这是项目 B" },
-	{ name: "项目 C", description: "这是项目 C" },
+  { name: '项目 A', description: '这是项目 A' },
+  { name: '项目 B', description: '这是项目 B' },
+  { name: '项目 C', description: '这是项目 C' },
 ]);
 
 const onSortChange = (newList, oldIndex, newIndex) => {
-	console.log(`项目从位置 ${oldIndex} 移动到位置 ${newIndex}`);
-	// 可以调用API保存新的排序
-	saveSortOrder(newList);
+  console.log(`项目从位置 ${oldIndex} 移动到位置 ${newIndex}`);
+  // 可以调用API保存新的排序
+  saveSortOrder(newList);
 };
 
-const onListUpdate = (newList) => {
-	items.value = newList;
+const onListUpdate = newList => {
+  items.value = newList;
 };
 
-const saveSortOrder = async (list) => {
-	try {
-		await api.updateSortOrder({
-			items: list.map((item, index) => ({
-				id: item.id,
-				sort: index,
-			})),
-		});
-		console.log("排序保存成功");
-	} catch (error) {
-		console.error("保存失败:", error);
-	}
+const saveSortOrder = async list => {
+  try {
+    await api.updateSortOrder({
+      items: list.map((item, index) => ({
+        id: item.id,
+        sort: index,
+      })),
+    });
+    console.log('排序保存成功');
+  } catch (error) {
+    console.error('保存失败:', error);
+  }
 };
 </script>
 
 <style lang="scss" scoped>
 .drag-item {
-	display: flex;
-	align-items: center;
-	height: 100%;
-	padding: 0 20rpx;
-	background: #fff;
-	border-radius: 8rpx;
-	box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 20rpx;
+  background: #fff;
+  border-radius: 8rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
 }
 
 .item-index {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 60rpx;
-	height: 60rpx;
-	background: #007aff;
-	color: #fff;
-	border-radius: 50%;
-	font-size: 24rpx;
-	font-weight: 600;
-	margin-right: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60rpx;
+  height: 60rpx;
+  background: #007aff;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 24rpx;
+  font-weight: 600;
+  margin-right: 20rpx;
 }
 
 .item-content {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .item-name {
-	font-size: 28rpx;
-	color: #333;
-	font-weight: 500;
-	margin-bottom: 8rpx;
+  font-size: 28rpx;
+  color: var(--text-1);
+  font-weight: 500;
+  margin-bottom: 8rpx;
 }
 
 .item-desc {
-	font-size: 24rpx;
-	color: #999;
+  font-size: 24rpx;
+  color: var(--text-3);
 }
 </style>
 ```

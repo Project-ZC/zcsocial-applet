@@ -270,7 +270,7 @@ const handleCancel = (orderInfo: any) => {
     .title {
       font-size: 36rpx;
       font-weight: 600;
-      color: #333;
+      color: var(--text-1);
       margin-bottom: 30rpx;
       text-align: center;
     }
@@ -293,7 +293,7 @@ const handleCancel = (orderInfo: any) => {
 
         .stat-label {
           font-size: 24rpx;
-          color: #666;
+          color: var(--text-2);
         }
       }
     }
@@ -312,7 +312,7 @@ const handleCancel = (orderInfo: any) => {
       text-align: center;
       padding: 16rpx 0;
       font-size: 28rpx;
-      color: #666;
+      color: var(--text-2);
       border-radius: 20rpx;
       transition: all 0.3s ease;
       position: relative;
@@ -361,7 +361,7 @@ const handleCancel = (orderInfo: any) => {
 
       .empty-text {
         font-size: 28rpx;
-        color: #999;
+        color: var(--text-3);
       }
     }
   }

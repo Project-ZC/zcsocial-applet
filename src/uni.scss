@@ -13,14 +13,15 @@
  */
 
 // @import 'uview-plus/theme.scss';
-@import '@/static/styles/theme.scss';
+// @import '@/static/styles/theme-light.scss'; // 浅色
+@import '@/static/styles/theme-dark.scss'; // 深色
 
 // $u-main-color: #303133;
 $u-main-color: var(--text-1);
 $u-content-color: var(--text-2);
 $u-tips-color: var(--text-3);
 $u-light-color: var(--text-4); // placeholder
-$u-border-color: var(--border-1); // 分割线/输入边框
+$u-border-color: var(--border-2); // 分割线/输入边框
 $u-bg-color: var(--bg-2);
 $u-disabled-color: var(--text-5);
 $u-bg-1: var(--bg-1); // 背景色
@@ -67,9 +68,9 @@ $u-info-light: var(--info-3);
 // $uni-color-error: #dd524d;
 
 // /* 文字基本颜色 */
-// $uni-text-color: #333; // 基本色
+// $uni-text-color: var(--text-1); // 基本色
 // $uni-text-color-inverse: #fff; // 反色
-// $uni-text-color-grey: #999; // 辅助灰色，如加载更多的提示信息
+// $uni-text-color-grey: var(--text-3); // 辅助灰色，如加载更多的提示信息
 // $uni-text-color-placeholder: #808080;
 // $uni-text-color-disable: #c0c0c0;
 

@@ -37,16 +37,24 @@ function setupUI(app: App) {
 				// "cursorSpacing": 30,
 				// 光标颜色
 				cursorColor: "#3c9cff",
+				color: "var(--text-2)",
+				borderColor: "var(--border-2)",
+				bgColor: "var(--bg-2)",
 			},
 			// 设置image组件的全局默认属性
 			image: {
 				// 设置默认的错误图片
 				errorIcon: "photo",
 				radius: 4,
+				bgColor: "var(--bg-1)",
 			},
 			popup: {
 				round: 15,
 			},
+			datetimePicker:{
+				cancelColor: "var(--text-1)",
+				confirmColor: "var(--primary-6)",
+			}
 			// 其他组件属性配置
 			// ......
 		},
