@@ -153,7 +153,7 @@ const state = reactive({
           img: '/static/images/shop/shop-audit.png',
         },
         {
-          title: '店铺订单',
+          title: '账单明细',
           icon: 'shop-order',
           url: '/pages/shop/merchant/orders',
           showArrow: true,
@@ -526,6 +526,9 @@ onPullDownRefresh(async () => {
     position: sticky;
     top: 0;
     z-index: 100;
+  }
+  .wd-icon {
+    font-size: 40rpx;
   }
 
   .tags {

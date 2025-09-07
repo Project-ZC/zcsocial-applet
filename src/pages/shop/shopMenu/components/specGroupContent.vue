@@ -46,7 +46,6 @@
     @select="onSelectTemplate"
     @close="state.showTemplateSheet = false"
     title="选择快速模板"
-    cancel-text="取消"
   />
 </template>
 

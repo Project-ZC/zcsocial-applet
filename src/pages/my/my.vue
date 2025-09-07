@@ -180,6 +180,7 @@ const itemClick = (item: any) => {
   if (item.url) {
     navigateTo(item.url);
   } else if (item.type == 'contactUs') {
+    // 换行在真机才生效，开发工具不生效
     uni.showModal({
       title: '联系我们',
       content: '客服电话: 400-123-4567\n工作时间: 9:00-18:00',

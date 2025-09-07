@@ -249,14 +249,14 @@ defineOptions({
   flex-direction: column;
 
   .add-tag {
-    width: 60rpx;
-    height: 60rpx;
+    width: 54rpx;
+    height: 54rpx;
     background-color: #f0f0f0;
     border-radius: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 36rpx;
     color: var(--text-3);
   }
   .selected-tags {

@@ -107,28 +107,15 @@
       </view>
     </template>
 
-    <!-- 性别选择器 -->
-    <up-popup class="modal" :show="state.showGenderPicker" mode="bottom">
-      <view class="picker-container">
-        <view class="picker-header">
-          <text class="picker-title">请选择性别</text>
-          <text class="picker-close" @click="closeGenderPicker">关闭</text>
-        </view>
-        <view class="picker-body">
-          <view
-            class="picker-item"
-            v-for="(item, index) in state.genderOptions"
-            :key="index"
-            @click="selectGender(item.code)"
-          >
-            <text class="picker-item-text" :class="{ active: state.userInfo.gender === item.code }">
-              {{ item.name }}
-            </text>
-            <view class="icon-check" v-if="state.userInfo.gender === item.code"></view>
-          </view>
-        </view>
-      </view>
-    </up-popup>
+    <!-- 性别选择器：改为 up-action-sheet -->
+    <up-action-sheet
+      :show="state.showGenderPicker"
+      :actions="state.genderOptions.map(g => ({ name: g.name, code: g.code }))"
+      title="请选择性别"
+      closeOnClickAction
+      @select="onGenderActionSelect"
+      @close="state.showGenderPicker = false"
+    ></up-action-sheet>
 
     <!-- 日期选择器 -->
     <up-datetime-picker
@@ -286,13 +273,9 @@ const showGenderPickerFn = () => {
   state.showGenderPicker = true;
 };
 
-const closeGenderPicker = () => {
-  state.showGenderPicker = false;
-};
-
 const selectGender = (gender: string) => {
   state.userInfo.gender = gender;
-  closeGenderPicker();
+  state.showGenderPicker = false;
 };
 
 const showDatePicker = () => {
@@ -329,6 +312,13 @@ onLoad(options => {
   GetTagList();
   GetGenderList();
 });
+
+// up-action-sheet 选择事件
+const onGenderActionSelect = (action: any) => {
+  // action: { name, code }
+  state.userInfo.gender = action.code;
+  closeGenderPicker();
+};
 </script>
 
 <style lang="scss" scoped>

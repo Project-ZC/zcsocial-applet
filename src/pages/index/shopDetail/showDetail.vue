@@ -14,15 +14,21 @@
         <view class="shop-base-info">
           <text class="shop-name text-bold">{{ state.shopInfo.name }}</text>
           <view class="shop-owner flex-row align-center">
-            <up-image class="owner-avatar" :src="state.shopInfo.ownerAvatar" width="40" height="40"></up-image>
-            <text class="owner-name">店长: {{ state.shopInfo.ownerName }}</text>
+            <up-image
+              class="owner-avatar"
+              :src="getDownloadUrl(state.shopInfo.ownerAvatar)"
+              width="30"
+              height="30"
+              @click="previewImage({ urls: [getDownloadUrl(state.shopInfo.ownerAvatar)] })"
+            ></up-image>
+            <text class="owner-name" @click="showOwnerInfo">店长: {{ state.shopInfo.ownerName }}</text>
           </view>
           <view class="shop-time flex-row align-center">
-            <text class="time-icon">⏱️</text>
-            <text>营业时间: {{ state.shopInfo.openTime }}-{{ state.shopInfo.closeTime }}</text>
+            <text>营业时间: {{ state.shopInfo.businessHours }}</text>
           </view>
-          <view class="shop-location flex-row align-center">
-            <text class="location-icon">📍</text>
+          <view class="shop-location flex-row align-center" v-if="state.shopInfo.address" @click="locateAddress">
+            <!-- <text class="location-icon">📍</text> -->
+            <view class="wd-icon wd-icon-shop-location location-icon"></view>
             <text class="ovflow2">{{ state.shopInfo.address }}</text>
           </view>
         </view>
@@ -107,11 +113,15 @@
       <view class="bottom-buttons">
         <view class="button-row flex-row space-between">
           <view class="button-item flex-column align-center" @click="goToDrinkMenu">
-            <text class="menu-icon">🍹</text>
+            <view class="wd-icon-box">
+              <text class="wd-icon wd-icon-shop-order"></text>
+            </view>
             <text class="button-text">店铺点单</text>
           </view>
           <view class="button-item flex-column align-center" @click="goToShopGame">
-            <text class="game-icon">🎮</text>
+            <view class="wd-icon-box">
+              <text class="wd-icon wd-icon-shop-games"></text>
+            </view>
             <text class="button-text">店内游戏</text>
           </view>
         </view>
@@ -129,15 +139,15 @@
       </view>
     </template>
   </pageWrapper>
-  <pageWrapper v-else height="80vh">
-    <emptyData text="店铺不存在或已被删除"></emptyData>
+  <pageWrapper v-else>
+    <emptyData height="80vh" text="店铺不存在或已被删除"></emptyData>
   </pageWrapper>
 </template>
 
 <script lang="ts" set>
 import { onLoad } from '@dcloudio/uni-app';
 import { reactive, onMounted } from 'vue';
-import { previewImage } from '@/utils/util';
+import { previewImage, getCurrentBusinessHours, useMap } from '@/utils/util';
 import { getDownloadUrl } from '@/api/common/upload';
 import { getShopDetail } from '@/api/shopManage';
 import { createShopHistory } from '@/api/history';
@@ -154,6 +164,7 @@ export default {
       showShop: true,
       isOwner: false, // 是否是店长
       shopInfo: {
+        businessHours: '',
         logo: '',
         name: '',
         openTime: '',
@@ -170,6 +181,7 @@ export default {
         latitude: '',
         longitude: '',
         ownerAvatar: '',
+        ownerMobile: '',
         ownerName: '张店长',
         fees: [
           { name: '入场费', value: '¥0' },
@@ -220,11 +232,50 @@ export default {
               state.shopInfo[key] = data[key];
             }
           }
+          state.shopInfo.businessHours = getCurrentBusinessHours(data?.shippingTimeList)?.time || '';
+          if (res.data?.shop) {
+            state.shopInfo.ownerName = res.data.shop.ownerName || '';
+            state.shopInfo.ownerAvatar = res.data.shop.ownerIdNumberPhoto || '';
+            state.shopInfo.ownerMobile = res.data.shop.ownerMobile || '';
+          }
           state.showShop = true;
         })
         .catch(err => {
+          console.log(err);
           state.showShop = false;
         });
+    };
+
+    const showOwnerInfo = () => {
+      uni.showModal({
+        title: '店长信息',
+        content: `店长: ${state.shopInfo.ownerName}\n店长手机号: ${state.shopInfo.ownerMobile}`,
+        showCancel: true,
+        cancelText: '拨打电话',
+        confirmText: '知道了',
+        success: res => {
+          if (res.cancel) {
+            // 用户点击了拨打电话
+            callOwner();
+          }
+        },
+      });
+    };
+
+    // 拨打电话功能
+    const callOwner = () => {
+      if (!state.shopInfo.ownerMobile) {
+        uni.showToast({
+          title: '手机号不存在',
+          icon: 'none',
+        });
+        return;
+      }
+      uni.makePhoneCall({
+        phoneNumber: state.shopInfo.ownerMobile,
+        success: () => {},
+        fail: err => {},
+      });
     };
 
     // 检查报名状态
@@ -305,6 +356,42 @@ export default {
       });
     };
 
+    // 复制地址或者打开地图
+    const locateAddress = () => {
+      // uni.showActionSheet({
+      //   itemList: ['复制地址', '地图'],
+      //   success: res => {
+      //     switch (res.tapIndex) {
+      //       case 0:
+      //         // 复制地址
+      //         copyAddressToClipboard();
+      //         break;
+      //     }
+      //   },
+      // });
+      // 直接打开默认地图
+      useMap('openLocation', state.shopInfo);
+    };
+
+    // 复制地址到剪贴板
+    const copyAddressToClipboard = () => {
+      uni.setClipboardData({
+        data: state.shopInfo.address,
+        success: () => {
+          uni.showToast({
+            title: '地址已复制',
+            icon: 'success',
+          });
+        },
+        fail: () => {
+          uni.showToast({
+            title: '复制失败',
+            icon: 'none',
+          });
+        },
+      });
+    };
+
     // 页面加载时执行
     onMounted(() => {
       // 检查是否已报名
@@ -337,6 +424,9 @@ export default {
       uploadAlbum,
       previewImage,
       getDownloadUrl,
+      showOwnerInfo,
+      locateAddress,
+      copyAddressToClipboard,
     };
   },
 };
@@ -381,6 +471,7 @@ export default {
   height: 40rpx;
   border-radius: 20rpx;
   margin-right: 10rpx;
+  margin-top: 10rpx;
 }
 
 .owner-name {
@@ -397,6 +488,7 @@ export default {
 .time-icon,
 .location-icon {
   margin-right: 10rpx;
+  font-size: 30rpx;
 }
 
 /* 店铺标签 */
@@ -511,7 +603,7 @@ export default {
 }
 
 .button-row {
-  margin-bottom: 30rpx;
+  margin-bottom: 20rpx;
 }
 
 .button-item {
@@ -519,18 +611,28 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
 
-.menu-icon,
-.game-icon {
-  font-size: 48rpx;
-  margin-bottom: 10rpx;
+  .wd-icon-box {
+    width: 60rpx;
+    height: 60rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--primary-6);
+    .wd-icon {
+      color: var(--text-1);
+      font-size: 36rpx;
+    }
+  }
 }
 
 .button-text {
-  font-size: 28rpx;
-  color: var(--primary-6);
+  font-size: 26rpx;
+  // color: var(--burgundy);
+  color: var(--text-1);
   font-weight: bold;
+  margin-top: 10rpx;
 }
 
 .apply-button {

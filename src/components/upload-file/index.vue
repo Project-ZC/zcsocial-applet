@@ -1,7 +1,17 @@
 <template>
   <view class="upload-container">
+    <!-- 隐藏画布：用于图片与logo合成（保持在组件作用域内） -->
+    <!-- <image :src="imgUrl" mode="aspectFill"></image> -->
+    <canvas
+      :canvas-id="canvasId"
+      :id="canvasId"
+      :style="{ position: 'fixed', left: '-9999px', top: '-9999px', width: canvasW + 'px', height: canvasH + 'px' }"
+      :width="canvasW"
+      :height="canvasH"
+    ></canvas>
     <up-upload
       ref="uploadRef"
+      imageMode="aspectFit"
       :class="['upload-wrap', { round: props.round }]"
       :width="props.width"
       :height="props.height"
@@ -27,14 +37,14 @@
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          border: '1px dashed var(--border-1)',
+          border: '1px dashed var(--border-2)',
           borderRadius: props.round ? '50%' : '16rpx',
         }"
       >
-        <up-icon name="plus" size="24" color="var(--border-1)"></up-icon>
+        <up-icon name="plus" size="24" color="var(--text-1)"></up-icon>
       </view>
     </up-upload>
-    <view class="tips-container">
+    <view class="tips-container z-tips">
       <slot name="tips"></slot>
     </view>
   </view>
@@ -46,6 +56,14 @@ import { uploadFile, previewImage } from '@/utils/util';
 import { getDownloadUrl } from '@/api/common/upload';
 
 const proxy = (getCurrentInstance()?.proxy || null) as any;
+
+// 配置上传图片是否加logo
+const logoConfig = {
+  src: '', // 图片路径 https
+  scale: 0.2, // 图片缩放比例
+  opacity: 0.8, // 图片透明度
+  margin: 10, // 图片边距
+};
 
 // 组件名称
 defineOptions({
@@ -77,9 +95,23 @@ const props = defineProps({
   },
   // 初始值（编辑场景）
   fileList: { type: Array, default: () => [] },
+  // 新参数：logo 配置对象（优先级高于下方旧参数）
+  logoConfig: { type: Object, default: () => ({}) },
+});
+// 统一读取 logo 配置（logoConfig 优先，旧参数回退）
+const mergedLogo = computed(() => {
+  const cfg: any = props.logoConfig || {};
+  return {
+    src: cfg.src ?? logoConfig.src,
+    scale: cfg.scale ?? logoConfig.scale,
+    opacity: cfg.opacity ?? logoConfig.opacity,
+    margin: cfg.margin ?? logoConfig.margin,
+  } as { src: string; scale: number; opacity: number; margin: number };
 });
 
 const uploadRef = ref<any>(null);
+
+const imgUrl = ref<string>('');
 
 const emit = defineEmits(['update:fileList', 'afterUpload']);
 
@@ -146,10 +178,10 @@ const onPreview = (event: any) => {
     // 获取所有图片的URL列表用于预览
     const urls = innerFileList.value.filter((item: any) => item.url).map((item: any) => item.url);
 
-    previewImage({
-      urls,
-      current: index,
-    });
+    // previewImage({
+    //   urls,
+    //   current: index,
+    // });
   }
 };
 
@@ -177,7 +209,16 @@ const afterRead = async (event: any) => {
   syncToParent();
   for (let i = 0; i < lists.length; i++) {
     try {
-      const result = await uploadFile(lists[i].url);
+      // 如果是图片，则先与logo进行合成
+      let uploadPath = lists[i].url;
+      // 合成图片为图片统一添加logo
+      const isImage = lists[i]?.type?.startsWith?.('image') || lists[i]?.isImage === true || props.acceept === 'image';
+      if (isImage && mergedLogo.value.src) {
+        const composed = await composeImageWithLogo(uploadPath);
+        if (composed) uploadPath = composed;
+      }
+
+      const result = await uploadFile(uploadPath);
       if (!result || !result.url) throw new Error('上传失败');
       let item = innerFileList.value[fileListLen];
       innerFileList.value.splice(fileListLen, 1, {
@@ -249,19 +290,108 @@ defineExpose({
   triggerUpload,
   resetFileList,
 });
+
+// ---------------- 叠加Logo：画布合成 ----------------
+// 说明：使用 canvas 将原图与 logo 合成，再生成临时文件用于上传
+const canvasId = 'uploadLogoCanvas';
+const canvasW = ref<number>(0);
+const canvasH = ref<number>(0);
+
+// 获取图片信息（宽高等）
+const getImgInfo = (src: string) =>
+  new Promise<uniApp.GetImageInfoSuccessCallbackResult>((resolve, reject) => {
+    uni.getImageInfo({ src, success: resolve, fail: reject });
+  });
+
+// 合成函数：返回临时文件路径
+const composeImageWithLogo = async (originPath: string) => {
+  const base = await getImgInfo(originPath);
+  // 处理 logo 源：支持 /static、本地临时文件、网络图
+  let logoSrc = mergedLogo.value.src as string;
+  if (!logoSrc) throw new Error('logo src empty');
+  if (/^https?:\/\//i.test(logoSrc)) {
+    const dl: any = await new Promise(resolve => {
+      uni.downloadFile({ url: logoSrc, success: resolve, fail: resolve });
+    });
+    if (dl && dl.statusCode === 200 && dl.tempFilePath) {
+      logoSrc = dl.tempFilePath;
+    }
+  }
+  const logo = await getImgInfo(logoSrc);
+
+  // 画布尺寸与原图一致
+  canvasW.value = base.width;
+  canvasH.value = base.height;
+
+  await nextTick();
+  // 创建绘图上下文
+  const ctx = uni.createCanvasContext(canvasId, proxy);
+  // 绘制原图
+  ctx.drawImage(base.path, 0, 0, base.width, base.height);
+
+  // 计算logo绘制尺寸与位置（基于短边比例）
+  const shortSide = Math.min(base.width, base.height);
+  const targetLogoSize = Math.max(1, Math.floor(shortSide * Math.min(Math.max(mergedLogo.value.scale, 0), 1)));
+  const margin = Math.max(0, Math.floor(mergedLogo.value.margin));
+
+  // 等比缩放logo至 targetLogoSize（以宽为准）
+  const scale = targetLogoSize / logo.width;
+  const logoDrawW = Math.round(logo.width * scale);
+  const logoDrawH = Math.round(logo.height * scale);
+  const dx = base.width - logoDrawW - margin;
+  const dy = base.height - logoDrawH - margin;
+
+  // 设置透明度并绘制logo
+  const alpha = Math.min(1, Math.max(0, mergedLogo.value.opacity));
+  // 旧版canvas无全局透明设置API，使用setGlobalAlpha
+  // @ts-ignore
+  if (ctx.setGlobalAlpha) ctx.setGlobalAlpha(alpha);
+  ctx.drawImage(logo.path, dx, dy, logoDrawW, logoDrawH);
+
+  return new Promise<string>((resolve, reject) => {
+    ctx.draw(false, () => {
+      uni.canvasToTempFilePath(
+        {
+          canvasId,
+          quality: 1,
+          success: res => {
+            imgUrl.value = res.tempFilePath;
+            resolve(res.tempFilePath);
+          },
+          fail: err => {
+            reject(err);
+          },
+        },
+        proxy as any
+      );
+    });
+  });
+};
 </script>
 
 <style lang="scss" scoped>
 .upload-container {
   text-align: center;
-
   :deep(.u-icon__icon) {
     color: #fff !important;
-    font-size: 24rpx !important;
+    font-size: 36rpx !important;
+    // top: 14rpx !important;
   }
   :deep(.u-upload__deletable) {
     background: var(--primary-6) !important;
     color: var(--text-1) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40rpx;
+    height: 40rpx;
+    border-radius: 50%;
+  }
+  :deep(.u-upload__deletable__icon) {
+    left: 50%;
+    top: 50% !important;
+    transform: translate(-50%, -50%) scale(0.7);
+    right: unset !important;
   }
 }
 
@@ -274,8 +404,6 @@ defineExpose({
   }
 }
 .tips-container {
-  font-size: 12px;
-  color: var(--text-3);
   margin-top: 5px;
 }
 </style>

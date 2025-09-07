@@ -149,11 +149,11 @@ const state = reactive({
   // DIY酒料分类数据
   diyTypes: [] as any[],
   mainTabs: [
-    {
-      title: 'DIY饮品',
-      badge: '',
-      type: 'diy',
-    },
+    // {
+    //   title: 'DIY饮品',
+    //   badge: '',
+    //   type: 'diy',
+    // },
     {
       title: '常规点单',
       badge: '',
@@ -471,7 +471,12 @@ onLoad(options => {
   // 先获取分类列表
   GetCategoryList();
   // 设置默认主类型为常规点单
-  handleMainTabClick(state.mainTabs[1]);
+  const defaultTab = state.mainTabs.find(tab => tab.type === state.currentMainType);
+  if (defaultTab) {
+    handleMainTabClick(defaultTab);
+  } else {
+    handleMainTabClick(state.mainTabs[0]);
+  }
 });
 
 defineOptions({

@@ -27,6 +27,7 @@ function setupUI(app: App) {
 				mode: "subsection",
 				border: false,
 			},
+
 			// 设置input组件的全局默认属性
 			input: {
 				// // 始终嵌入键盘
@@ -36,7 +37,7 @@ function setupUI(app: App) {
 				// // 光标距离键盘的距离
 				// "cursorSpacing": 30,
 				// 光标颜色
-				cursorColor: "#3c9cff",
+				cursorColor: "var(--primary-6)",
 				color: "var(--text-2)",
 				borderColor: "var(--border-2)",
 				bgColor: "var(--bg-2)",
@@ -50,11 +51,16 @@ function setupUI(app: App) {
 			},
 			popup: {
 				round: 15,
+				bgColor: "var(--bg-2)",
+			},
+			picker: {
+				bgColor: "var(--bg-2)",
 			},
 			datetimePicker:{
 				cancelColor: "var(--text-1)",
-				confirmColor: "var(--primary-6)",
-			}
+				confirmColor: "var(--text-1)",
+				bgColor: "var(--bg-2)",
+			},
 			// 其他组件属性配置
 			// ......
 		},

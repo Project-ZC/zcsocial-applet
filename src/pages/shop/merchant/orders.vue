@@ -31,11 +31,6 @@
 
     <!-- 订单列表 -->
     <view class="orders-list">
-      <view v-if="filteredOrders.length === 0" class="empty-state">
-        <view class="empty-icon">📋</view>
-        <view class="empty-text">暂无{{ getStatusText(currentStatus) }}订单</view>
-      </view>
-
       <order-card
         v-for="order in filteredOrders"
         :key="order.orderNumber"
@@ -212,60 +207,11 @@ const handleCancel = (orderInfo: any) => {
 
 <style lang="scss" scoped>
 .merchant-orders-page {
-  min-height: 100vh;
-  background-color: #f5f5f5;
-  padding-bottom: 40rpx;
-
-  &.dark-theme {
-    background-color: #1a1a1a;
-    color: #e0e0e0;
-
-    .page-header {
-      background-color: #2c2c2c;
-
-      .title {
-        color: #e0e0e0;
-      }
-
-      .stats {
-        .stat-item {
-          .stat-number {
-            color: #e0e0e0;
-          }
-
-          .stat-label {
-            color: #aaa;
-          }
-        }
-      }
-    }
-
-    .status-tabs {
-      background-color: #2c2c2c;
-
-      .tab-item {
-        color: #e0e0e0;
-
-        &.active {
-          background-color: #1890ff;
-          color: #fff;
-        }
-      }
-    }
-
-    .empty-state {
-      .empty-text {
-        color: #e0e0e0;
-      }
-    }
-  }
-
   // 页面头部
   .page-header {
-    background-color: #fff;
-    padding: 40rpx 30rpx;
+    background-color: var(--bg-2);
+    padding: 20rpx;
     margin-bottom: 20rpx;
-    border-radius: 0 0 16rpx 16rpx;
 
     .title {
       font-size: 36rpx;
@@ -302,7 +248,7 @@ const handleCancel = (orderInfo: any) => {
   // 状态筛选标签
   .status-tabs {
     display: flex;
-    background-color: #fff;
+    background-color: var(--bg-2);
     padding: 20rpx;
     margin-bottom: 20rpx;
     border-radius: 16rpx;
@@ -345,25 +291,6 @@ const handleCancel = (orderInfo: any) => {
   // 订单列表
   .orders-list {
     padding: 0 20rpx;
-
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 100rpx 0;
-
-      .empty-icon {
-        font-size: 80rpx;
-        margin-bottom: 20rpx;
-        opacity: 0.5;
-      }
-
-      .empty-text {
-        font-size: 28rpx;
-        color: var(--text-3);
-      }
-    }
   }
 }
 </style>

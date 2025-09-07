@@ -83,6 +83,7 @@
   </pageWrapper>
   <!-- 营业时间选择器 -->
   <up-datetime-picker
+    bgColor="var(--bg-2)"
     :show="showOpenTimePicker"
     v-model="form.openTime"
     mode="time"
@@ -110,7 +111,7 @@ import TagSelector from '@/components/tag-selector/index.vue';
 import { getDownloadUrl } from '@/api/common/upload';
 import { reactive, ref, nextTick, computed, watch } from 'vue';
 import { onLoad } from '@dcloudio/uni-app';
-import { getCurrentDay, getCurrentBusinessHours } from '@/utils/util';
+import { getCurrentDay, getCurrentBusinessHours, useMap } from '@/utils/util';
 import { getShopDetail, getAllShopConfig, editShopConfig, getShopConfigList } from '@/api/shopManage';
 import { getTagList } from '@/api/common/dict';
 
@@ -259,17 +260,16 @@ const confirmCloseTime = e => {
 };
 
 // 选择地址
-const chooseLocation = () => {
-  uni.chooseLocation({
-    success: res => {
-      form.address = res.address || '';
-      form.latitude = res.latitude || '';
-      form.longitude = res.longitude || '';
-      form.provinceId = res.provinceId || '';
-      form.cityId = res.cityId || '';
-      form.distinctId = res.distinctId || '';
-    },
-  });
+const chooseLocation = async () => {
+  try {
+    const res = await useMap('chooseLocation');
+    form.address = res.address || '';
+    form.latitude = res.latitude || '';
+    form.longitude = res.longitude || '';
+    form.provinceId = res.provinceId || '';
+    form.cityId = res.cityId || '';
+    form.distinctId = res.distinctId || '';
+  } catch (error) {}
 };
 
 // 上传相册图片
@@ -409,50 +409,6 @@ onLoad(options => {
   height: 100%;
   object-fit: cover;
 }
-
-.upload-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-.upload-icon {
-  width: 30px;
-  height: 30px;
-  background-color: #eee;
-  border-radius: 50%;
-  margin-bottom: 5px;
-  position: relative;
-}
-
-.upload-icon::before,
-.upload-icon::after {
-  content: '';
-  position: absolute;
-  background-color: var(--text-2);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.upload-icon::before {
-  width: 16px;
-  height: 2px;
-}
-
-.upload-icon::after {
-  width: 2px;
-  height: 16px;
-}
-
-.upload-text {
-  font-size: 12px;
-  color: var(--text-2);
-}
-
 .form-input {
   height: 40px;
   border: 1px solid #eee;

@@ -59,13 +59,56 @@ onLaunch(options => {
   //   }
   // 设置登录过期错误处理回调
   setOnAuthErrorCallback(handleAuthError);
+
+  // 小程序版本更新检测与应用
+  // 仅在微信小程序端有效
+  // 使用方式：检测到新版本 -> 弹窗提示 -> 用户确认后重启应用以应用新版本
+  // 参考：https://developers.weixin.qq.com/miniprogram/dev/api/base/update/wx.getUpdateManager.html
+  // #ifdef MP-WEIXIN
+  try {
+    const updateManager = wx.getUpdateManager();
+    // 检查是否有新版本
+    updateManager.onCheckForUpdate(res => {
+      // res.hasUpdate 为 true 表示有新版本
+      if (res.hasUpdate) {
+        // 下载完成后回调
+        updateManager.onUpdateReady(() => {
+          uni.showModal({
+            title: '更新提示',
+            content: '有新版本可用，是否立即重启并更新？',
+            confirmText: '立即更新',
+            cancelText: '稍后',
+            success: mres => {
+              if (mres.confirm) {
+                // 应用新版本并重启
+                updateManager.applyUpdate();
+              }
+            },
+          });
+        });
+
+        // 新版本下载失败
+        updateManager.onUpdateFailed(() => {
+          uni.showModal({
+            title: '更新失败',
+            content: '新版本下载失败，请稍后重试或重新进入小程序。',
+            showCancel: false,
+            confirmText: '知道了',
+          });
+        });
+      }
+    });
+  } catch (e) {
+    console.log('版本更新检测初始化失败：', e);
+  }
+  // #endif
 });
 // 页面级 onShow 不接收路径参数， 获取页面参数应使用 onLoad(options)
 onShow(() => {
   if (shopStore.shopStatus.length == 0) {
     shopStore.GetShopStatus();
   }
-  shopStore.GetMyShopList();
+  // shopStore.GetMyShopList();
   console.log('App Show');
 });
 onHide(() => {

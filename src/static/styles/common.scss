@@ -3,17 +3,11 @@
 /* 全局页面背景色 */
 page {
     // background-color: var(--bg-1);
-    background: var(--bg-gradient-1);
+    // background: var(--bg-gradient-1); 
     font-size: $up-font-base;
     /* 优化滚动性能 */
     -webkit-overflow-scrolling: touch;
     color: var(--text-1);
-    min-height: 100%;
-}
-
-/* 渐变背景类 - 用于需要渐变效果的页面 */
-.page-gradient-bg {
-    // background: var(--bg-gradient-1);
 }
 
 .navigation{
@@ -122,12 +116,6 @@ page {
     width: 650rpx;
     max-height: 100vh;
 }
-.u-popup{
-    &__content{
-        background-color: var(--bg-2)!important;
-    }
-}
-
 
 /* 毛玻璃效果 */
 .z-glass-card {
@@ -218,8 +206,6 @@ page {
 // }
 
 
-
-
 // 购物车选择效果
 /* 容量、加料、冰度、甜度等选项样式 */
 .z-cart-item {
@@ -303,13 +289,55 @@ page {
     }
 }
 
-// 日期框
-.u-picker{
-
-    
-    background-color: var(--bg-2)!important;
-    &__view__column{
-        background-color: var(--bg-2)!important;
+// // 日期框
+// .u-datetime-picker{
+//     background-color: var(--bg-2)!important;
+// }
+// .u-picker{
+//     background-color: var(--bg-2)!important;
+//     &__view__column{
+//         background-color: var(--bg-2)!important;
+//     }
+//     .u-picker__view__column__item{
+//         background-color: var(--bg-2)!important;
+//     }
+// }
+// 动作框间隙
+.u-action-sheet{
+    .u-gap{
+        background-color: var(--border-2)!important;
+        height: 2px!important;
     }
 }
+
+.u-picker-input{
+    opacity: 1!important;
+}
+
+.u-picker-input{
+    background-color: var(--bg-2)!important;
+    color: var(--text-1)!important;
+    border-color: var(--border-2)!important;
+}
+
+.u-popup__content{
+    background-color: var(--bg-2)!important;
+}
+
+.uni-picker-view-mask{
+    background-color: var(--bg-2)!important;
+}
+.u-picker-view-mask{
+    background-color: var(--bg-2)!important;
+}
+.uni-picker-view-content{
+    background-color: var(--bg-2)!important;
+}
+.u-picker-view-content{
+    background-color: var(--bg-2)!important;
+}
+.u-picker-wraper{
+    background-color: var(--bg-2)!important;
+}
+
 

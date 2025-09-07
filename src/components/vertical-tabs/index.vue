@@ -217,6 +217,10 @@ const options1 = reactive([
   },
 ]);
 
+const state = reactive({
+  timer: null,
+});
+
 // 将 props 字段暴露为同名顶层变量，供模板与样式 v-bind 使用
 const { tabs, activeColor, inactiveColor, indicatorColor, height, width, currentMainType } = toRefs(props);
 // 仅在 setup 时获取并缓存组件代理，避免异步场景下 getCurrentInstance() 为空
@@ -282,7 +286,7 @@ const editProduct = (item: any, index: number) => {
 // 处理标签点击
 const handleTabClick = async (index: number, tab: TabItem) => {
   if (tab.disabled) return;
-
+  state.timer && clearTimeout(state.timer);
   activeIndex.value = index;
   emit('update:modelValue', index);
   emit('change', { index, tab });
@@ -292,8 +296,8 @@ const handleTabClick = async (index: number, tab: TabItem) => {
   isClickScrolling.value = true;
   // 先清空再设置，避免同值不触发滚动
   //   await nextTick();
-  scrollIntoViewId.value = `sec-${index}`;
-  setTimeout(() => {
+  state.timer = setTimeout(() => {
+    scrollIntoViewId.value = `sec-${index}`;
     isClickScrolling.value = false;
   }, 100);
 };

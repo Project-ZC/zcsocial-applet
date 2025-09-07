@@ -1,6 +1,6 @@
 <template>
   <!-- <scroll-view :scroll-y="true" show-scrollbar="true" :scroll-into-view="scrollIntoViewId"> -->
-  <view class="page-wrapper page-gradient-bg" theme="LightBlue" :style="{ paddingBottom: bottom + 'px' }">
+  <view class="page-wrapper" theme="LightBlue" :style="{ paddingBottom: bottom + 'px' }">
     <!-- <view class="page-wrapper-header" :style="{
       position: currentPage === 'index' ? 'unset' : 'sticky',
       backgroundColor: ['index', 'login'].includes(currentPage) ? 'transparent' : '#fff',
@@ -192,9 +192,10 @@ $header-h: 100rpx;
   font-size: $up-font-base;
   display: flex;
   flex-direction: column;
-  // background-color: var(--bg-1);
-  background-color: var(--bg-gradient-1);
+  // background: var(--bg-1);
+  background: var(--bg-gradient-1);
   color: var(--text-1);
+  min-height: 100vh;
 
   &-header {
     position: sticky;

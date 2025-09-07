@@ -9,7 +9,9 @@
             <text class="table-selector__text">
               {{ state.currentTableNo || '请选择桌号' }}
             </text>
-            <up-icon name="arrow-down" size="16" color="var(--text-2)" />
+            <view class="choose-table">
+              <text class="wd-icon wd-icon-choose-table"></text>
+            </view>
           </view>
         </view>
       </view>
@@ -263,7 +265,7 @@ const state = reactive({
   currentMainType: 'all',
   // 顶部主类切换
   mainTabs: [
-    { title: 'DIY饮品', badge: '', type: 'diy' },
+    // { title: 'DIY饮品', badge: '', type: 'diy' },
     { title: '常规点单', badge: '', type: 'all' },
   ],
   // 分类与样式
@@ -343,8 +345,6 @@ const handleMainTabClick = (tab: any) => {
 // 点击分类
 const handleCategoryClick = (event: { index: number; tab: any }) => {
   const { tab } = event;
-  // 这里保留扩展入口
-  console.log('点击分类:', tab?.name);
 };
 
 // 商品接口
@@ -759,13 +759,29 @@ defineOptions({
   align-items: center;
   gap: 16rpx;
   background: var(--bg-2);
-  border: 2rpx solid var(--border-1);
+  border: 2rpx solid var(--border-2);
   border-radius: 16rpx;
-  padding: 20rpx 24rpx;
+  padding: 0 20rpx;
+  height: 70rpx;
+  line-height: 70rpx;
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
   min-width: 260rpx;
   max-width: 400rpx;
   transition: all 0.2s ease;
+
+  .choose-table {
+    width: 50rpx;
+    height: 50rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--primary-6);
+    .wd-icon-choose-table {
+      color: var(--text-1);
+      font-size: 36rpx;
+    }
+  }
 
   &:active {
     transform: scale(0.98);

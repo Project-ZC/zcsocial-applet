@@ -289,7 +289,6 @@
     @select="selectCategory"
     @close="state.showCategorySelector = false"
     title="选择细分类"
-    cancel-text="取消"
   />
 </template>
 

@@ -88,21 +88,11 @@
             </up-form-item>
             <up-form-item label="二维码" v-if="state.tempTable.qrCode">
               <view class="qrcode-preview">
-                <image class="qrcode-image" :src="API_CONFIG.fileUrl + state.tempTable.qrCode" mode="aspectFit"></image>
-                <!-- <view class="qrcode-actions">
-									<up-button
-										class="qrcode-btn"
-										type="primary"
-										@click="viewQRCode"
-										>查看</up-button
-									>
-									<up-button
-										class="qrcode-btn"
-										type="error"
-										@click="deleteQRCode"
-										>删除</up-button
-									>
-								</view> -->
+                <up-image
+                  class="qrcode-image"
+                  :src="API_CONFIG.fileUrl + state.tempTable.qrCode"
+                  mode="aspectFit"
+                ></up-image>
               </view>
               <!-- <view class="qrcode-upload" v-else>
                 <view class="upload-area" @click="uploadQRCode">
@@ -131,7 +121,7 @@ import { reactive, ref } from 'vue';
 import emptyData from '@/components/empty-data/index.vue';
 import { onLoad, onPullDownRefresh } from '@dcloudio/uni-app';
 import { API_CONFIG } from '@/api/common/apiConfig';
-import { previewImage } from '@/utils/util';
+import { previewImage, handleQRCodeLongPress } from '@/utils/util';
 import { getAllTableList, addTable, editTable, deleteTable } from '@/api/tableManage';
 import { getGender } from '@/api/common/dict';
 
@@ -236,13 +226,6 @@ const uploadQRCode = () => {
   });
 };
 
-const viewQRCode = () => {
-  previewImage({
-    urls: [API_CONFIG.fileUrl + state.tempTable.qrCode],
-    current: 0,
-  });
-};
-
 const deleteQRCode = () => {
   state.tempTable.qrCode = '';
 };
@@ -336,6 +319,14 @@ onLoad(async query => {
   await getOrderModeList();
   GetTableList();
 });
+
+// 二维码长按处理
+const onQRCodeLongPress = () => {
+  if (state.tempTable.qrCode) {
+    const qrCodeUrl = API_CONFIG.fileUrl + state.tempTable.qrCode;
+    handleQRCodeLongPress(qrCodeUrl, '桌位二维码');
+  }
+};
 
 // 下拉刷新监听
 onPullDownRefresh(async () => {

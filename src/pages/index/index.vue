@@ -37,7 +37,8 @@
       <!-- 默认内容 -->
       <view v-else>
         <view class="scan-box z-glass-card" @tap="handleScan">
-          <up-image width="100" height="100" src="/static/images/scan-logo.png" />
+          <!-- <up-image width="100" height="100" src="/static/images/scan-logo.png" /> -->
+          <view class="wd-icon wd-icon-shop-saoma"></view>
           <view class="scan-text">
             <text>扫码进入店铺</text>
           </view>
@@ -72,6 +73,7 @@ import ShopCard from '@/components/shop-card/index.vue';
 import ActivityCard from './components/activityCard.vue';
 import Advertisement from '@/components/advertisement/index.vue';
 import { getAllShopHistory } from '@/api/history';
+import { uniCache } from '@/utils/storage';
 // 搜索相关状态
 const showSearchResults = ref(false);
 const searchResults = ref([]);
@@ -219,6 +221,7 @@ const GetShopHistoryList = async () => {
 };
 
 const handleShopClick = (item: any) => {
+  uniCache.setItem('skipSearchClear', true);
   uni.navigateTo({
     url: `/pages/index/shopDetail/showDetail?shopId=${item.shopId}`,
   });
@@ -302,10 +305,14 @@ onMounted(() => {
 // 页面显示时（从其他tabbar页面切换回来时）
 onShow(() => {
   // 可以在这里刷新数据或执行其他逻辑
+  uniCache.removeItem('skipSearchClear');
 });
 
 // 页面隐藏时（切换到其他tabbar页面时）
 onHide(() => {
+  const skip = uniCache.getItem('skipSearchClear');
+  if (skip) return; // 不清理
+
   // 清理搜索状态
   closeSearchResults(false);
   // 通知navbar组件清空搜索框
@@ -335,6 +342,10 @@ onPullDownRefresh(async () => {
     box-sizing: border-box;
     padding: $up-box-pd;
     transition: all 0.3s ease;
+    .wd-icon-shop-saoma {
+      font-size: 140rpx;
+      color: var(--text-2);
+    }
 
     &:active {
       transform: scale(0.98);
@@ -344,7 +355,7 @@ onPullDownRefresh(async () => {
       font-weight: bold;
       margin-top: 16rpx;
       font-size: 32rpx;
-      color: var(--text-1);
+      color: var(--text-2);
     }
   }
   .title {

@@ -105,17 +105,19 @@ export function uploadFile(filePath, formData?: any) {
 
 // 公共预览图片
 export const previewImage = ({ urls, current = 0 }: { urls: string[]; current?: number }) => {
-	uni.previewImage({
-	  current,
-	  urls: urls,
-	  success: () => {},
-	  fail: (err) => {
-        uni.showToast({
-          title: '预览失败',
-          icon: 'none'
-        });
-      }
-	});
+	if(urls.length>0 && urls[0]) {
+		uni.previewImage({
+		  current,
+		  urls: urls,
+		  success: () => {},
+		  fail: (err) => {
+			uni.showToast({
+			  title: '预览失败',
+			  icon: 'none'
+			});
+		  }
+		});
+	}
   };
 
 
@@ -181,3 +183,219 @@ export const getCurrentBusinessHours = (shippingTimeList: any[]) => {
   return '暂无营业时间';
 };
 
+
+// 地图导航和选择
+export const useMap = (type: string, data: any)=>{
+	if(!data){
+		return;
+	}
+	return new Promise((resolve, reject) => {
+		if(type == 'chooseLocation'){
+			uni.chooseLocation({
+				success: res => {
+					resolve(res);
+				},
+				fail: err => {
+					reject(err);
+				},
+			});
+		}else if(type == 'openLocation'){
+			uni.openLocation({
+				latitude: data.latitude,
+				longitude: data.longitude,
+				name: data.name,
+				address: data.address,
+				success: res => {
+					resolve(res);
+				},
+				fail: err => {
+					reject(err);
+				},
+			});
+		}
+	});
+}
+
+// 二维码长按处理 - 保存到相册或识别二维码
+export const handleQRCodeLongPress = (imageUrl: string, title: string = '二维码') => {
+	uni.showActionSheet({
+		itemList: ['保存到相册', '识别二维码'],
+		success: (res) => {
+			if (res.tapIndex === 0) {
+				// 保存到相册
+				saveQRCodeToAlbum(imageUrl, title);
+			} else if (res.tapIndex === 1) {
+				// 识别二维码
+				scanQRCode(imageUrl);
+			}
+		},
+		fail: (err) => {
+			console.log('用户取消操作:', err);
+		}
+	});
+};
+
+// 保存二维码到相册
+export const saveQRCodeToAlbum = (imageUrl: string, title: string = '二维码') => {
+	// 先下载图片到本地
+	uni.downloadFile({
+		url: imageUrl,
+		success: (downloadRes) => {
+			if (downloadRes.statusCode === 200) {
+				// 保存到相册
+				uni.saveImageToPhotosAlbum({
+					filePath: downloadRes.tempFilePath,
+					success: () => {
+						uni.showToast({
+							title: `${title}已保存到相册`,
+							icon: 'success',
+							duration: 2000
+						});
+					},
+					fail: (err) => {
+						console.log('保存到相册失败:', err);
+						if (err.errMsg.includes('auth deny')) {
+							// 权限被拒绝，引导用户开启权限
+							uni.showModal({
+								title: '提示',
+								content: '需要相册权限才能保存图片，请在设置中开启相册权限',
+								showCancel: true,
+								cancelText: '取消',
+								confirmText: '去设置',
+								success: (modalRes) => {
+									if (modalRes.confirm) {
+										// 打开系统设置页面
+										plus.runtime.openURL('app-settings:');
+									}
+								}
+							});
+						} else {
+							uni.showToast({
+								title: '保存失败',
+								icon: 'none'
+							});
+						}
+					}
+				});
+			} else {
+				uni.showToast({
+					title: '图片下载失败',
+					icon: 'none'
+				});
+			}
+		},
+		fail: (err) => {
+			console.log('下载图片失败:', err);
+			uni.showToast({
+				title: '图片下载失败',
+				icon: 'none'
+			});
+		}
+	});
+};
+
+// 识别二维码
+export const scanQRCode = (imageUrl: string) => {
+	// 先下载图片到本地
+	uni.downloadFile({
+		url: imageUrl,
+		success: (downloadRes) => {
+			if (downloadRes.statusCode === 200) {
+				// 识别二维码
+				uni.scanCode({
+					scanType: ['qrCode'],
+					success: (scanRes) => {
+						console.log('识别结果:', scanRes);
+						// 显示识别结果
+						uni.showModal({
+							title: '识别结果',
+							content: scanRes.result,
+							showCancel: true,
+							cancelText: '关闭',
+							confirmText: '复制',
+							success: (modalRes) => {
+								if (modalRes.confirm) {
+									// 复制到剪贴板
+									uni.setClipboardData({
+										data: scanRes.result,
+										success: () => {
+											uni.showToast({
+												title: '已复制到剪贴板',
+												icon: 'success'
+											});
+										}
+									});
+								}
+							}
+						});
+					},
+					fail: (err) => {
+						console.log('识别失败:', err);
+						// 如果直接识别失败，尝试使用图片识别
+						recognizeQRCodeFromImage(downloadRes.tempFilePath);
+					}
+				});
+			} else {
+				uni.showToast({
+					title: '图片下载失败',
+					icon: 'none'
+				});
+			}
+		},
+		fail: (err) => {
+			console.log('下载图片失败:', err);
+			uni.showToast({
+				title: '图片下载失败',
+				icon: 'none'
+			});
+		}
+	});
+};
+
+// 从图片识别二维码（备用方案）
+export const recognizeQRCodeFromImage = (imagePath: string) => {
+	// 使用plus API进行图片识别
+	if (typeof plus !== 'undefined' && plus.barcode) {
+		plus.barcode.scan({
+			path: imagePath,
+			success: (result) => {
+				console.log('图片识别结果:', result);
+				uni.showModal({
+					title: '识别结果',
+					content: result,
+					showCancel: true,
+					cancelText: '关闭',
+					confirmText: '复制',
+					success: (modalRes) => {
+						if (modalRes.confirm) {
+							uni.setClipboardData({
+								data: result,
+								success: () => {
+									uni.showToast({
+										title: '已复制到剪贴板',
+										icon: 'success'
+									});
+								}
+							});
+						}
+					}
+				});
+			},
+			fail: (err) => {
+				console.log('图片识别失败:', err);
+				uni.showToast({
+					title: '识别失败，请重试',
+					icon: 'none'
+				});
+			}
+		});
+	} else {
+		// 如果plus API不可用，提示用户手动识别
+		uni.showModal({
+			title: '提示',
+			content: '无法自动识别二维码，请长按图片保存到相册后使用其他应用识别',
+			showCancel: false,
+			confirmText: '知道了'
+		});
+	}
+};
