@@ -4,11 +4,21 @@
     <!-- 店铺切换组件 -->
     <ShopSwitcher
       ref="shopSwitcherRef"
-      v-if="state.shopList.length > 0 && userStore.checkShopPermission()"
+      v-if="state.shopList.length > 0 && userStore.checkPermission('shop/switch')"
       :shops="state.shopList"
       @shopChange="handleShopSelect"
     />
-    <div class="shop">
+
+    <!-- 顶部弹层：从顶部滑出展示店铺信息，遮罩可点击关闭 -->
+    <up-popup
+      :show="showShopInfoPopup"
+      mode="top"
+      :overlay="true"
+      closeOnClickOverlay
+      :safeAreaInsetBottom="false"
+      @close="showShopInfoPopup = false"
+      z-index="999"
+    >
       <!-- 店铺基本信息 -->
       <view class="shop-info-card z-glass-card">
         <view class="shop-header">
@@ -42,37 +52,32 @@
         <view class="shop-switch-section" @click="openShopModal" v-if="userStore.checkPermission('shop/switch')">
           <view class="shop-switch-btn">
             <view class="btn-content">
-              <!-- <up-icon
-								class="switch-icon"
-								name="shop"
-								size="20"
-								color="var(--primary-6)"
-							></up-icon> -->
               <text class="btn-text">切换店铺</text>
-              <!-- <up-icon class="arrow-icon" name="arrow-down" size="20" color="var(--primary-6)"></up-icon> -->
               <view class="wd-icon wd-icon-switch-shop"></view>
             </view>
             <view class="shop-count">{{ state.shopList.length }}家店铺</view>
           </view>
         </view>
       </view>
-      <!-- 无权限提示 -->
-      <!-- <view v-else class="no-permission-card z-glass-card">
-				<view class="no-permission-content">
-					<up-icon name="lock" size="60" color="var(--text-3)"></up-icon>
-					<text class="no-permission-text">您暂无店铺管理权限</text>
-					<text class="no-permission-desc">请联系管理员开通相关权限</text>
-				</view>
-			</view> -->
+    </up-popup>
+    <!-- 顶部长按+下滑触发区：透明覆盖在顶部，用于唤起店铺信息弹层 -->
+    <view
+      class="shop"
+      @touchstart="onTouchStart"
+      @touchmove.stop.prevent="onTouchMove"
+      @touchend="onTouchEnd"
+      @longpress="onLongPress"
+    >
+      <view class="top-box">
+        <tabs class="shop-tab" v-model="state.currentTab" :list="state.list" @change="handleTabChange" />
 
-      <tabs
-        class="shop-subsection"
-        v-model="state.currentTab"
-        :list="state.list"
-        @change="handleTabChange"
-        v-if="userStore.checkShopPermission()"
-      />
-      <view class="z-glass-card" v-show="state.currentTab === 'shop-system' && userStore.checkShopPermission()">
+        <view class="right-shop" @click="showShopInfoPopup = true">
+          <text>{{ shopInfo.name }}</text>
+          <view class="wd-icon wd-icon-switch-shop"></view>
+        </view>
+      </view>
+
+      <view class="z-glass-card" v-show="state.currentTab === 'shop-system'">
         <up-cell-group v-for="main in filteredCellList" :key="main.title">
           <view class="z-cell-title">{{ main.title }}</view>
           <up-cell
@@ -92,19 +97,10 @@
         </up-cell-group>
       </view>
 
-      <view v-show="state.currentTab === 'shop-order' && userStore.checkShopPermission()">
-        <!-- <view class="order-content"></view> -->
-        <!-- 包含用户信息的订单卡片 -->
-        <!-- <OrderCard
-					v-for="order in state.sampleOrders"
-					:key="order.orderNumber"
-					:order-info="order"
-					@order-click="handleOrderClick"
-					@action-click="handleActionClick"
-				/> -->
+      <view class="order-content" v-show="state.currentTab === 'shop-order'">
         <Order />
       </view>
-    </div>
+    </view>
   </pageWrapper>
 </template>
 
@@ -129,6 +125,17 @@ const userStore = useUserStore();
 const shopStore = useShopStore();
 
 const shopSwitcherRef = ref<any>(null);
+
+// 顶部弹层显示状态
+const showShopInfoPopup = ref<boolean>(false);
+
+// 手势相关状态
+const gesture = reactive({
+  startY: 0,
+  deltaY: 0,
+  longPressed: false,
+  THRESHOLD: 100, // 下滑阈值，像素
+});
 
 const state = reactive({
   currentTab: 'shop-system',
@@ -354,17 +361,6 @@ const handleOrderClick = (orderInfo: any) => {
   });
 };
 
-// 处理操作按钮点击
-const handleActionClick = (action: any, orderInfo: any) => {
-  uni.showToast({
-    title: `执行操作：${action.text}`,
-    icon: 'none',
-  });
-
-  // 这里可以添加具体的业务逻辑
-  console.log('Action:', action.type, 'Order:', orderInfo.orderNumber);
-};
-
 const handleTabChange = (tab: any, index: number) => {
   state.currentTab = tab.status;
 };
@@ -430,12 +426,13 @@ const GetShopConfigList = async () => {
 
 // 处理店铺选择
 const handleShopSelect = (shop: any) => {
-  console.log('切换到店铺:', shop);
+  // console.log(shop, 111);
   // 更新当前店铺信息
   if (shop.shopConfig) {
     for (const key in shopInfo.value) {
       shopInfo.value[key] = shop.shopConfig[key];
     }
+    shopInfo.value.businessHours = getCurrentBusinessHours(shopInfo.value.shippingTimeList)?.time;
     // 更新用户权限
     if (shop.roleList && shop.roleList.length > 0) {
       let roleList = [...shop.roleList];
@@ -449,9 +446,13 @@ const handleShopSelect = (shop: any) => {
     const currentShopId = shop.shopConfig.shopId;
     if (currentShopId) {
       uniCache.setItem('lastSelectedShopId', currentShopId);
-      console.log('已缓存店铺ID:', currentShopId);
     }
   }
+  uni.showToast({
+    title: '已切换到' + shop.shopConfig.name,
+    icon: 'none',
+  });
+  showShopInfoPopup.value = false;
 };
 
 const itemClick = (item: any) => {
@@ -498,6 +499,37 @@ const toggleShopStatus = async () => {
   }
 };
 
+// 触摸开始：记录起点
+const onTouchStart = (e: any) => {
+  gesture.startY = e.changedTouches?.[0]?.clientY || 0;
+  gesture.deltaY = 0;
+};
+
+// 触摸移动：计算下滑距离
+const onTouchMove = (e: any) => {
+  const currentY = e.changedTouches?.[0]?.clientY || 0;
+  gesture.deltaY = currentY - gesture.startY;
+};
+
+// 触摸结束：若已长按且下滑超过阈值则打开
+const onTouchEnd = () => {
+  // if (gesture.longPressed && gesture.deltaY > THRESHOLD) {
+  //   showShopInfoPopup.value = true;
+  // }
+  if (gesture.deltaY > gesture.THRESHOLD) {
+    showShopInfoPopup.value = true;
+  }
+  // 重置
+  gesture.startY = 0;
+  gesture.deltaY = 0;
+  gesture.longPressed = false;
+};
+
+// 长按回调：标记长按
+const onLongPress = () => {
+  gesture.longPressed = true;
+};
+
 // 每次显示页面时都刷新数据
 onShow(async () => {
   try {
@@ -507,8 +539,11 @@ onShow(async () => {
       GetShopConfigList();
     });
     // 检查是否有店铺权限，如果没有则跳转到首页
-    if (!userStore.checkShopPermission()) {
+    if (!userStore.checkPermission('shop')) {
       console.log('用户无店铺权限，跳转到首页');
+      // uni.navigateTo({
+      //   url: 'pages/index/index',
+      // });
       return;
     }
   } catch (error) {}
@@ -526,19 +561,47 @@ onPullDownRefresh(async () => {
     uni.stopPullDownRefresh();
   }
 });
+
+defineOptions({
+  options: {
+    styleIsolation: 'shared',
+  },
+});
 </script>
 
 <style lang="scss" scoped>
 .shop {
   padding: $up-box-pd;
-  :deep(.shop-subsection) {
+  :deep(.shop-tab) {
     margin: $up-box-mg 0;
     position: sticky;
     top: 0;
     z-index: 100;
+    width: 64%;
   }
-  .wd-icon {
-    font-size: 40rpx;
+  .top-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100rpx;
+    .right-shop {
+      // background: var(--bg-1);
+      display: flex;
+      align-items: center;
+      flex: 1;
+      justify-content: flex-end;
+      height: 100%;
+      margin-top: -16rpx;
+      text {
+        font-size: 28rpx;
+        font-weight: bold;
+        color: var(--text-2);
+      }
+      .wd-icon {
+        font-size: 44rpx;
+        color: var(--text-2);
+      }
+    }
   }
 
   .tags {
@@ -552,53 +615,30 @@ onPullDownRefresh(async () => {
     margin: 0 auto;
     margin-top: 20rpx;
   }
-
-  /* 店铺基本信息卡片 */
-  .shop-info-card {
-    padding: $up-box-pd;
-    margin-bottom: $up-box-mg;
-    .shop-intro,
-    .shop-date {
-      color: var(--text-2);
-      font-size: $up-font-sm;
-    }
-
-    .shop-date {
-      margin-bottom: 10rpx;
-    }
-    .shop-intro {
-      margin: 8rpx 0;
-    }
+}
+/* 店铺基本信息卡片 */
+.shop-info-card {
+  padding: $up-box-pd;
+  .shop-intro,
+  .shop-date {
+    color: var(--text-2);
+    font-size: $up-font-sm;
   }
 
-  /* 无权限提示卡片 */
-  .no-permission-card {
-    padding: 60rpx $up-box-pd;
-    text-align: center;
-
-    .no-permission-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20rpx;
-
-      .no-permission-text {
-        font-size: 32rpx;
-        font-weight: bold;
-        color: var(--text-1);
-      }
-
-      .no-permission-desc {
-        font-size: 28rpx;
-        color: var(--text-3);
-      }
-    }
+  .shop-date {
+    margin-bottom: 10rpx;
   }
-
+  .shop-intro {
+    margin: 8rpx 0;
+  }
   .shop-header {
     display: flex;
     align-items: center;
     padding: 0;
+  }
+
+  .wd-icon {
+    font-size: 40rpx;
   }
 
   .shop-logo {

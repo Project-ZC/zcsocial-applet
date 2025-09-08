@@ -406,6 +406,7 @@ const handleReorder = (orderInfo: any) => {
 </script>
 
 <style lang="scss" scoped>
+@import '@/uni.scss';
 // 订单类型筛选样式
 .order-type-section {
   display: flex;
@@ -419,32 +420,6 @@ const handleReorder = (orderInfo: any) => {
     gap: 20rpx;
     justify-content: center;
     margin-left: 20rpx;
-  }
-}
-
-// 状态筛选样式
-.status-tabs {
-  display: flex;
-  background-color: var(--bg-2);
-  padding: $up-box-pd;
-
-  .tab-item {
-    flex: 1;
-    text-align: center;
-    padding: 16rpx 0;
-    font-size: 28rpx;
-    color: var(--text-2);
-    border-radius: 20rpx;
-    transition: all 0.3s ease;
-
-    &.active {
-      background-color: var(--primary-6);
-      color: #fff;
-    }
-
-    &:active {
-      transform: scale(0.95);
-    }
   }
 }
 .orders-page {

@@ -7,6 +7,7 @@
     @close="closeModal"
     title="选择店铺"
     height="70%"
+    z-index="1000"
   >
     <view class="shop-modal z-modal z-modal-lg" v-if="currentShop">
       <view class="modal-header">

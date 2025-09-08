@@ -1,15 +1,9 @@
 import { useUserStore } from "@/stores";
-import { hasPermission, hasShopPermission } from "@/consts/auth";
+import { hasPermission } from "@/consts/auth";
 
 /**
  * 权限管理工具函数
  */
-
-// 检查是否有店铺权限
-export const checkShopPermission = (): boolean => {
-	const userStore = useUserStore();
-	return hasShopPermission(userStore.userInfo);
-};
 
 // 检查是否有特定权限
 export const checkPermission = (permission: string): boolean => {

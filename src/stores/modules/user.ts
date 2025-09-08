@@ -5,7 +5,6 @@ import { loginTo } from "@/utils/login";
 import { uniCache } from "@/utils/storage";
 import {
 	generateUserPermissionsByRoleIds,
-	hasShopPermission,
 	hasPermission,
 	testRoleId,
 } from "@/consts/auth";
@@ -30,11 +29,6 @@ export const useUserStore = defineStore(
 		//清理用户信息
 		const clearUserInfo = () => {
 			userInfo.value = {} as user;
-		};
-
-		// 检查是否有店铺权限
-		const checkShopPermission = () => {
-			return hasShopPermission(userRole.value);
 		};
 
 		// 检查是否有特定权限
@@ -104,7 +98,6 @@ export const useUserStore = defineStore(
 			setUserInfo,
 			clearUserInfo,
 			login,
-			checkShopPermission,
 			checkPermission,
 			setPerms,
 			userRole,

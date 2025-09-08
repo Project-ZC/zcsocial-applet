@@ -247,10 +247,16 @@ page {
 .u-button{
     // 用作取消按钮
     &--info{
+        border-color: var(--border-6)!important;
         background-color: var(--info-6)!important;
-        border-color: var(--info-6)!important;
-        color: rgb(66, 73, 88)!important;
+        color: var(--text-1)!important;
     }
+
+    &--cancel{
+        background-color: #e9ecef!important;
+        color: rgb(29, 33, 41)!important;
+    }
+
     // 酒红色
     &--burgundy{
         background-color: var(--burgundy)!important;

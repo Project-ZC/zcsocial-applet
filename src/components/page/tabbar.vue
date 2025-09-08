@@ -49,7 +49,6 @@ const currentTab = ref<number>(0);
 
 // 使用computed来响应式更新tabbar
 const setupTabbar = computed(() => {
-  // const canSeeShop = userStore.checkShopPermission();
   const allTabs = [
     {
       text: '首页',

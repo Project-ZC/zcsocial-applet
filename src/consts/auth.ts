@@ -145,12 +145,6 @@ export const generatePermObj = (perms: string[]): Record<string, boolean> => {
 	return permObj;
 };
 
-// 检查是否有店铺权限
-export const hasShopPermission = (userInfo: any): boolean => {
-	if (!userInfo || !userInfo.permObj) return false;
-	return !!userInfo.permObj["shop"];
-};
-
 // 检查是否有特定权限
 export const hasPermission = (userInfo: any, permission: string): boolean => {
 	if (!userInfo || !userInfo.permObj) return false;

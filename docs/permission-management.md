@@ -37,18 +37,18 @@
 
 ```typescript
 export const ROLE_PERMISSIONS: RolePermission[] = [
-	{
-		roleId: 10000000,
-		roleName: "店主",
-		perms: [
-			"shop/shopMenu", // 点单管理
-			"shop/shopGames", // 游戏管理
-			"shop/tableManage", // 桌位管理
-			"shop/ticketSettings", // 门票管理
-			"shop/shopStaff", // 员工管理
-			// ... 更多权限
-		],
-	},
+  {
+    roleId: 10000000,
+    roleName: '店主',
+    perms: [
+      'shop/shopMenu', // 点单管理
+      'shop/shopGames', // 游戏管理
+      'shop/tableManage', // 桌位管理
+      'shop/ticketSettings', // 门票管理
+      'shop/shopStaff', // 员工管理
+      // ... 更多权限
+    ],
+  },
 ];
 ```
 
@@ -58,24 +58,24 @@ export const ROLE_PERMISSIONS: RolePermission[] = [
 
 ```vue
 <template>
-	<!-- 根据权限显示内容 -->
-	<view v-if="userStore.checkShopPermission()">
-		<text>店铺管理内容</text>
-	</view>
+  <!-- 根据权限显示内容 -->
+  <view v-if="userStore.checkPermission('shop')">
+    <text>店铺管理内容</text>
+  </view>
 
-	<!-- 根据特定权限显示内容 -->
-	<view v-if="userStore.checkPermission('shop/shopMenu')">
-		<text>点单管理内容</text>
-	</view>
+  <!-- 根据特定权限显示内容 -->
+  <view v-if="userStore.checkPermission('shop/shopMenu')">
+    <text>点单管理内容</text>
+  </view>
 
-	<!-- 无权限提示 -->
-	<view v-else class="no-permission">
-		<text>您暂无相关权限</text>
-	</view>
+  <!-- 无权限提示 -->
+  <view v-else class="no-permission">
+    <text>您暂无相关权限</text>
+  </view>
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from "@/stores";
+import { useUserStore } from '@/stores';
 
 const userStore = useUserStore();
 </script>
@@ -84,21 +84,16 @@ const userStore = useUserStore();
 ### 2. 使用权限工具函数
 
 ```typescript
-import {
-	checkShopPermission,
-	checkPermission,
-	checkAnyPermission,
-	getUserRoleName,
-} from "@/utils/permission";
+import { checkPermission, checkAnyPermission, getUserRoleName } from '@/utils/permission';
 
 // 检查店铺权限
-const hasShop = checkShopPermission();
+const hasShop = checkPermission('shop');
 
 // 检查特定权限
-const canManageMenu = checkPermission("shop/shopMenu");
+const canManageMenu = checkPermission('shop/shopMenu');
 
 // 检查多个权限中的任意一个
-const canManageAny = checkAnyPermission(["shop/shopMenu", "shop/shopGames"]);
+const canManageAny = checkAnyPermission(['shop/shopMenu', 'shop/shopGames']);
 
 // 获取用户角色名称
 const roleName = getUserRoleName();
@@ -111,17 +106,17 @@ tabbar 组件会自动根据用户权限显示或隐藏店铺 tab：
 ```typescript
 // 在 src/components/page/tabbar.vue 中
 const setupTabbar = computed(() => {
-	const canSeeShop = userStore.checkShopPermission();
-	const allTabs = [
-		// ... 其他tab
-		{
-			text: "店铺",
-			path: "/pages/shop/shop",
-			needPerm: "shop", // 需要店铺权限
-		},
-	];
+  const canSeeShop = userStore.checkPermission();
+  const allTabs = [
+    // ... 其他tab
+    {
+      text: '店铺',
+      path: '/pages/shop/shop',
+      needPerm: 'shop', // 需要店铺权限
+    },
+  ];
 
-	return allTabs.filter((tab) => !tab.needPerm || canSeeShop);
+  return allTabs.filter(tab => !tab.needPerm || canSeeShop);
 });
 ```
 
@@ -130,14 +125,12 @@ const setupTabbar = computed(() => {
 ```typescript
 // 根据权限过滤功能列表
 const filteredCellList = computed(() => {
-	return state.cellList
-		.map((main) => ({
-			...main,
-			children: main.children.filter(
-				(item) => !item.permission || userStore.checkPermission(item.permission)
-			),
-		}))
-		.filter((main) => main.children.length > 0);
+  return state.cellList
+    .map(main => ({
+      ...main,
+      children: main.children.filter(item => !item.permission || userStore.checkPermission(item.permission)),
+    }))
+    .filter(main => main.children.length > 0);
 });
 ```
 
@@ -147,10 +140,10 @@ const filteredCellList = computed(() => {
 
 ```typescript
 interface user {
-	roleId?: number; // 角色ID
-	perms?: string[]; // 权限列表，如 ['shop/shopMenu', 'shop/shopGames']
-	permObj?: Record<string, boolean>; // 权限对象，如 { 'shop/shopMenu': true }
-	roleName?: string; // 角色名称，如 "店主"
+  roleId?: number; // 角色ID
+  perms?: string[]; // 权限列表，如 ['shop/shopMenu', 'shop/shopGames']
+  permObj?: Record<string, boolean>; // 权限对象，如 { 'shop/shopMenu': true }
+  roleName?: string; // 角色名称，如 "店主"
 }
 ```
 
