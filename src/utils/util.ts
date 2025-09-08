@@ -186,9 +186,6 @@ export const getCurrentBusinessHours = (shippingTimeList: any[]) => {
 
 // 地图导航和选择
 export const useMap = (type: string, data: any)=>{
-	if(!data){
-		return;
-	}
 	return new Promise((resolve, reject) => {
 		if(type == 'chooseLocation'){
 			uni.chooseLocation({
@@ -200,6 +197,9 @@ export const useMap = (type: string, data: any)=>{
 				},
 			});
 		}else if(type == 'openLocation'){
+			if(!data){
+				return;
+			}
 			uni.openLocation({
 				latitude: data.latitude,
 				longitude: data.longitude,
