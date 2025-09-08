@@ -17,16 +17,7 @@
 
     <!-- 状态筛选标签 -->
     <view class="status-tabs">
-      <view
-        v-for="tab in statusTabs"
-        :key="tab.status"
-        class="tab-item"
-        :class="{ active: currentStatus === tab.status }"
-        @tap="switchStatus(tab.status)"
-      >
-        {{ tab.text }}
-        <view class="tab-badge" v-if="tab.count > 0">{{ tab.count }}</view>
-      </view>
+      <tabs v-model="currentStatus" :list="statusTabs" />
     </view>
 
     <!-- 订单列表 -->
@@ -43,6 +34,7 @@
 </template>
 
 <script lang="ts" setup>
+import tabs from '@/components/tabs/index.vue';
 import OrderCard from '@/components/order-card/order-card.vue';
 import { useThemeStore } from '@/stores/modules/theme';
 import { ActionType, OrderStatus } from '@/enums/order';
@@ -98,17 +90,17 @@ const preparingCount = computed(() => orders.value.filter(order => order.status 
 const statusTabs = computed(() => [
   {
     status: 'all' as const,
-    text: '全部',
+    title: '全部',
     count: orders.value.length,
   },
   {
     status: OrderStatus.PENDING_ACCEPT,
-    text: '待接单',
+    title: '待接单',
     count: pendingAcceptCount.value,
   },
   {
     status: OrderStatus.PREPARING,
-    text: '制作中',
+    title: '制作中',
     count: preparingCount.value,
   },
 ]);
@@ -120,11 +112,6 @@ const filteredOrders = computed(() => {
   }
   return orders.value.filter(order => order.status === currentStatus.value);
 });
-
-// 切换状态
-const switchStatus = (status: OrderStatus | 'all') => {
-  currentStatus.value = status;
-};
 
 // 获取状态文本
 const getStatusText = (status: OrderStatus | 'all') => {
@@ -241,49 +228,6 @@ const handleCancel = (orderInfo: any) => {
           font-size: 24rpx;
           color: var(--text-2);
         }
-      }
-    }
-  }
-
-  // 状态筛选标签
-  .status-tabs {
-    display: flex;
-    background-color: var(--bg-2);
-    padding: 20rpx;
-    margin-bottom: 20rpx;
-    border-radius: 16rpx;
-
-    .tab-item {
-      flex: 1;
-      text-align: center;
-      padding: 16rpx 0;
-      font-size: 28rpx;
-      color: var(--text-2);
-      border-radius: 20rpx;
-      transition: all 0.3s ease;
-      position: relative;
-
-      &.active {
-        background-color: #1890ff;
-        color: #fff;
-      }
-
-      &:active {
-        transform: scale(0.95);
-      }
-
-      .tab-badge {
-        position: absolute;
-        top: -8rpx;
-        right: 20rpx;
-        background-color: #ff4d4f;
-        color: #fff;
-        font-size: 20rpx;
-        padding: 4rpx 8rpx;
-        border-radius: 10rpx;
-        min-width: 20rpx;
-        text-align: center;
-        line-height: 1;
       }
     }
   }

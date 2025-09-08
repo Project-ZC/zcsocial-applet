@@ -2,17 +2,7 @@
   <pageWrapper>
     <!-- 状态筛选标签 -->
     <up-sticky>
-      <view class="status-tabs">
-        <view
-          v-for="tab in statusTabs"
-          :key="tab.status"
-          class="tab-item"
-          :class="{ active: currentStatus === tab.status }"
-          @tap="switchStatus(tab.status)"
-        >
-          {{ tab.text }}
-        </view>
-      </view>
+      <tabs :list="statusTabs" v-model="currentStatus" @change="switchStatus" />
     </up-sticky>
 
     <!-- 订单类型筛选 -->
@@ -51,6 +41,7 @@
 <script lang="ts" setup>
 import OrderCard from '@/components/order-card/order-card.vue';
 import { useThemeStore } from '@/stores/modules/theme';
+import tabs from '@/components/tabs/index.vue';
 import { ActionType, OrderStatus } from '@/enums/order';
 import { computed, ref } from 'vue';
 
@@ -72,9 +63,9 @@ const orderTypeTabs = ref([
 
 // 状态筛选标签
 const statusTabs = ref([
-  { status: 'all' as const, text: '全部订单' },
-  { status: OrderStatus.PREPARING, text: '正在进行' },
-  { status: OrderStatus.COMPLETED, text: '已完成' },
+  { status: 'all' as const, title: '全部订单' },
+  { status: OrderStatus.PREPARING, title: '正在进行' },
+  { status: OrderStatus.COMPLETED, title: '已完成' },
   // { status: OrderStatus.PENDING_PAYMENT, text: '待支付' },
   // { status: OrderStatus.PAID, text: '已支付' },
   // { status: OrderStatus.PENDING_ACCEPT, text: '未接单' },
@@ -223,8 +214,8 @@ const switchOrderType = (type: 'all' | 'ticket' | 'order') => {
 };
 
 // 切换状态
-const switchStatus = (status: OrderStatus | 'all') => {
-  currentStatus.value = status;
+const switchStatus = tab => {
+  currentStatus.value = tab.status;
 };
 
 // 获取状态文本

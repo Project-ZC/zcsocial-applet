@@ -179,19 +179,19 @@ page {
 .u-line{
     border-color: var(--border-2)!important;
 }
-.u-subsection{
-    height: 72rpx!important;
-    background: var(--bg-2);
-    .u-subsection__item{
-        font-size: $up-font-base!important;
-    }
-    .u-subsection__item__text{
-        color: var(--text-1)!important;
-    }
-    &__bar{
-        background: var(--primary-6)!important;
-    }
-}
+// .u-subsection{
+//     height: 72rpx!important;
+//     background: var(--bg-2);
+//     .u-subsection__item{
+//         font-size: $up-font-base!important;
+//     }
+//     .u-subsection__item__text{
+//         color: var(--text-1)!important;
+//     }
+//     &__bar{
+//         background: var(--primary-6)!important;
+//     }
+// }
 
 .z-tips{
     color:var(--text-2);

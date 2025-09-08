@@ -23,10 +23,10 @@ function setupUI(app: App) {
 			radio: {
 				// size: 20
 			},
-			subsection: {
-				mode: "subsection",
-				border: false,
-			},
+			// subsection: {
+			// 	mode: "subsection",
+			// 	border: false,
+			// },
 
 			// 设置input组件的全局默认属性
 			input: {
