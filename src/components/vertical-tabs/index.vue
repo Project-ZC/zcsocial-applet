@@ -471,7 +471,7 @@ defineOptions({
 		margin-left: 0;
 
 		.u-tag {
-			transform: scale(0.9);
+			transform: scale(0.8);
 		}
 	}
 	:deep(.cart-btn) {

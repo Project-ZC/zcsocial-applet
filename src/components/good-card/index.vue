@@ -165,6 +165,7 @@ defineOptions({
 	margin-bottom: 12rpx;
 	display: flex;
 	align-items: center;
+	white-space: nowrap;
 }
 
 .good-desc {
