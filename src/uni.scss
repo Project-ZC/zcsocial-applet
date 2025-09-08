@@ -13,8 +13,8 @@
  */
 
 // @import 'uview-plus/theme.scss';
-// @import '@/static/styles/theme-light.scss'; // 浅色
-@import '@/static/styles/theme-dark.scss'; // 深色
+@import '@/static/styles/theme-light.scss'; // 浅色
+// @import '@/static/styles/theme-dark.scss'; // 深色
 
 // $u-main-color: #303133;
 $u-main-color: var(--text-1);
@@ -24,7 +24,6 @@ $u-light-color: var(--text-4); // placeholder
 $u-border-color: var(--border-2); // 分割线/输入边框
 $u-bg-color: var(--bg-2);
 $u-disabled-color: var(--text-5);
-$u-bg-1: var(--bg-1); // 背景色
 
 $u-primary: var(--primary-6);
 $u-primary-dark: var(--primary-5);

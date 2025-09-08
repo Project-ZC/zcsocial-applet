@@ -37,7 +37,8 @@ function setupUI(app: App) {
 				// // 光标距离键盘的距离
 				// "cursorSpacing": 30,
 				// 光标颜色
-				cursorColor: "var(--primary-6)",
+				cursorColor: "#2272FB", // 这里不能使用var
+				disabledColor: "var(--text-5)",
 				color: "var(--text-2)",
 				borderColor: "var(--border-2)",
 				bgColor: "var(--bg-2)",
@@ -56,7 +57,7 @@ function setupUI(app: App) {
 			picker: {
 				bgColor: "var(--bg-2)",
 			},
-			datetimePicker:{
+			datetimePicker: {
 				cancelColor: "var(--text-1)",
 				confirmColor: "var(--text-1)",
 				bgColor: "var(--bg-2)",

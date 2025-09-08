@@ -229,7 +229,7 @@ page {
         border-color: var(--primary-6)!important;
 
         text{
-            color: var(--text-1)!important;
+            color: #fff!important;
 
         }
     }
@@ -249,22 +249,22 @@ page {
     &--info{
         background-color: var(--info-6)!important;
         border-color: var(--info-6)!important;
-        color: var(--text-6)!important;
+        color: rgb(66, 73, 88)!important;
     }
     // 酒红色
     &--burgundy{
         background-color: var(--burgundy)!important;
-        color: var(--text-1)!important;
+        color: #fff!important;
     }
     // 蓝色-酒红色渐变
     &--gradient1{
         background: var(--btn-gradient-1)!important;
-        color: var(--text-1)!important;
+        color: #fff!important;
     }
      // 橙色渐变按钮
      &--gradient2{
         background: var(--btn-gradient-2)!important;
-        color: var(--text-1)!important;
+        color: #fff!important;
     }
 }
 

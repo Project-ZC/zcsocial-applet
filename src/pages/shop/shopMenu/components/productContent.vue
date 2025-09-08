@@ -835,14 +835,6 @@ defineOptions({
   align-items: center;
   gap: 8rpx;
 }
-.default-badge {
-  font-size: 22rpx;
-  color: #fff;
-  background-color: #1989fa;
-  padding: 4rpx 10rpx;
-  border-radius: 8rpx;
-}
-
 .capacity-group-actions {
   display: flex;
   gap: 16rpx;
@@ -910,7 +902,7 @@ defineOptions({
 }
 .default-badge {
   font-size: $up-font-sm;
-  color: var(--text-1);
+  color: #fff;
   background-color: var(--primary-6);
   padding: 3rpx 8rpx;
   border-radius: 8rpx;
