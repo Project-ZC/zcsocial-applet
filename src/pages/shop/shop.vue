@@ -579,6 +579,11 @@ defineOptions({
     z-index: 100;
     width: 64%;
   }
+  .z-cell-left-icon {
+    .wd-icon {
+      font-size: 44rpx;
+    }
+  }
   .top-box {
     display: flex;
     align-items: center;

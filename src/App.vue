@@ -15,9 +15,11 @@ const init = async () => {
       const res = await userStore.login();
       shopStore.GetShopStatus();
       shopStore.GetMyShopList();
-      uni.reLaunch({
-        url: '/pages/index/index',
-      });
+      setTimeout(() => {
+        uni.reLaunch({
+          url: '/pages/index/index',
+        });
+      }, 300);
       resolve(res);
     } catch (error) {
       reject(error);
