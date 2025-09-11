@@ -6,7 +6,6 @@ import { uniCache } from "@/utils/storage";
 
 // 导入子模块
 import { useUserStore } from "./modules/user";
-import { useThemeStore } from "./modules/theme";
 import { useShopStore } from "./modules/shop";
 
 // 安装pinia状态管理插件
@@ -25,5 +24,5 @@ function setupStore(app: App) {
 }
 
 // 导出模块
-export { useUserStore, useThemeStore, useShopStore };
+export { useUserStore, useShopStore };
 export default setupStore;

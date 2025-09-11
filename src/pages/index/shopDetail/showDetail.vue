@@ -352,7 +352,7 @@ export default {
 			}
 
 			uni.navigateTo({
-				url: "/pages/zero/apply?shopId=" + state.shopId,
+				url: "/pages/index/apply/apply?shopId=" + state.shopId,
 			});
 		};
 

@@ -1,6 +1,24 @@
 {
 	"pages": [
 		{
+			"path": "pages/index/apply/apply",
+			"style": {
+				"navigationBarTitleText": "报名"
+			}
+		},
+		{
+			"path": "pages/my/registration/registration",
+			"style": {
+				"navigationBarTitleText": "我的报名"
+			}
+		},
+		{
+			"path": "pages/my/ticketholder/ticketholder",
+			"style": {
+				"navigationBarTitleText": "我的票夹"
+			}
+		},
+		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "首页",
@@ -11,18 +29,18 @@
 		{
 			"path": "pages/shop/shop",
 			"style": {
-				"navigationBarTitleText": "店铺",
+				"navigationBarTitleText": "店铺"
 				// "enablePullDownRefresh": true
 			}
 		},
-		
+
 		{
 			"path": "pages/index/order/order",
 			"style": {
 				"navigationBarTitleText": "店铺点单"
 			}
 		},
-	
+
 		{
 			"path": "pages/shop/shopMenu/shopMenu",
 			"style": {

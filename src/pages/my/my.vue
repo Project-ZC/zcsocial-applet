@@ -120,7 +120,6 @@
 </template>
 
 <script lang="ts" setup>
-import { useThemeStore } from "@/stores/modules/theme";
 import { useUserStore } from "@/stores/modules/user";
 import { ActionType } from "@/enums/order";
 import { computed, reactive } from "vue";
@@ -146,6 +145,20 @@ const state = reactive({
 					bgc: "#2196F3",
 				},
 				{
+					title: "我的票夹",
+					wdIcon: "my-ticketholder",
+					url: "",
+					showArrow: true,
+					bgc: "#795548",
+				},
+				{
+					title: "我的报名",
+					wdIcon: "my-registration",
+					url: "",
+					showArrow: true,
+					bgc: "#ff5722",
+				},
+				{
 					title: "浏览历史",
 					wdIcon: "history",
 					url: "/pages/my/history/history",
@@ -154,34 +167,34 @@ const state = reactive({
 				},
 			],
 		},
-		{
-			title: "通用设置",
-			children: [
-				{
-					title: "通用设置",
-					wdIcon: "setting",
-					url: "",
-					showArrow: true,
-					bgc: "#607d8b",
-				},
-				{
-					title: "联系我们",
-					wdIcon: "contact-us",
-					url: "",
-					showArrow: true,
-					type: "contactUs",
-					bgc: "#ff5722",
-				},
-				{
-					title: "关于我们",
-					wdIcon: "about-us",
-					url: "",
-					showArrow: true,
-					type: "aboutUs",
-					bgc: "#795548",
-				},
-			],
-		},
+		// {
+		// 	title: "通用设置",
+		// 	children: [
+		// 		{
+		// 			title: "通用设置",
+		// 			wdIcon: "setting",
+		// 			url: "",
+		// 			showArrow: true,
+		// 			bgc: "#607d8b",
+		// 		},
+		// 		{
+		// 			title: "联系我们",
+		// 			wdIcon: "contact-us",
+		// 			url: "",
+		// 			showArrow: true,
+		// 			type: "contactUs",
+		// 			bgc: "#ff5722",
+		// 		},
+		// 		{
+		// 			title: "关于我们",
+		// 			wdIcon: "about-us",
+		// 			url: "",
+		// 			showArrow: true,
+		// 			type: "aboutUs",
+		// 			bgc: "#795548",
+		// 		},
+		// 	],
+		// },
 	],
 });
 

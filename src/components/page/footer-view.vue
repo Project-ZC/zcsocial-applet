@@ -1,34 +1,46 @@
 <template>
-  <view class="footer" :style="{ height: props.footerH + 'px' }">
-    <slot></slot>
-  </view>
+	<view class="footer" :style="{ height: props.footerH + 'px' }">
+		<slot></slot>
+	</view>
 </template>
 
 <script setup lang="ts">
 const props = defineProps<{
-  footerH: {
-    type: Number;
-    default: 80;
-  };
+	footerH: {
+		type: Number;
+		default: 80;
+	};
 }>();
 </script>
 
 <style lang="scss" scoped>
-@import '@/uni.scss';
+@import "@/uni.scss";
 .footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  background-color: var(--bg-1);
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  border-top: 1px solid var(--border-1);
-  padding-bottom: constant(safe-area-inset-bottom);
-  padding-bottom: env(safe-area-inset-bottom);
-  z-index: 2;
-  box-sizing: border-box;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: 100%;
+	background-color: var(--bg-1);
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+	border-top: 1px solid var(--border-1);
+	padding-bottom: constant(safe-area-inset-bottom);
+	padding-bottom: env(safe-area-inset-bottom);
+	z-index: 2;
+	box-sizing: border-box;
 }
+// 滚动到底部会跟随
+// .bottom-action {
+// 	position: sticky;
+// 	bottom: 0;
+// 	left: 0;
+// 	right: 0;
+// 	padding: 15px;
+// 	display: flex;
+// 	flex-direction: column;
+// 	gap: 10px;
+// 	background: transparent;
+// }
 </style>
