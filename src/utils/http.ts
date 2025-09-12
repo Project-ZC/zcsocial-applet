@@ -3,6 +3,8 @@
 // import { useUserStore } from '@/stores/index';
 import { uniCache } from "@/utils/storage";
 import { baseUrl } from "@/api/common/apiConfig";
+import { autoLogin } from "@/consts/auth";
+import { PAGE_LIST } from "@/consts/page";
 
 // const userStore = useUserStore();
 
@@ -137,6 +139,14 @@ export const http = <T>(options: UniApp.RequestOptions) => {
 				if (val.code == 0) {
 					resolve(val);
 				} else if (val.code == 1002) {
+					if (!autoLogin) {
+						// 清空缓存
+						uniCache.clear();
+						uni.reLaunch({
+							url: PAGE_LIST.LOGIN,
+						});
+						return;
+					}
 					// 检查是否超过最大重试次数
 					if (currentAuthRetryCount >= MAX_AUTH_RETRY_COUNT) {
 						// showToast("登录过期次数过多，请重新登录");

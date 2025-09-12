@@ -2,7 +2,6 @@
 <template>
 	<page-wrapper>
 		<view class="container">
-			<view class="container_bg"></view>
 			<!-- Logo区域 -->
 			<view class="logo-section">
 				<view class="logo">
@@ -32,7 +31,8 @@
 				>
 					一键授权登录
 				</button>
-				<view class="agreement-section">
+				<!-- <up-button class="auth-btn" @click="handleToLogin">直接登录</up-button> -->
+				<view class="agreement-section" v-if="false">
 					<up-checkbox-group v-model="state.isAgreed">
 						<up-checkbox label=""></up-checkbox>
 					</up-checkbox-group>
@@ -45,7 +45,6 @@
 						<text class="link" @click.stop="openPrivacyAgreement"
 							>《隐私协议》</text
 						>
-						并使用本机号码登录
 					</text>
 				</view>
 			</view>
@@ -57,6 +56,8 @@
 import { reactive } from "vue";
 import { useUserStore } from "@/stores/modules/user";
 import { register, toLogin } from "@/api/login";
+import { PAGE_LIST } from "@/consts/page";
+import { useShopStore } from "@/stores/modules/shop";
 
 // 定义组件选项
 defineOptions({
@@ -72,32 +73,18 @@ const state = reactive({
 
 // 获取用户store
 const userStore = useUserStore();
-
-// 登录进去
-const login = async (res) => {
-	// 使用Pinia store保存用户信息
-	userStore.setUserInfo(res);
-	// uni.setStorageSync("userInfo", res);
-	uni.reLaunch({
-		url: "/pages/index/index",
-	});
-};
+const shopStore = useShopStore();
 
 // 登录处理函数
-const handleLogin = (e) => {
-	if (!state.isAgreed) {
-		uni.showToast({
-			title: "请先同意用户协议和隐私协议",
-			icon: "none",
-		});
-		return;
-	}
-	// 用户同意授权
-	if (e?.detail?.userInfo) {
-		// const { nickName, avatarUrl } = e.detail.userInfo;
-		state.userInfo = e.detail.userInfo;
-	}
-	console.log(state.userInfo, 1234);
+const handleLogin = async (e) => {
+	// if (!state.isAgreed) {
+	// 	uni.showToast({
+	// 		title: "请先同意用户协议和隐私协议",
+	// 		icon: "none",
+	// 	});
+	// 	return;
+	// }
+	// 手机号授权登录
 	// if (!e?.detail?.code) {
 	// 	uni.showToast({
 	// 		title: "请先授权手机号",
@@ -105,41 +92,39 @@ const handleLogin = (e) => {
 	// 	});
 	// 	return;
 	// }
-	// 执行登录逻辑
-	uni.login({
-		provider: "weixin",
-		success: async (loginRes) => {
-			// 处理登录成功
-			uni.showLoading({
-				title: "登录中...",
-			});
-			try {
-				const params = {
-					loginCode: loginRes.code,
-				};
-				state.params = params;
-				const res = await toLogin(params);
-				login({ ...res.data, ...state.userInfo });
-			} catch (error: any) {
-				console.log(error);
-				if (error.code == 1004) {
-					const res = await register({
-						...state.params,
-						nickname: state.userInfo.nickName,
-						avatar: state.userInfo.avatarUrl,
-					});
-					login({ ...res.data, ...state.userInfo });
-				}
-			} finally {
-			}
-		},
-		fail: (err) => {
-			uni.showToast({
-				title: "登录失败，请重试",
-				icon: "none",
-			});
-		},
-	});
+	// 用户同意授权
+	if (e?.detail?.userInfo) {
+		// const { nickName, avatarUrl } = e.detail.userInfo;
+		state.userInfo = e.detail.userInfo;
+		// 执行登录逻辑
+		handleToLogin(state.userInfo);
+	}
+};
+
+// 直接登录
+const handleToLogin = async (userInfo?: any) => {
+	try {
+		let data = {};
+		if (userInfo) {
+			data = {
+				avatar: userInfo.avatarUrl,
+				nickname: userInfo.nickName,
+			};
+		}
+		await userStore.login(data);
+
+		shopStore.GetShopStatus();
+		await shopStore.GetMyShopList();
+
+		uni.reLaunch({
+			url: PAGE_LIST.INDEX,
+		});
+	} catch (error) {
+		uni.showToast({
+			title: "登录失败，请重试",
+			icon: "none",
+		});
+	}
 };
 
 // 打开用户协议
@@ -159,28 +144,16 @@ const openPrivacyAgreement = () => {
 
 <style lang="scss" scoped>
 .container {
-	min-height: 100%;
-	// padding-bottom: env(safe-area-inset-bottom);
+	height: 70vh;
 	box-sizing: border-box;
-
-	// &_bg {
-	// 	position: absolute;
-	// 	top: 0;
-	// 	left: 0;
-	// 	width: 100%;
-	// 	height: 100%;
-	// 	background: linear-gradient(
-	// 		to bottom,
-	// 		rgba(6, 148, 230, 0.24) 0%,
-	// 		rgba(255, 255, 255, 0.16) 20%,
-	// 		white 100%
-	// 	);
-	// 	z-index: -1;
-	// }
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
 }
 
 .logo-section {
-	margin-top: 160rpx;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -192,7 +165,7 @@ const openPrivacyAgreement = () => {
 
 		.logo-text {
 			font-size: 160rpx;
-			color: #0099ff;
+			color: var(--text-1);
 			font-weight: bold;
 			line-height: 1;
 		}
@@ -206,26 +179,22 @@ const openPrivacyAgreement = () => {
 
 	.app-name {
 		margin-top: 24rpx;
-		font-size: 32rpx;
-		color: #0694e6;
+		font-size: 36rpx;
+		color: var(--text-1);
 		font-weight: 500;
-	}
-
-	.app-subtitle {
-		font-size: 24rpx;
-		color: #002d36;
 	}
 }
 
 .login-section {
-	margin-top: 220rpx;
-	padding: 0 60rpx;
+	padding: 60rpx 20rpx;
+	width: 100%;
+	box-sizing: border-box;
 
 	.auth-btn {
 		width: 100%;
 		height: 90rpx;
 		line-height: 90rpx;
-		background: #0694e6;
+		background: var(--btn-gradient-1);
 		color: #ffffff;
 		font-size: 32rpx;
 		border-radius: 45rpx;

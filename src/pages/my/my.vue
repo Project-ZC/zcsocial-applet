@@ -109,26 +109,30 @@
 					</up-cell>
 				</up-cell-group>
 			</view>
-			<!-- <up-button
-			v-if="userStore.userInfo?.token"
-			class="logout-btn"
-			type="error"
-			@click="handleLogout"
-		>退出登录</up-button> -->
+			<up-button
+				v-if="userStore.userInfo?.token && !autoLogin"
+				class="logout-btn"
+				type="error"
+				shape="circle"
+				@click="handleLogout"
+				>退出登录</up-button
+			>
 		</view>
 	</pageWrapper>
 </template>
 
 <script lang="ts" setup>
+import { reactive, onMounted } from "vue";
+import { onPullDownRefresh } from "@dcloudio/uni-app";
 import { useUserStore } from "@/stores/modules/user";
 import { ActionType } from "@/enums/order";
-import { computed, reactive } from "vue";
-import { onPullDownRefresh } from "@dcloudio/uni-app";
 import { getUserInfo } from "@/api/userManage";
-import { onMounted } from "vue";
+import { PAGE_LIST } from "@/consts/page";
 import { getDownloadUrl } from "@/api/common/upload";
 import { bindMobile } from "@/api/userManage";
 import { previewImage } from "@/utils/util";
+import { uniCache } from "@/utils/storage";
+import { autoLogin } from "@/consts/auth";
 
 const userStore = useUserStore();
 
@@ -140,28 +144,28 @@ const state = reactive({
 				{
 					title: "我的订单",
 					wdIcon: "my-order",
-					url: "/pages/my/orders/orders",
+					url: PAGE_LIST.MY_ORDERS,
 					showArrow: true,
 					bgc: "#2196F3",
 				},
 				{
 					title: "我的票夹",
 					wdIcon: "my-ticketholder",
-					url: "",
+					url: PAGE_LIST.MY_TICKETHOLDER,
 					showArrow: true,
 					bgc: "#795548",
 				},
 				{
 					title: "我的报名",
 					wdIcon: "my-registration",
-					url: "",
+					url: PAGE_LIST.MY_REGISTRATION,
 					showArrow: true,
 					bgc: "#ff5722",
 				},
 				{
 					title: "浏览历史",
 					wdIcon: "history",
-					url: "/pages/my/history/history",
+					url: PAGE_LIST.MY_HISTORY,
 					showArrow: true,
 					bgc: "#FF9800",
 				},
@@ -314,9 +318,9 @@ const handleLogout = () => {
 		content: "确定要退出登录吗？",
 		success: (res) => {
 			if (res.confirm) {
-				uni.clearStorageSync();
+				uniCache.clear();
 				uni.reLaunch({
-					url: "/pages/login/login",
+					url: PAGE_LIST.LOGIN,
 				});
 			}
 		},
@@ -346,7 +350,9 @@ onPullDownRefresh(async () => {
 		color: #fff;
 	}
 	.logout-btn {
-		width: 90%;
+		width: 100%;
+		padding: 0 20rpx;
+		box-sizing: border-box;
 		margin-top: 40rpx;
 	}
 	::v-deep .up-cell__body {

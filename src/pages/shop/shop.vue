@@ -588,7 +588,7 @@ onShow(async () => {
 		if (!userStore.checkPermission("shop")) {
 			console.log("用户无店铺权限，跳转到首页");
 			// uni.navigateTo({
-			//   url: 'pages/index/index',
+			//   url: PAGE_LIST.INDEX,
 			// });
 			return;
 		}

@@ -37,26 +37,28 @@ export const useUserStore = defineStore(
 		};
 
 		const login = async (data = {}) => {
-			try {
-				uni.showLoading({
-					title: "登录中...",
-				});
-				const res = (await loginTo(data)) as any;
-				const userInfo = { ...res, ...data };
-				setUserInfo(userInfo);
-				
-				// 登录成功后，设置权限
-				if (res.roleList || res.roleId) {
-					setPerms(res);
+			return new Promise(async (resolve, reject) => {
+				try {
+					uni.showLoading({
+						title: "登录中...",
+					});
+					const res = (await loginTo(data)) as any;
+					const userInfo = { ...res, ...data };
+					setUserInfo(userInfo);
+
+					// 登录成功后，设置权限
+					if (res.roleList || res.roleId) {
+						setPerms(res);
+					}
+					setTimeout(() => {
+						resolve(userInfo);
+					}, 10);
+				} catch (error) {
+					reject(error);
+				} finally {
+					uni.hideLoading();
 				}
-				
-				return userInfo;
-			} catch (error) {
-				console.error('登录失败:', error);
-				throw error;
-			} finally {
-				uni.hideLoading();
-			}
+			});
 		};
 
 		// 设置店铺权限，绑定的店铺角色

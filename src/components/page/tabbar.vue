@@ -41,8 +41,8 @@
 import { ref, onMounted, computed } from "vue";
 import { onShow } from "@dcloudio/uni-app";
 import { uniCache } from "@/utils/storage";
-import { useUserStore } from "@/stores";
-import { useShopStore } from "@/stores";
+import { useShopStore, useUserStore } from "@/stores";
+import { PAGE_LIST } from "@/consts/page";
 
 const userStore = useUserStore();
 const shopStore = useShopStore();
@@ -56,7 +56,7 @@ const setupTabbar = computed(() => {
 	const allTabs = [
 		{
 			text: "首页",
-			path: "/pages/index/index",
+			path: PAGE_LIST.INDEX,
 			// icon: "home-fill",
 			wdIcon: "home",
 			type: "home",
@@ -65,7 +65,7 @@ const setupTabbar = computed(() => {
 		},
 		{
 			text: "消息",
-			path: "/pages/message/message",
+			path: PAGE_LIST.MESSAGE,
 			// icon: "chat-fill",
 			wdIcon: "message",
 			type: "message",
@@ -74,7 +74,7 @@ const setupTabbar = computed(() => {
 		},
 		{
 			text: "店铺",
-			path: "/pages/shop/shop",
+			path: PAGE_LIST.SHOP,
 			wdIcon: "shop",
 			// icon: "/static/images/tabbar/shop.png",
 			// iconActive: "/static/images/tabbar/shop-active.png",
@@ -82,7 +82,7 @@ const setupTabbar = computed(() => {
 		} as any,
 		{
 			text: "我的",
-			path: "/pages/my/my",
+			path: PAGE_LIST.MY,
 			// icon: "account-fill",
 			wdIcon: "my",
 			type: "my",

@@ -5,6 +5,9 @@ export interface RolePermission {
 	perms: string[];
 }
 
+// 是否自动登录
+export const autoLogin = true;
+
 // 测试角色ID权限
 export const testRoleId = "";
 

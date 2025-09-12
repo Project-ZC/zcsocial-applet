@@ -51,22 +51,16 @@
 						<up-form-item label="活动日期">
 							<up-input
 								readonly
-								placeholder="请选择到场日期"
+								:placeholder="`本日${state.shopBusinessHours}`"
 								:value="state.selectedDate || '请选择日期'"
 								@click="state.datePickerShow = true"
 							/>
-							<up-datetime-picker
-								:show="state.datePickerShow"
-								v-model="state.selectedDate"
-								mode="date"
-								@confirm="onDateConfirm"
-								@cancel="state.datePickerShow = false"
-								@close="state.datePickerShow = false"
-							/>
+							<!-- <view class="business-hours-display">
+								<text class="hours-text"
+									>本日{{ state.shopBusinessHours }}</text
+								>
+							</view> -->
 						</up-form-item>
-						<view class="business-hours-display">
-							<text class="hours-text">本日{{ state.shopBusinessHours }}</text>
-						</view>
 						<view class="date-tip">
 							<text class="tip-icon">?</text>
 							<text class="tip-text"
@@ -105,7 +99,7 @@
 									<text class="detail-item">使用{{ item.validHours }}小时</text>
 								</view>
 								<view class="ticket-price">
-									<text class="price-value">¥{{ item.price }}</text>
+									<text class="price-value z-price">¥{{ item.price }}</text>
 								</view>
 								<view class="quantity-controls">
 									<text class="quantity-label">数量：</text>
@@ -171,33 +165,29 @@
 							<view class="gender-options-inline">
 								<view
 									class="gender-option-inline"
-									:class="{ selected: state.form.gender === '男' }"
-									@click="selectGender('男')"
-								>
-									<text class="wd-icon wd-icon-male gender-icon male"></text>
-									<text class="gender-text">男</text>
-								</view>
-								<view
-									class="gender-option-inline"
-									:class="{ selected: state.form.gender === '女' }"
-									@click="selectGender('女')"
+									v-for="gender in state.genderList"
+									:key="gender.value"
+									:class="{ selected: state.form.gender === gender.value }"
+									@click="selectGender(gender.value)"
 								>
 									<text
-										class="wd-icon wd-icon-female gender-icon female"
+										class="wd-icon gender-icon"
+										:class="
+											gender.value === '0'
+												? 'wd-icon-male male'
+												: 'wd-icon-female female'
+										"
 									></text>
-									<text class="gender-text">女</text>
+									<text class="gender-text">{{ gender.label }}</text>
 								</view>
 							</view>
 						</up-form-item>
 						<up-form-item label="玩点ID">
-							<up-input
-								v-model="state.form.wandianId"
-								placeholder="请输入玩点ID"
-							/>
+							<up-input v-model="state.form.id" placeholder="请输入玩点ID" />
 						</up-form-item>
 						<up-form-item label="电话号码">
 							<up-input
-								v-model="state.form.phone"
+								v-model="state.form.mobile"
 								type="number"
 								placeholder="请输入电话号码"
 							/>
@@ -209,8 +199,13 @@
 								<Upload
 									v-model:fileList="state.form.images"
 									acceept="image"
+									:maxSize="5 * 1024 * 1024"
 									:maxCount="5"
-								/>
+								>
+									<template #tips>
+										<text class="photo-tip">单张不超过5MB</text>
+									</template>
+								</Upload>
 							</up-form-item>
 						</view>
 						<!-- 备注 -->
@@ -238,6 +233,14 @@
 				>
 			</view>
 		</template>
+		<up-datetime-picker
+			:show="state.datePickerShow"
+			v-model="state.selectedDate"
+			mode="date"
+			@confirm="onDateConfirm"
+			@cancel="state.datePickerShow = false"
+			@close="state.datePickerShow = false"
+		/>
 	</pageWrapper>
 </template>
 
@@ -248,6 +251,7 @@ import Upload from "@/components/upload-file/index.vue";
 import { uniCache } from "@/utils/storage";
 import { getDownloadUrl } from "@/api/common/upload";
 import { getShopDetail } from "@/api/shopManage";
+import { getGenderList } from "@/api/common/dict";
 
 const state = reactive({
 	shopId: "",
@@ -258,9 +262,9 @@ const state = reactive({
 	// 表单
 	form: {
 		nickname: "",
-		gender: "男" as "男" | "女",
-		wandianId: "",
-		phone: "",
+		gender: 0 as 0 | 1, // 0=男，1=女
+		id: "",
+		mobile: "",
 		images: [] as any[],
 		remark: "",
 	},
@@ -281,16 +285,40 @@ const state = reactive({
 		price: number;
 	}>,
 	totalPrice: 0,
+	// 字典数据
+	genderList: [] as Array<{ value: number; label: string }>,
 });
 
 // 自动填充（缓存用户信息）
 const fillFromCache = () => {
-	const cache = uniCache.getItem("user") || {};
-	const info = cache.userInfo || {};
-	state.form.nickname =
-		info.nickname || info.nickName || state.form.nickname || "";
-	state.form.phone = info.phone || state.form.phone || "";
-	state.form.wandianId = info.wandianId || state.form.wandianId || "";
+	const user = uniCache.getItem("user") || {};
+	const info = user.userInfo || {};
+	state.form.nickname = info.nickname || state.form.nickname || "";
+	state.form.mobile = info.mobile || state.form.mobile || "";
+	state.form.id = info.id || state.form.id || "";
+	state.form.gender =
+		info.gender !== undefined ? info.gender : state.form.gender;
+};
+
+// 获取性别字典
+const fetchGenderList = () => {
+	getGenderList({})
+		.then((res: any) => {
+			if (res.data && Array.isArray(res.data)) {
+				state.genderList = res.data.map((item: any) => ({
+					value: item.value || item.code,
+					label: item.label || item.name,
+				}));
+			}
+		})
+		.catch((err: any) => {
+			console.error("获取性别字典失败:", err);
+			// 设置默认值
+			state.genderList = [
+				{ value: 0, label: "男" },
+				{ value: 1, label: "女" },
+			];
+		});
 };
 
 // 今日统计（示例固定值）
@@ -390,7 +418,7 @@ const filterTicketsByDate = (_date: string) => {
 };
 
 // 性别切换
-const selectGender = (g: "男" | "女") => {
+const selectGender = (g: 0 | 1) => {
 	state.form.gender = g;
 	updatePriceBreakdown();
 };
@@ -407,8 +435,8 @@ const updatePriceBreakdown = () => {
 	for (const t of state.ticketList) {
 		const qty = state.ticketQuantities[t.id] || 0;
 		if (qty <= 0) continue;
-		if (t.priceType === "male" && state.form.gender !== "男") continue;
-		if (t.priceType === "female" && state.form.gender !== "女") continue;
+		if (t.priceType === "male" && state.form.gender !== 0) continue;
+		if (t.priceType === "female" && state.form.gender !== 1) continue;
 		const unit = parseInt(t.price || "0", 10) || 0;
 		const sum = unit * qty;
 		breakdown.push({
@@ -457,22 +485,24 @@ const GtShopDetail = () => {
 	getShopDetail({
 		id: state.shopId,
 	})
-		.then((res) => {
+		.then((res: any) => {
 			let data = res.data?.config || {};
 			state.shopInfo = data || {};
 		})
-		.catch((err) => {});
+		.catch((err: any) => {});
 };
-onLoad((options) => {
+
+onLoad((options: any) => {
 	options.shopId = "10000008";
 	if (options?.shopId) {
 		state.shopId = options.shopId as string;
 		GtShopDetail();
 	}
+	fetchGenderList(); // 获取性别字典
 	setTodayDate();
 	fetchTicketList();
 	updateTodayStats();
-	fillFromCache();
+	// fillFromCache(); //
 });
 
 defineOptions({
@@ -481,6 +511,7 @@ defineOptions({
 </script>
 
 <style scoped lang="scss">
+@import "@/uni.scss";
 .apply {
 	padding: $up-box-pd;
 }
@@ -531,7 +562,7 @@ defineOptions({
 }
 .count-desc {
 	font-size: 24rpx;
-	color: var(--text-3);
+	color: var(--text-2);
 }
 .total-count {
 	display: flex;
@@ -559,10 +590,10 @@ defineOptions({
 	color: var(--primary-6);
 }
 .gender-icon.female {
-	color: #e91e63;
+	color: var(--female);
 }
 .gender-count {
-	font-size: 26rpx;
+	font-size: 30rpx;
 	color: var(--text-2);
 }
 
@@ -590,13 +621,6 @@ defineOptions({
 	}
 }
 
-.business-hours-display {
-	margin-top: 12px;
-	padding: 8px 12px;
-	background: var(--bg-2);
-	border-radius: 8px;
-	border: 1px solid var(--border-1);
-}
 .hours-text {
 	font-size: 24rpx;
 	color: var(--primary-6);
@@ -606,22 +630,24 @@ defineOptions({
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	margin-top: 12px;
-	padding: 12px;
-	background: var(--bg-2);
-	border: 1px solid var(--border-2);
-	border-radius: 8px;
+	margin-top: 0;
+	padding: 12rpx 20rpx;
+	// background: var(--bg-2);
+	background: var(--burgundy);
+	color: var(--text1);
+	opacity: 0.9;
+	border-radius: 8rpx;
 }
 .tip-icon {
-	width: 26rpx;
-	height: 26rpx;
+	width: 36rpx;
+	height: 36rpx;
 	border-radius: 50%;
 	background: var(--primary-6);
 	color: #fff;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 20rpx;
+	font-size: 28rpx;
 }
 .tip-text {
 	font-size: 24rpx;
@@ -635,7 +661,7 @@ defineOptions({
 }
 .ticket-card {
 	background: var(--bg-2);
-	border-radius: 12px;
+	border-radius: 8rpx;
 	padding: 12px;
 	border: 1px solid var(--border-2);
 }
@@ -655,15 +681,16 @@ defineOptions({
 	border-radius: 8px;
 	font-size: 20rpx;
 	color: #fff;
+	margin-left: 12rpx;
 }
 .price-type-badge.universal {
 	background: #52c41a;
 }
 .price-type-badge.male {
-	background: #1890ff;
+	background: var(--primary-6);
 }
 .price-type-badge.female {
-	background: #eb2f96;
+	background: var(--female);
 }
 .ticket-details {
 	display: flex;
@@ -684,7 +711,6 @@ defineOptions({
 .price-value {
 	font-size: 30rpx;
 	font-weight: bold;
-	color: #e74c3c;
 }
 .quantity-controls {
 	display: flex;
@@ -695,7 +721,7 @@ defineOptions({
 	border-top: 1px solid var(--border-1);
 }
 .quantity-label {
-	font-size: 24rpx;
+	font-size: 28rpx;
 	color: var(--text-2);
 }
 
@@ -745,10 +771,9 @@ defineOptions({
 .gender-option-inline {
 	display: flex;
 	align-items: center;
-	padding: 10px 16px;
-	border-radius: 12px;
-	background: var(--bg-2);
-	border: 1px solid var(--border-1);
+	padding: 16rpx 24rpx;
+	border-radius: 8rpx;
+	border: 1px solid var(--border-2);
 }
 .gender-option-inline.selected {
 	color: var(--primary-6);

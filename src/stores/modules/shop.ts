@@ -4,14 +4,13 @@ import { ref, computed } from "vue";
 import { uniCache } from "@/utils/storage";
 import { getShopStatus, getShopConfigList } from "@/api/shopManage";
 
-
 export const useShopStore = defineStore(
 	"shop",
 	() => {
 		const shopStatus = ref<any>([]);
 		const myShopList = ref<any>([]);
 		const myShopListLen = ref<number>(0);
-	
+
 		const setMyShopList = (data: any) => {
 			myShopList.value = data;
 		};
@@ -61,11 +60,13 @@ export const useShopStore = defineStore(
 					const shopLen = res.data?.length || 0;
 					setMyShopListLen(shopLen);
 					setMyShopList(res.data);
-					resolve(res);
+					setTimeout(() => {
+						resolve(res);
+					}, 10);
 				} catch (error) {
 					reject(error);
 				}
-			})
+			});
 		};
 		return {
 			setShopStatus,
