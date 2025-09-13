@@ -170,7 +170,7 @@ const saveSortOrder = async list => {
   height: 100%;
   padding: 0 20rpx;
   background: #fff;
-  border-radius: 8rpx;
+  border-radius: $up-box-radius-1;
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
 }
 

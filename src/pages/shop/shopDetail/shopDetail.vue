@@ -325,6 +325,7 @@ onLoad(options => {
 });
 </script>
 <style lang="scss" scoped>
+@import '@/uni.scss';
 .shop-detail {
   padding: $up-box-pd;
   // min-height: 100vh;
@@ -335,8 +336,8 @@ onLoad(options => {
   // background: rgba(255, 255, 255, 0.8);
   // backdrop-filter: blur(10px);
   // box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin-bottom: 15px;
-  padding: 15px;
+  margin-bottom: $up-box-mg;
+  padding: $up-box-pd;
   overflow: hidden;
 }
 

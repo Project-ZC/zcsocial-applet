@@ -42,6 +42,8 @@
 import { reactive, onMounted, onUnmounted } from 'vue';
 import { getAllShopHistory, deleteShopHistory } from '@/api/history';
 import ShopCard from '@/components/shop-card/index.vue';
+import { PAGE_LIST } from '@/consts/page';
+
 // 统一状态管理
 const state = reactive({
   // 浏览历史列表
@@ -110,7 +112,7 @@ const removeHistory = async (index: number) => {
 // 查看店铺详情
 const viewShopDetail = (shop: any) => {
   uni.navigateTo({
-    url: `/pages/index/shopDetail/showDetail?shopId=${shop.shopId}`,
+    url: `${PAGE_LIST.INDEX_SHOP_DETAIL}?shopId=${shop.shopId}`,
   });
 };
 
@@ -165,8 +167,8 @@ defineOptions({
 
 /* 页面头部 */
 .page-header {
-  margin: 24rpx 0;
-  padding: 32rpx;
+  margin: $up-box-mg 0;
+  padding: $up-box-pd;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -190,13 +192,9 @@ defineOptions({
 }
 
 /* 店铺列表 */
-.shop-list {
-  margin-top: 12rpx;
-}
 
 .history-item {
   position: relative;
-  margin-bottom: 12rpx;
 }
 
 .remove-btn {

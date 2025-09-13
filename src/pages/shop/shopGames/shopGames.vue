@@ -1,14 +1,9 @@
 <template>
   <pageWrapper>
-    <!-- 顶部导航栏 -->
-    <up-navbar :title="'店内游戏'" :placeholder="true" :border="true" leftIcon="" class="z-navbar">
-      <template #right>
-        <view class="header-right">
-          <!-- <up-icon name="scan" size="22" @click="generateQRCode"></up-icon> -->
-          <up-icon name="plus" size="22" color="var(--text-1)" @click="openAddModal"></up-icon>
-        </view>
-      </template>
-    </up-navbar>
+    <view class="z-page-header z-glass-card">
+      <text class="page-title">店内游戏</text>
+      <up-button type="gradient1" @click="openAddModal">添加游戏</up-button>
+    </view>
     <view class="game-list" v-if="state.games.length > 0">
       <view class="game-item" v-for="(item, index) in state.games" :key="item.id">
         <view class="game-info">
@@ -36,20 +31,19 @@
           </view>
           <view class="action-btns">
             <view class="edit-btn" @click="openEditModal(index)">
-              <up-icon name="edit-pen" size="36"></up-icon>
+              <up-icon name="edit-pen" size="28"></up-icon>
             </view>
             <view class="delete-btn" @click="openDeleteModal(index)">
-              <up-icon name="trash" size="36"></up-icon>
+              <up-icon name="trash" size="28"></up-icon>
             </view>
           </view>
         </view>
       </view>
     </view>
 
-    <view class="empty-state" v-else>
-      <!-- <up-image src="/static/images/empty-games.png" mode="aspectFit"></up-image> -->
+    <emptyData text="暂无游戏" subtext="点击右上角添加" height="60vh" v-else>
       <text>暂无游戏，点击右上角添加</text>
-    </view>
+    </emptyData>
   </pageWrapper>
 
   <!-- 添加/编辑游戏弹窗 -->
@@ -91,19 +85,7 @@
           </view>
           <view class="form-item">
             <text class="label">游戏图标</text>
-            <view class="upload-box" @click="uploadIcon">
-              <up-image
-                v-if="state.tempGame.icon"
-                :src="state.tempGame.icon"
-                mode="aspectFill"
-                width="100%"
-                height="100%"
-              ></up-image>
-              <view class="upload-placeholder" v-else>
-                <!-- <up-icon name="upload" size="50"></up-icon> -->
-                <text>点击上传</text>
-              </view>
-            </view>
+            <UploadFile v-model="state.tempGame.icon" :max-count="1"></UploadFile>
           </view>
           <view class="form-item switch-item">
             <text class="label">启用状态</text>
@@ -112,7 +94,7 @@
         </view>
       </scroll-view>
       <view class="modal-footer">
-        <up-button @click="closeAddModal">取消</up-button>
+        <up-button type="cancel" @click="closeAddModal">取消</up-button>
         <up-button type="primary" @click="saveGame">保存</up-button>
       </view>
     </view>
@@ -122,6 +104,7 @@
 <script lang="ts" setup>
 import { reactive, onMounted } from 'vue';
 import pageWrapper from '@/components/page/index.vue';
+import UploadFile from '@/components/upload-file/index.vue';
 
 defineOptions({
   name: 'ShopGamesPage',
@@ -302,29 +285,6 @@ const deleteGame = () => {
     icon: 'success',
   });
 };
-
-// 上传图标
-const uploadIcon = () => {
-  uni.chooseImage({
-    count: 1,
-    sizeType: ['original', 'compressed'],
-    sourceType: ['album', 'camera'],
-    success: res => {
-      const tempFilePaths = res.tempFilePaths;
-      state.tempGame.icon = tempFilePaths[0];
-      uni.showToast({
-        title: '图标上传成功',
-        icon: 'success',
-      });
-    },
-    fail: err => {
-      uni.showToast({
-        title: '上传失败: ' + err.errMsg,
-        icon: 'none',
-      });
-    },
-  });
-};
 </script>
 
 <style lang="scss" scoped>
@@ -332,17 +292,6 @@ const uploadIcon = () => {
 .container {
   padding: 0 30rpx;
   min-height: 100vh;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 100rpx;
-  padding: 0 10rpx;
-  position: sticky;
-  top: 0;
-  z-index: 10;
 }
 
 .back-btn {
@@ -369,19 +318,19 @@ const uploadIcon = () => {
 
 /* 游戏列表样式 */
 .game-list {
-  margin-top: 20rpx;
+  padding: $up-box-pd;
 }
 
 .modal-body {
   // max-height: 600rpx;
 }
 .game-item {
-  margin-bottom: 30rpx;
+  margin-bottom: $up-box-mg;
   background-color: var(--bg-2);
   border-radius: 16rpx;
   overflow: hidden;
   box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
-  padding: 30rpx;
+  padding: $up-box-pd;
 }
 
 .game-info {
@@ -471,6 +420,7 @@ const uploadIcon = () => {
     align-items: center;
     justify-content: center;
     margin-left: 20rpx;
+    font-size: 32rpx;
   }
 
   .edit-btn {
@@ -484,26 +434,6 @@ const uploadIcon = () => {
       color: var(--danger-6) !important;
     }
   }
-}
-
-/* 空状态样式 */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-top: 200rpx;
-}
-
-.empty-state up-image {
-  width: 200rpx;
-  height: 200rpx;
-  margin-bottom: 30rpx;
-}
-
-.empty-state text {
-  font-size: 28rpx;
-  color: var(--text-3);
 }
 
 /* 弹窗样式 */
@@ -522,7 +452,7 @@ up-input,
 up-input[type='textarea'] {
   width: 100%;
   border: 1rpx solid #ddd;
-  border-radius: 8rpx;
+  border-radius: $up-box-radius-1;
   padding: 16rpx;
   font-size: 28rpx;
   box-sizing: border-box;
@@ -536,7 +466,7 @@ up-input[type='textarea'] {
   width: 200rpx;
   height: 200rpx;
   border: 1rpx dashed #ddd;
-  border-radius: 8rpx;
+  border-radius: $up-box-radius-1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -546,7 +476,7 @@ up-input[type='textarea'] {
 .upload-box up-image {
   width: 100%;
   height: 100%;
-  border-radius: 8rpx;
+  border-radius: $up-box-radius-1;
 }
 
 .upload-placeholder {

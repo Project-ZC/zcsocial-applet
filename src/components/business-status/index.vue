@@ -35,6 +35,12 @@ const props = defineProps<{
 const statusText = computed(() => {
   return shopStore.getShopStatusText(props.state);
 });
+
+defineOptions({
+  options: {
+    styleIsolation: 'shared',
+  },
+});
 </script>
 
 <style lang="scss" scoped>
@@ -44,11 +50,15 @@ const statusText = computed(() => {
   align-items: center;
   justify-content: center;
 }
+:deep(.u-tag) {
+  border: 0 !important;
+  background: transparent !important;
+}
 .status-dot {
   width: 10rpx;
   height: 10rpx;
   border-radius: 50%;
-  margin-right: 8rpx;
+  margin-right: 0;
 
   &.open {
     background-color: var(--success-6);

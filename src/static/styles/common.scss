@@ -2,8 +2,7 @@
 
 /* 全局页面背景色 */
 page {
-    // background-color: var(--bg-1);
-    background: var(--bg-gradient-1); 
+    background-color: var(--bg-1);
     font-size: $up-font-base;
     /* 优化滚动性能 */
     -webkit-overflow-scrolling: touch;
@@ -15,7 +14,7 @@ page {
     background: var(--bg-1)!important;
 }
 .u-safe-bottom{
-    background-color: var(--bg-2);
+    background-color: var(--bg-1);
 }
 
 // 超出几行超出部分省略号显示,默认2行
@@ -42,7 +41,7 @@ page {
     display: flex;
     flex-direction: column;
     height: 100%;
-    background-color: var(--bg-2);
+    background-color: var(--bg-1);
     border-radius: 30rpx 30rpx 0 0;
 
     &-no-round {
@@ -120,8 +119,8 @@ page {
 /* 毛玻璃效果 */
 .z-glass-card {
     background: var(--bg-2);
-    backdrop-filter: blur(8rpx);
-    border-radius: 14rpx;
+    // backdrop-filter: blur(8rpx);
+    border-radius: $up-box-radius-1;
     box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
     // overflow: hidden;
 }
@@ -177,7 +176,7 @@ page {
 //     }
 // }
 .u-line{
-    border-color: var(--border-2)!important;
+    border-color: var(--border-1)!important;
 }
 // .u-subsection{
 //     height: 72rpx!important;
@@ -215,7 +214,7 @@ page {
     .u-radio__label-wrap,.u-checkbox__label-wrap {
         background: var(--bg-2);
         padding: 6rpx 20rpx;
-        border-radius: 8rpx;
+        border-radius: $up-box-radius-1;
         border: 2rpx solid var(--border-1);
         transition: all 0.3s;
     }
@@ -259,12 +258,13 @@ page {
 
     // 酒红色
     &--burgundy{
-        background-color: var(--burgundy)!important;
+        background-color: var(--primary-6)!important;
         color: #fff!important;
     }
     // 蓝色-酒红色渐变
     &--gradient1{
-        background: var(--btn-gradient-1)!important;
+        // background: var(--btn-gradient-1)!important;
+        background: var(--primary-6)!important;
         color: #fff!important;
     }
      // 橙色渐变按钮
@@ -295,19 +295,7 @@ page {
     }
 }
 
-// // 日期框
-// .u-datetime-picker{
-//     background-color: var(--bg-2)!important;
-// }
-// .u-picker{
-//     background-color: var(--bg-2)!important;
-//     &__view__column{
-//         background-color: var(--bg-2)!important;
-//     }
-//     .u-picker__view__column__item{
-//         background-color: var(--bg-2)!important;
-//     }
-// }
+
 // 动作框间隙
 .u-action-sheet{
     .u-gap{
@@ -316,33 +304,27 @@ page {
     }
 }
 
-.u-picker-input{
-    opacity: 1!important;
+.u-tag{
+    &--primary--plain--fill{
+        background-color: var(--bg-2)!important;
+    }
 }
 
-.u-picker-input{
-    background-color: var(--bg-2)!important;
-    color: var(--text-1)!important;
-    border-color: var(--border-2)!important;
-}
 
-.u-popup__content{
-    background-color: var(--bg-2)!important;
-}
-
-.uni-picker-view-mask{
-    background-color: var(--bg-2)!important;
-}
-.u-picker-view-mask{
-    background-color: var(--bg-2)!important;
-}
-.uni-picker-view-content{
-    background-color: var(--bg-2)!important;
-}
-.u-picker-view-content{
-    background-color: var(--bg-2)!important;
-}
-.u-picker-wraper{
-    background-color: var(--bg-2)!important;
-}
-
+/* 页面头部 */
+.z-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $up-box-pd;
+    .u-button {
+      // font-size: 28rpx;
+      margin: 0;
+      width: 200rpx!important;
+    }
+    .page-title {
+      font-size: 36rpx;
+      font-weight: bold;
+      color: var(--text-1);
+    }
+  }

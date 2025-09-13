@@ -15,49 +15,49 @@ page {
     /* 常规 ：#2272FB */
     --primary-7: rgb(46 118 233);
     /* 点击/高亮 ：#2e76e9 */
-    --border-1: rgb(211, 220, 235);
-    /* 浅 ：#f2f3f5 */
-    --border-2: rgb(229, 230, 235);
-    /* 一般 ：#e5e6eb */
-    --border-3: rgb(201, 205, 212);
-    /* 深/悬浮 ：#c9cdd4 */
-    --border-4: rgb(134, 144, 156);
-    /* 重/按钮描边 ：#86909c */
-    --fill-1: rgb(255, 255, 255);
+
+    --border-1: #3b3d4e; // card border line
+    --border-2: #56596f; // input
+    --border-3: #7c7e8f; // model-header narvar-border
+    --border-4: #d2cfd7;
+    --border-5: #d2cfd7;
+    --border-6: #ffffff; // 选中边框
+
+    --fill-1: #2E263D;
     /* 纯白填充 ：#ffffff */
-    --fill-2: rgb(247, 248, 250);
+    --fill-2: #2E263D;
     /* 浅/禁用 ：#f7f8fa */
-    --fill-3: rgb(242, 243, 245);
+    --fill-3: #2E263D;
     /* 常规/白底悬浮 ：#f2f3f5 */
-    --fill-4: rgb(229, 230, 235);
+    --fill-4: #2E263D;
     /* 深/灰底悬浮 ：#e5e6eb */
-    --fill-5: rgb(201, 205, 212);
+    --fill-5: #2E263D;
     /* 重/特殊场景 ：#c9cdd4 */
-    --text-1: rgb(29, 33, 41);
+
+    --text-1: #fff;  // 主色文字
     /* 强调/正文标题：#1d2129 */
-    --text-2: rgb(78, 89, 105);
+    --text-2: rgb(204, 207, 211);
     /* 次强调/正文标题 ：#4e5969 */
-    --text-3: rgb(134, 144, 156);
+    --text-3: rgb(133, 139, 145);
     /* 次要信息/placeholder ：#86909c */
-    --text-4: rgb(201, 205, 212);
+    --text-4: rgb(107, 114, 128);   
     /* 置灰信息  ：#c9cdd4 */
-    --text-5: rgb(218, 212, 212);
-    // 渐变色次文字
+    --text-5: rgb(86, 93, 107);
     --text-6: rgb(203, 210, 217);
-    /* 纯白文字 ：#ffffff */
-    --bg-1: #f5f5f5;
+
+    --bg-1: rgb(14, 19, 49);  // body背景
     /* 整体背景色*/
-    --bg-2: rgb(255, 255, 255);
-    /* 一级容器背景
-   ：#ffffff */
-    --bg-3: rgb(255, 255, 255);
+    --bg-2: rgba(41, 38, 88, 0.94); // box容器背景
+    /* 一级容器背景*/
+    --bg-3: #2E263D;
     /* 二级容器背景：#ffffff */
-    --bg-4: rgb(255, 255, 255);
+    --bg-4: #2E263D;
     /* 三级容器背景 ：#ffffff */
-    --bg-5: rgb(255, 255, 255);
+    --bg-5: #2E263D;
     /* 下拉弹出框、Tooltip 背景颜色 ：#ffffff */
-    --bg-6: rgb(16, 22, 37);
+    --bg-6: #c4c0cb;
     /* 左侧导航背景 ：#101625 */
+
     --warning-1: rgb(255, 247, 232);
     /* 浅色/白底悬浮：#fff7e8 */
     --warning-2: rgb(255, 228, 186);
@@ -65,13 +65,15 @@ page {
     --warning-3: rgb(255, 207, 139);
     /* 一般禁用 ：#ffcf8b */
     --warning-4: rgb(255, 182, 93);
-    /* 特殊场景：#ffb65d */
+    /* 特殊场景
+   ：#ffb65d */
     --warning-5: rgb(255, 154, 46);
     /* 悬浮 ：#ff9a2e */
     --warning-6: rgb(255, 125, 0);
     /* 常规 ：#ff7d00 */
     --warning-7: rgb(210, 95, 0);
     /* 点击 ：#d25f00 */
+
     --success-1: rgb(232, 255, 234);
     /* 浅色/白底悬浮 ：#e8ffea */
     --success-2: rgb(175, 240, 181);
@@ -86,6 +88,7 @@ page {
     /* 常规 ：#00b42a */
     --success-7: rgb(0, 154, 41);
     /* 点击 ：#009a29 */
+
     --danger-1: rgb(255, 236, 232);
     /* 浅色/白底悬浮
    ：#ffece8 */
@@ -111,9 +114,9 @@ page {
     /* 特殊场景 ：#adb5bd */
     --info-5: #909399;
     /* 悬浮 ：#909399 */
-    --info-6: #767a82;
-    /* 常规 ：#767a82 */
-    --info-7: #313639;
+     --info-6: #767a82;
+     /* 常规 ：#767a82 */
+     --info-7: #313639;
 
     /* 点击 ：#cb272d */
     --link-1: rgb(232, 243, 255);
@@ -155,14 +158,15 @@ page {
     /*  ：#f5319d */
     --chart-gray: rgb(201, 205, 212);
     /*  ：#c9cdd4 */
-
     // 酒红色:
     --burgundy: rgb(181, 58, 232);
      // 渐变按钮背景通过专门的类来实现
     --btn-gradient-1: linear-gradient(to right, var(--primary-6) 0%, var(--burgundy) 100%);
+    // --btn-gradient-1:linear-gradient(135deg, #667eea, #764ba2);
     --btn-gradient-2: linear-gradient(135deg, #ff6b6b, #ee5a24);
     // 渐变背景
-    --bg-gradient-1: linear-gradient(180deg, var(--bg-1) 0%, #F5F5F5 100%);
+    --bg-gradient-1: linear-gradient(180deg, var(--bg-1) 0%, #2B0C35 100%);
+
     // 主色调
     // --theme-primary: var(--primary-6);
     // --theme-success: var(--success-6);

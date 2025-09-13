@@ -74,6 +74,7 @@ import ActivityCard from './components/activityCard.vue';
 import Advertisement from '@/components/advertisement/index.vue';
 import { getAllShopHistory } from '@/api/history';
 import { uniCache } from '@/utils/storage';
+import { PAGE_LIST } from '@/consts/page';
 // 搜索相关状态
 const showSearchResults = ref(false);
 const searchResults = ref([]);
@@ -223,7 +224,7 @@ const GetShopHistoryList = async () => {
 const handleShopClick = (item: any) => {
   uniCache.setItem('skipSearchClear', true);
   uni.navigateTo({
-    url: `/pages/index/shopDetail/showDetail?shopId=${item.shopId}`,
+    url: `${PAGE_LIST.INDEX_SHOP_DETAIL}?shopId=${item.shopId}`,
   });
 };
 

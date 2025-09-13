@@ -212,6 +212,7 @@ watch(
 </script>
 
 <style lang="scss" scoped>
+@import '@/uni.scss';
 .movable-area {
   width: 100%;
   height: 100%;
@@ -220,7 +221,7 @@ watch(
 
 .movable-item {
   background: #fff;
-  border-radius: 8rpx;
+  border-radius: $up-box-radius-1;
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 

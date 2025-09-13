@@ -230,6 +230,7 @@ const confirmSpec = () => {
 </script>
 
 <style lang="scss" scoped>
+@import '@/uni.scss';
 .goods-card {
   padding: 20rpx;
   box-sizing: border-box;
@@ -367,7 +368,7 @@ const confirmSpec = () => {
             padding: 16rpx 24rpx;
             box-sizing: border-box;
             border: 1px solid #e9ecef;
-            border-radius: 8rpx;
+            border-radius: $up-box-radius-1;
             font-size: 26rpx;
             color: var(--text-2);
             background: #fff;
@@ -452,7 +453,7 @@ const confirmSpec = () => {
       padding: 20rpx 40rpx;
       background: var(--bg-1);
       color: #fff;
-      border-radius: 8rpx;
+      border-radius: $up-box-radius-1;
       font-size: 28rpx;
       font-weight: 600;
     }

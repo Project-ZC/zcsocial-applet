@@ -18,4 +18,6 @@ export const PAGE_LIST = {
 	SHOP_TABLE_MANAGE: "/pages/shop/tableManage/tableManage", // 店铺桌位管理
 	SHOP_TICKET_SETTINGS: "/pages/shop/ticketSettings/ticketSettings", // 店铺门票设置
 	SHOP_GAMES: "/pages/shop/shopGames/shopGames", // 店铺游戏
+	SHOP_AUDIT: "/pages/shop/shopAudit/shopAudit", // 店铺报名审核
+	SHOP_TICKET: "/pages/shop/shopTicket/shopTicket", // 店铺门票
 } as any;

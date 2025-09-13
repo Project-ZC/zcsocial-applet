@@ -45,7 +45,10 @@ const switchStatus = (tab, index) => {
 .tabs {
   display: flex;
   background-color: var(--bg-2);
-  margin-bottom: $up-box-mg;
+  // margin-bottom: $up-box-mg;
+  border-radius: $up-box-radius-1;
+  // position: sticky;
+  // top: 20rpx;
 
   .tab-item {
     flex: 1;
@@ -53,7 +56,7 @@ const switchStatus = (tab, index) => {
     padding: 16rpx 0;
     font-size: 28rpx;
     color: var(--text-2);
-    border-radius: 8rpx;
+    border-radius: $up-box-radius-1;
     transition: all 0.3s ease;
     position: relative;
 

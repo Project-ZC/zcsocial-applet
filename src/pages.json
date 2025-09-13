@@ -9,6 +9,30 @@
 			}
 		},
 		{
+			"path": "pages/shop/shopOrder/shopOrder",
+			"style": {
+				"navigationBarTitleText": "店铺订单"
+			}
+		},
+		{
+			"path": "pages/shop/shopAnalysis/shopAnalysis",
+			"style": {
+				"navigationBarTitleText": "店铺数据分析"
+			}
+		},
+		{
+			"path": "pages/shop/shopAudit/shopAudit",
+			"style": {
+				"navigationBarTitleText": "店铺报名审核"
+			}
+		},
+		{
+			"path": "pages/shop/shopTicket/shopTicket",
+			"style": {
+				"navigationBarTitleText": "店铺门票"
+			}
+		},
+		{
 			"path": "pages/index/apply/apply",
 			"style": {
 				"navigationBarTitleText": "报名"
@@ -56,7 +80,7 @@
 			}
 		},
 		{
-			"path": "pages/index/shopDetail/showDetail",
+			"path": "pages/index/shopDetail/shopDetail",
 			"style": {
 				"navigationBarTitleText": "店铺详情"
 			}
@@ -133,13 +157,19 @@
 			"style": {
 				"navigationBarTitleText": "编辑资料"
 			}
+		},
+		{
+			"path": "pages/ticketReceive/ticketReceive",
+			"style": {
+				"navigationBarTitleText": "接收门票"
+			}
 		}
 	],
 	"globalStyle": {
-		"navigationBarTextStyle": "white",
-		"navigationBarTitleText": "ZC Social",
-		"navigationBarBackgroundColor": "#0E1331",
-		"backgroundColor": "#0E1331",
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "玩点",
+		"navigationBarBackgroundColor": "#F4F4F4",
+		"backgroundColor": "#F4F4F4",
 		"usingComponents": {}
 	},
 	"tabBar": {

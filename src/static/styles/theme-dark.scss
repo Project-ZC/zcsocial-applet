@@ -1,61 +1,65 @@
 // 主题CSS变量
 :root,
 page {
-    --primary-1: rgb(219, 235, 255);
-    /* 浅色/白底悬浮 ：#DBEBFF */
-    --primary-2: rgb(207, 226, 246);
-    /* 文字禁用 ：#CFE2F6 */
-    --primary-3: rgb(186, 217, 255);
-    /* 一般禁用 ：#BAD9FF */
-    --primary-4: rgb(110, 175, 255);
-    /* 特殊场景 ：#6EAFFF */
-    --primary-5: rgb(61, 161, 255);
-    /* 悬浮 ：#3DA1FF */
-    --primary-6: rgb(34, 114, 251);
-    /* 常规 ：#2272FB */
-    --primary-7: rgb(46 118 233);
-    /* 点击/高亮 ：#2e76e9 */
+    --primary-1: #f5f5f5;
+    /* 最浅色/浅灰 ：#f5f5f5 */
+    --primary-2: #d9d9d9;
+    /* 浅色/中灰 ：#d9d9d9 */
+    --primary-3: #8c8c8c;
+    /* 较浅/深灰 ：#8c8c8c */
+    --primary-4: #434343;
+    /* 中等/深灰 ：#434343 */
+    --primary-5: #302f2f;
+    /* 高等 ：#302f2f */
+    --primary-6: #121212;
+    /* 深色/常规 ：#2e76e9 */
+    --primary-7: #000;
+    /* 最深色/点击高亮 ：#121212 */
 
-    --border-1: #3b3d4e; // card border line
-    --border-2: #56596f; // input
-    --border-3: #7c7e8f; // model-header narvar-border
-    --border-4: #d2cfd7;
-    --border-5: #d2cfd7;
-    --border-6: #ffffff; // 选中边框
+    --border-1: rgb(229, 230, 235);// card border line 
+    /* 浅 ：#f2f3f5 */
+    --border-2: rgb(211, 220, 235); // input
+    /* 一般 ：#e5e6eb */
+    --border-3: rgb(201, 205, 212); // model-header narvar-border
+    /* 深/悬浮 ：#c9cdd4 */
+    --border-4: rgb(134, 144, 156);
+    /* 重/按钮描边 ：#86909c */
 
-    --fill-1: #2E263D;
+    --fill-1: rgb(255, 255, 255);
     /* 纯白填充 ：#ffffff */
-    --fill-2: #2E263D;
+    --fill-2: rgb(247, 248, 250);
     /* 浅/禁用 ：#f7f8fa */
-    --fill-3: #2E263D;
+    --fill-3: rgb(242, 243, 245);
     /* 常规/白底悬浮 ：#f2f3f5 */
-    --fill-4: #2E263D;
+    --fill-4: rgb(229, 230, 235);
     /* 深/灰底悬浮 ：#e5e6eb */
-    --fill-5: #2E263D;
+    --fill-5: rgb(201, 205, 212);
     /* 重/特殊场景 ：#c9cdd4 */
 
-    --text-1: #fff;  // 主色文字
+    --text-1: #121212;
     /* 强调/正文标题：#1d2129 */
-    --text-2: rgb(204, 207, 211);
+    --text-2: rgb(78, 89, 105);
     /* 次强调/正文标题 ：#4e5969 */
-    --text-3: rgb(133, 139, 145);
+    --text-3: rgb(134, 144, 156);
     /* 次要信息/placeholder ：#86909c */
-    --text-4: rgb(107, 114, 128);   
+    --text-4: rgb(201, 205, 212);
     /* 置灰信息  ：#c9cdd4 */
-    --text-5: rgb(86, 93, 107);
+    --text-5: rgb(218, 212, 212);
+    // 渐变色次文字
     --text-6: rgb(203, 210, 217);
+    /* 纯白文字 ：#ffffff */
 
-    --bg-1: rgb(14, 19, 49);  // body背景
+    --bg-1: #ffffff;
     /* 整体背景色*/
-    --bg-2: rgba(41, 38, 88, 0.94); // box容器背景
-    /* 一级容器背景*/
-    --bg-3: #2E263D;
+    --bg-2: #F4F4F4;
+    /* 一级容器背景：#ffffff */
+    --bg-3: rgb(255, 255, 255);
     /* 二级容器背景：#ffffff */
-    --bg-4: #2E263D;
+    --bg-4: rgb(255, 255, 255);
     /* 三级容器背景 ：#ffffff */
-    --bg-5: #2E263D;
+    --bg-5: rgb(255, 255, 255);
     /* 下拉弹出框、Tooltip 背景颜色 ：#ffffff */
-    --bg-6: #c4c0cb;
+    --bg-6: rgb(16, 22, 37);
     /* 左侧导航背景 ：#101625 */
 
     --warning-1: rgb(255, 247, 232);
@@ -65,15 +69,14 @@ page {
     --warning-3: rgb(255, 207, 139);
     /* 一般禁用 ：#ffcf8b */
     --warning-4: rgb(255, 182, 93);
-    /* 特殊场景
-   ：#ffb65d */
+    /* 特殊场景：#ffb65d */
     --warning-5: rgb(255, 154, 46);
     /* 悬浮 ：#ff9a2e */
     --warning-6: rgb(255, 125, 0);
     /* 常规 ：#ff7d00 */
     --warning-7: rgb(210, 95, 0);
     /* 点击 ：#d25f00 */
-
+    
     --success-1: rgb(232, 255, 234);
     /* 浅色/白底悬浮 ：#e8ffea */
     --success-2: rgb(175, 240, 181);
@@ -90,8 +93,7 @@ page {
     /* 点击 ：#009a29 */
 
     --danger-1: rgb(255, 236, 232);
-    /* 浅色/白底悬浮
-   ：#ffece8 */
+    /* 浅色/白底悬浮：#ffece8 */
     --danger-2: rgb(253, 205, 197);
     /* 文字禁用 ：#fdcdc5 */
     --danger-3: rgb(251, 172, 163);
@@ -114,14 +116,13 @@ page {
     /* 特殊场景 ：#adb5bd */
     --info-5: #909399;
     /* 悬浮 ：#909399 */
-     --info-6: #767a82;
-     /* 常规 ：#767a82 */
-     --info-7: #313639;
-
+    --info-6: #EEEEEE;
+    /* 常规 ：#767a82 */
+    --info-7: #313639;
     /* 点击 ：#cb272d */
+
     --link-1: rgb(232, 243, 255);
-    /* 浅色/白底悬浮
-   ：#e8f3ff */
+    /* 浅色/白底悬浮：#e8f3ff */
     --link-2: rgb(190, 218, 255);
     /* 文字禁用 ：#bedaff */
     --link-3: rgb(148, 191, 255);
@@ -134,6 +135,7 @@ page {
     /* 常规 ：#165dff */
     --link-7: rgb(14, 66, 210);
     /* 点击 ：#0e42d2 */
+
     --chart-red: rgb(245, 63, 63);
     /*  ：#f53f3f */
     --chart-orangered: rgb(247, 114, 52);
@@ -158,6 +160,7 @@ page {
     /*  ：#f5319d */
     --chart-gray: rgb(201, 205, 212);
     /*  ：#c9cdd4 */
+
     // 酒红色:
     --burgundy: rgb(181, 58, 232);
      // 渐变按钮背景通过专门的类来实现
@@ -165,13 +168,12 @@ page {
     // --btn-gradient-1:linear-gradient(135deg, #667eea, #764ba2);
     --btn-gradient-2: linear-gradient(135deg, #ff6b6b, #ee5a24);
     // 渐变背景
-    --bg-gradient-1: linear-gradient(180deg, var(--bg-1) 0%, #2B0C35 100%);
+    --bg-gradient-1: linear-gradient(180deg, var(--bg-1) 0%, #F5F5F5 100%);
 
     // 女生
     --female: #eb2f96;
     // 男生
-    // --male: rgb(255, 125, 0);
-
+    --male: rgb(46 118 233);
     // 主色调
     // --theme-primary: var(--primary-6);
     // --theme-success: var(--success-6);
@@ -191,4 +193,5 @@ page {
 
     // // 边框颜色
     // --theme-border-color: var(--border-1);
+
 }

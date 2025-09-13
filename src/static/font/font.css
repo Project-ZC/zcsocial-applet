@@ -1,130 +1,134 @@
 @font-face {
-  font-family: "wd-icon"; /* Project id 5002018 */
-  src: url('//at.alicdn.com/t/c/font_5002018_8ix8sbdo7iw.woff2?t=1757583930166') format('woff2'),
-       url('//at.alicdn.com/t/c/font_5002018_8ix8sbdo7iw.woff?t=1757583930166') format('woff'),
-       url('//at.alicdn.com/t/c/font_5002018_8ix8sbdo7iw.ttf?t=1757583930166') format('truetype');
+  font-family: 'wd-icon'; /* Project id 5002018 */
+  src: url('//at.alicdn.com/t/c/font_5002018_vscyau4timf.woff2?t=1757768934882') format('woff2'),
+    url('//at.alicdn.com/t/c/font_5002018_vscyau4timf.woff?t=1757768934882') format('woff'),
+    url('//at.alicdn.com/t/c/font_5002018_vscyau4timf.ttf?t=1757768934882') format('truetype');
 }
 
 .wd-icon {
-  font-family: "wd-icon" !important;
+  font-family: 'wd-icon' !important;
   font-size: 16px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+.wd-icon-my-qrcode:before {
+  content: '\e644';
+}
+
 .wd-icon-male:before {
-  content: "\e8b3";
+  content: '\e8b3';
 }
 
 .wd-icon-female:before {
-  content: "\e8b4";
+  content: '\e8b4';
 }
 
 .wd-icon-my-registration:before {
-  content: "\e667";
+  content: '\e667';
 }
 
 .wd-icon-my-ticketholder:before {
-  content: "\e61e";
+  content: '\e61e';
 }
 
 .wd-icon-choose-table:before {
-  content: "\f07e";
+  content: '\f07e';
 }
 
 .wd-icon-shop-location:before {
-  content: "\e8bb";
+  content: '\e8bb';
 }
 
 .wd-icon-shop-saoma:before {
-  content: "\e609";
+  content: '\e609';
 }
 
 .wd-icon-shop-order:before {
-  content: "\e737";
+  content: '\e737';
 }
 
 .wd-icon-shop-detail:before {
-  content: "\e679";
+  content: '\e679';
 }
 
 .wd-icon-pijiuwu:before {
-  content: "\e6bd";
+  content: '\e6bd';
 }
 
 .wd-icon-shop-qrcode:before {
-  content: "\e63f";
+  content: '\e63f';
 }
 
 .wd-icon-shop-menu:before {
-  content: "\e68e";
+  content: '\e68e';
 }
 
 .wd-icon-shop-ticket:before {
-  content: "\e60c";
+  content: '\e60c';
 }
 
 .wd-icon-my:before {
-  content: "\e699";
+  content: '\e699';
 }
 
 .wd-icon-jingpincajiu:before {
-  content: "\e60d";
+  content: '\e60d';
 }
 
 .wd-icon-shop-staff:before {
-  content: "\e62f";
+  content: '\e62f';
 }
 
 .wd-icon-shop-analysis:before {
-  content: "\e612";
+  content: '\e612';
 }
 
 .wd-icon-shop-table:before {
-  content: "\ea1a";
+  content: '\ea1a';
 }
 
 .wd-icon-shop-audit:before {
-  content: "\e661";
+  content: '\e661';
 }
 
 .wd-icon-shop-games:before {
-  content: "\e7f0";
+  content: '\e7f0';
 }
 
 .wd-icon-switch-shop:before {
-  content: "\e65c";
+  content: '\e65c';
 }
 
 .wd-icon-contact-us:before {
-  content: "\e648";
+  content: '\e648';
 }
 
 .wd-icon-history:before {
-  content: "\e8bd";
+  content: '\e8bd';
 }
 
 .wd-icon-setting:before {
-  content: "\e60f";
+  content: '\e60f';
 }
 
 .wd-icon-about-us:before {
-  content: "\e645";
+  content: '\e645';
 }
 
 .wd-icon-my-order:before {
-  content: "\e6b8";
+  content: '\e6b8';
 }
 
 .wd-icon-shop:before {
-  content: "\e739";
+  content: '\e739';
 }
 
 .wd-icon-message:before {
-  content: "\e61b";
+  content: '\e61b';
 }
 
 .wd-icon-home:before {
-  content: "\e91c";
+  content: '\e91c';
 }

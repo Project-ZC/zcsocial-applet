@@ -62,7 +62,7 @@
           </view>
         </view>
         <!-- <up-input v-model="cart.remark" placeholder="输入订单备注" clearable style="flex: 1" /> -->
-        <up-button type="gradient1" shape="circle" :disabled="selectedItems.length === 0" @click="checkout">
+        <up-button type="primary" shape="circle" :disabled="selectedItems.length === 0" @click="checkout">
           结算 ¥ {{ cart.selectedTotalPrice.toFixed(2) }}
         </up-button>
       </view>
@@ -156,7 +156,7 @@
           </view>
           <up-number-box v-model="form.quantity" min="1" integer />
         </view>
-        <up-button type="gradient1" shape="circle" class="submit-btn" @click="confirmAddToCart">加入购物车</up-button>
+        <up-button type="primary" shape="circle" class="submit-btn" @click="confirmAddToCart">加入购物车</up-button>
       </view>
     </view>
   </up-popup>
@@ -230,7 +230,7 @@
           <view class="total-label">合计</view>
           <view class="z-price">¥ {{ cart.selectedTotalPrice.toFixed(2) }}</view>
         </view>
-        <up-button type="gradient1" shape="circle" @click="checkout" :disabled="selectedItems.length === 0">
+        <up-button type="primary" shape="circle" @click="checkout" :disabled="selectedItems.length === 0">
           去结算({{ selectedItems.length }})
         </up-button>
       </view>
@@ -932,7 +932,7 @@ defineOptions({
   font-size: 24rpx;
   color: var(--text-3);
   padding: 8rpx 16rpx;
-  border-radius: 8rpx;
+  border-radius: $up-box-radius-1;
   background: var(--bg-1);
   cursor: pointer;
 }

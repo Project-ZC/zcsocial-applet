@@ -200,8 +200,8 @@ $header-h: 100rpx;
   font-size: $up-font-base;
   display: flex;
   flex-direction: column;
-  // background: var(--bg-1);
-  background: var(--bg-gradient-1);
+  background: var(--bg-1);
+  // background: var(--bg-gradient-1);
   color: var(--text-1);
   min-height: 100vh;
 

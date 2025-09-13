@@ -740,6 +740,7 @@ defineOptions({
 </script>
 
 <style lang="scss" scoped>
+@import '@/uni.scss';
 .del-icon-btn {
   border-radius: 50%;
   overflow: hidden;
@@ -761,7 +762,7 @@ defineOptions({
   text-align: center;
   padding: 40rpx 20rpx;
   background-color: #f8f9fa;
-  border-radius: 8rpx;
+  border-radius: $up-box-radius-1;
   display: none;
 }
 /* 容量组管理样式 */
@@ -802,7 +803,7 @@ defineOptions({
   height: 36px;
   padding: 16rpx;
   background-color: var(--bg-1);
-  border-radius: 8rpx;
+  border-radius: $up-box-radius-1;
   box-sizing: border-box;
 }
 
@@ -873,7 +874,7 @@ defineOptions({
   height: 36px;
   padding: 16rpx;
   background-color: var(--bg-1);
-  border-radius: 8rpx;
+  border-radius: $up-box-radius-1;
   box-sizing: border-box;
 }
 
@@ -905,7 +906,7 @@ defineOptions({
   color: #fff;
   background-color: var(--primary-6);
   padding: 3rpx 8rpx;
-  border-radius: 8rpx;
+  border-radius: $up-box-radius-1;
 }
 
 .spec-group-actions {
@@ -968,7 +969,7 @@ defineOptions({
   height: 36px;
   padding: 16rpx;
   background-color: var(--bg-2);
-  border-radius: 8rpx;
+  border-radius: $up-box-radius-1;
   box-sizing: border-box;
 }
 

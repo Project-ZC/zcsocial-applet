@@ -14,7 +14,9 @@
 
 // @import 'uview-plus/theme.scss';
 // @import '@/static/styles/theme-light.scss'; // 浅色
-@import '@/static/styles/theme-dark.scss'; // 深色
+// @import '@/static/styles/theme-burgundy.scss'; // 酒色
+@import '@/static/styles/theme-dark.scss'; // 黑色深色主题
+
 
 $u-main-color: var(--text-1);
 $u-content-color: var(--text-2);
@@ -125,3 +127,8 @@ $up-navbar-h: 44px;
 $up-tabbar-h: 50px;
 
 
+// footer和tabbar的阴影
+$up-box-shadow-1: 0 -2rpx 10rpx rgba(0, 0, 0, 0.1);
+
+// 圆角
+$up-box-radius-1: 8rpx;

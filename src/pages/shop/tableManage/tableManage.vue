@@ -1,43 +1,38 @@
 <template>
   <pageWrapper class="table-manage">
-    <view class="header z-glass-card">
+    <view class="z-page-header z-glass-card">
       <text class="page-title">桌位管理</text>
-      <up-button class="add-btn" type="gradient1" @click="openAddTableModal">添加桌位</up-button>
+      <up-button type="gradient1" @click="openAddTableModal">添加桌位</up-button>
     </view>
     <!-- 桌位列表 -->
-    <view class="table-list">
-      <template v-if="state.tables.length > 0">
-        <block v-for="table in state.tables" :key="table.id">
-          <view class="table-item z-glass-card">
-            <view class="table-info">
-              <view class="table-header">
-                <text class="table-name">{{ table.tableName }}</text>
-                <view class="table-status" :class="[table.status === 'available' ? 'available' : 'occupied']">
-                  {{ table.status === 'available' ? '空闲' : '已满' }}
-                </view>
-              </view>
-              <view class="table-count">
-                <text>人数：{{ table.personNumber }}人</text>
-              </view>
-              <view class="table-mode">
-                <text class="mode-tag" :class="[table.orderMode]">{{ getModeName(table.orderMode) }}</text>
-              </view>
+    <view class="table-list" v-if="state.tables.length > 0">
+      <block v-for="table in state.tables" :key="table.id">
+        <view class="table-item z-glass-card">
+          <view class="table-info">
+            <view class="table-header">
+              <text class="table-name">{{ table.tableName }}</text>
+              <!-- <up-tag v-if="table.status == 'available'" :text="'空闲'" type="success"></up-tag>
+              <up-tag v-if="table.status == 'occupied'" :text="'已满'" type="error"></up-tag> -->
             </view>
-            <view class="table-actions">
-              <up-button shape="circle" size="small" type="primary" @click="openEditTableModal(table)">编辑</up-button>
-              <up-button shape="circle" size="small" type="error" @click="openDeleteTableModal(table)">删除</up-button>
+            <view class="table-count">
+              <text>人数：{{ table.personNumber }}人</text>
+            </view>
+            <view class="table-mode">
+              <text class="mode-tag" :class="[table.orderMode]">{{ getModeName(table.orderMode) }}</text>
             </view>
           </view>
-        </block>
-      </template>
-      <view class="empty-state z-glass-card" v-else>
-        <emptyData text="暂无桌位">
-          <template #subtext>
-            <text>点击右上角按钮添加桌位</text>
-          </template>
-        </emptyData>
-      </view>
+          <view class="table-actions">
+            <up-button shape="circle" size="small" type="primary" @click="openEditTableModal(table)">编辑</up-button>
+            <up-button shape="circle" size="small" type="error" @click="openDeleteTableModal(table)">删除</up-button>
+          </view>
+        </view>
+      </block>
     </view>
+    <emptyData text="暂无桌位" height="60vh" v-else>
+      <template #subtext>
+        <text>点击右上角按钮添加桌位</text>
+      </template>
+    </emptyData>
   </pageWrapper>
 
   <!-- 添加/编辑桌位弹窗 -->
@@ -108,7 +103,7 @@
         </view>
       </scroll-view>
       <view class="modal-footer">
-        <up-button @click="closeTableModal">取消</up-button>
+        <up-button type="cancel" @click="closeTableModal">取消</up-button>
         <up-button type="primary" @click="confirmTable">确定</up-button>
       </view>
     </view>
@@ -342,26 +337,6 @@ onPullDownRefresh(async () => {
 @import '@/uni.scss';
 .table-manage {
   ::v-deep .content-area {
-    padding: $up-box-pd;
-  }
-}
-
-/* 头部样式 */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: $up-box-pd;
-  margin-bottom: $up-box-mg;
-  :deep(.add-btn) {
-    // font-size: 28rpx;
-    margin: 0;
-    width: 200rpx;
-  }
-  .page-title {
-    font-size: 36rpx;
-    font-weight: bold;
-    color: var(--text-1);
   }
 }
 
@@ -370,6 +345,7 @@ onPullDownRefresh(async () => {
   display: flex;
   flex-direction: column;
   gap: $up-box-mg;
+  padding: $up-box-pd;
 }
 
 .table-item {
@@ -391,22 +367,6 @@ onPullDownRefresh(async () => {
   font-size: $up-font-lg;
   font-weight: bold;
   color: var(--text-1);
-}
-
-.table-status {
-  font-size: 24rpx;
-  padding: 8rpx 16rpx;
-  border-radius: 20rpx;
-}
-
-.table-status.available {
-  background-color: var(--bg-1);
-  color: var(--primary-6);
-}
-
-.table-status.occupied {
-  background-color: var(--bg-1);
-  color: var(--danger-6);
 }
 
 .table-count {

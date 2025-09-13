@@ -62,6 +62,12 @@ function setupUI(app: App) {
 				confirmColor: "var(--text-1)",
 				bgColor: "var(--bg-2)",
 			},
+			checkbox: {
+				activeColor: "var(--primary-6)",
+			},
+			switch: {
+				activeColor: "var(--primary-6)",
+			},
 			// 其他组件属性配置
 			// ......
 		},

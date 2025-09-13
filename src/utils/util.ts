@@ -223,7 +223,7 @@ export const handleQRCodeLongPress = (imageUrl: string, title: string = '二维�
 		success: (res) => {
 			if (res.tapIndex === 0) {
 				// 保存到相册
-				saveQRCodeToAlbum(imageUrl, title);
+				saveImgToAlbum(imageUrl, title);
 			} else if (res.tapIndex === 1) {
 				// 识别二维码
 				scanQRCode(imageUrl);
@@ -236,7 +236,7 @@ export const handleQRCodeLongPress = (imageUrl: string, title: string = '二维�
 };
 
 // 保存二维码到相册
-export const saveQRCodeToAlbum = (imageUrl: string, title: string = '二维码') => {
+export const saveImgToAlbum = (imageUrl: string, title: string = '二维码') => {
 	// 先下载图片到本地
 	uni.downloadFile({
 		url: imageUrl,
